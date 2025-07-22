@@ -1,0 +1,54 @@
+{
+  "name": "sherlock-ai-legal-frontend",
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "headers": {
+        "cache-control": "s-maxage=31536000,immutable"
+      }
+    },
+    {
+      "src": "/service-worker.js",
+      "headers": {
+        "cache-control": "s-maxage=0"
+      }
+    },
+    {
+      "src": "/sockjs-node/(.*)",
+      "dest": "/sockjs-node/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_AWS_REGION": "us-east-1",
+    "REACT_APP_STAGE": "production"
+  },
+  "build": {
+    "env": {
+      "REACT_APP_AWS_REGION": "us-east-1",
+      "REACT_APP_USER_POOL_ID": "@sherlock_user_pool_id",
+      "REACT_APP_USER_POOL_CLIENT_ID": "@sherlock_user_pool_client_id",
+      "REACT_APP_API_ENDPOINT": "@sherlock_api_endpoint"
+    }
+  },
+  "functions": {},
+  "rewrites": [
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
+} 

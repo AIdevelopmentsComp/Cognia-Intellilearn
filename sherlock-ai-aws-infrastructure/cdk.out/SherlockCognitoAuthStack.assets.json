@@ -1,0 +1,34 @@
+{
+  "version": "38.0.1",
+  "files": {
+    "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d": {
+      "source": {
+        "path": "asset.2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "655153555581-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-655153555581-us-east-1",
+          "objectKey": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::655153555581:role/cdk-hnb659fds-file-publishing-role-655153555581-us-east-1"
+        }
+      }
+    },
+    "1246874c4c2f01cfb0c1436c0cbbbd56dc994a84023b7f7ce8aa15affc9a59b1": {
+      "source": {
+        "path": "SherlockCognitoAuthStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "655153555581-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-655153555581-us-east-1",
+          "objectKey": "1246874c4c2f01cfb0c1436c0cbbbd56dc994a84023b7f7ce8aa15affc9a59b1.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::655153555581:role/cdk-hnb659fds-file-publishing-role-655153555581-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

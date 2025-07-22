@@ -1,0 +1,2253 @@
+{
+ "Description": "Sherlock AI Legal Case Management System - Mass Tort & Single Event Cases",
+ "Resources": {
+  "SherlockKMSKey64E6B4DC": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "Description": "KMS Key for Sherlock AI Legal Database encryption",
+    "EnableKeyRotation": true,
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": "kms:*",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "arn:aws:iam::655153555581:root"
+       },
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockKMSKey/Resource"
+   }
+  },
+  "SherlockKMSKeyAliasABAABEFF": {
+   "Type": "AWS::KMS::Alias",
+   "Properties": {
+    "AliasName": "alias/sherlock-ai-legal-db",
+    "TargetKeyId": {
+     "Fn::GetAtt": [
+      "SherlockKMSKey64E6B4DC",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockKMSKeyAlias/Resource"
+   }
+  },
+  "SherlockPrivilegedDocsBucket60039F03": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "KMSMasterKeyID": {
+         "Fn::GetAtt": [
+          "SherlockKMSKey64E6B4DC",
+          "Arn"
+         ]
+        },
+        "SSEAlgorithm": "aws:kms"
+       }
+      }
+     ]
+    },
+    "BucketName": "sherlock-ai-privileged-documents",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "Id": "LegalRetentionRule",
+       "Status": "Enabled",
+       "Transitions": [
+        {
+         "StorageClass": "STANDARD_IA",
+         "TransitionInDays": 90
+        },
+        {
+         "StorageClass": "GLACIER",
+         "TransitionInDays": 365
+        },
+        {
+         "StorageClass": "DEEP_ARCHIVE",
+         "TransitionInDays": 2555
+        }
+       ]
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ],
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockPrivilegedDocsBucket/Resource"
+   }
+  },
+  "SherlockPrivilegedDocsBucketPolicyCCD8B82F": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "SherlockPrivilegedDocsBucket60039F03"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SherlockPrivilegedDocsBucket60039F03",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockPrivilegedDocsBucket60039F03",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockPrivilegedDocsBucket/Policy/Resource"
+   }
+  },
+  "SherlockMedicalRecordsBucket40A2CF48": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "KMSMasterKeyID": {
+         "Fn::GetAtt": [
+          "SherlockKMSKey64E6B4DC",
+          "Arn"
+         ]
+        },
+        "SSEAlgorithm": "aws:kms"
+       }
+      }
+     ]
+    },
+    "BucketName": "sherlock-ai-medical-records",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "Id": "HIPAARetentionRule",
+       "Status": "Enabled",
+       "Transitions": [
+        {
+         "StorageClass": "GLACIER",
+         "TransitionInDays": 730
+        }
+       ]
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ],
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockMedicalRecordsBucket/Resource"
+   }
+  },
+  "SherlockMedicalRecordsBucketPolicyE2C2755A": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "SherlockMedicalRecordsBucket40A2CF48"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SherlockMedicalRecordsBucket40A2CF48",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockMedicalRecordsBucket40A2CF48",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockMedicalRecordsBucket/Policy/Resource"
+   }
+  },
+  "SherlockCommunicationsBucketC33238A8": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "KMSMasterKeyID": {
+         "Fn::GetAtt": [
+          "SherlockKMSKey64E6B4DC",
+          "Arn"
+         ]
+        },
+        "SSEAlgorithm": "aws:kms"
+       }
+      }
+     ]
+    },
+    "BucketName": "sherlock-ai-communications",
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ],
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockCommunicationsBucket/Resource"
+   }
+  },
+  "SherlockCommunicationsBucketPolicyBF28A825": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "SherlockCommunicationsBucketC33238A8"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SherlockCommunicationsBucketC33238A8",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockCommunicationsBucketC33238A8",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockCommunicationsBucket/Policy/Resource"
+   }
+  },
+  "SherlockCasesMainCA51B7CF": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI2PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI2SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI3PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI3SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI4PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI4SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "GSI1-LitigationStatus",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI1PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI1SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "GSI2-AttorneyWorkload",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI2PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI2SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "GSI3-JurisdictionCaseType",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI3PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI3SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "GSI4-ClientMatter",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI4PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI4SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "SherlockKMSKey64E6B4DC",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "sherlock-cases-main",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockCasesMain/Resource"
+   }
+  },
+  "SherlockPartiesRoles8862DB6C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "GSI1-PartyType",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI1PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI1SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "SherlockKMSKey64E6B4DC",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "sherlock-parties-roles",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockPartiesRoles/Resource"
+   }
+  },
+  "SherlockLegalRepresentatives50C255FD": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "SherlockKMSKey64E6B4DC",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "sherlock-legal-representatives",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockLegalRepresentatives/Resource"
+   }
+  },
+  "SherlockWitnessesB0335426": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "GSI1-WitnessType",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI1PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI1SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "SherlockKMSKey64E6B4DC",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "sherlock-witnesses",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockWitnesses/Resource"
+   }
+  },
+  "SherlockMedicalRecords23265960": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI2PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI2SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "GSI1-ProviderSpecialty",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI1PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI1SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "GSI2-CausationOpinion",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI2PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI2SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "SherlockKMSKey64E6B4DC",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "sherlock-medical-records",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockMedicalRecords/Resource"
+   }
+  },
+  "SherlockFinancialLedger6E7BF00C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI2PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI2SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "GSI1-TransactionType",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI1PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI1SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "GSI2-TrustAccount",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI2PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI2SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "SherlockKMSKey64E6B4DC",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "sherlock-financial-ledger",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockFinancialLedger/Resource"
+   }
+  },
+  "SherlockDocumentsCB52E6CA": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI2PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI2SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "GSI1-PrivilegeType",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI1PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI1SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "GSI2-DocumentCategory",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI2PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI2SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "SherlockKMSKey64E6B4DC",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "sherlock-documents",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockDocuments/Resource"
+   }
+  },
+  "SherlockAttorneyRole7B34D72B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Full access role for attorneys in Sherlock AI system",
+    "RoleName": "sherlock-attorney-role",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAttorneyRole/Resource"
+   }
+  },
+  "SherlockAttorneyRoleDefaultPolicyE2916371": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "SherlockKMSKey64E6B4DC",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "dynamodb:*",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SherlockCasesMainCA51B7CF",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockDocumentsCB52E6CA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockFinancialLedger6E7BF00C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockLegalRepresentatives50C255FD",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockMedicalRecords23265960",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockPartiesRoles8862DB6C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockWitnessesB0335426",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockCasesMainCA51B7CF",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockDocumentsCB52E6CA",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockFinancialLedger6E7BF00C",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockMedicalRecords23265960",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockPartiesRoles8862DB6C",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockWitnessesB0335426",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SherlockCommunicationsBucketC33238A8",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockMedicalRecordsBucket40A2CF48",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockPrivilegedDocsBucket60039F03",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockCommunicationsBucketC33238A8",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockMedicalRecordsBucket40A2CF48",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockPrivilegedDocsBucket60039F03",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SherlockAttorneyRoleDefaultPolicyE2916371",
+    "Roles": [
+     {
+      "Ref": "SherlockAttorneyRole7B34D72B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAttorneyRole/DefaultPolicy/Resource"
+   }
+  },
+  "SherlockParalegalRole6604807D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Limited access role for paralegals in Sherlock AI system",
+    "RoleName": "sherlock-paralegal-role",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockParalegalRole/Resource"
+   }
+  },
+  "SherlockParalegalRoleDefaultPolicy92A2CA10": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "SherlockKMSKey64E6B4DC",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SherlockCasesMainCA51B7CF",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockDocumentsCB52E6CA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockFinancialLedger6E7BF00C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockLegalRepresentatives50C255FD",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockMedicalRecords23265960",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockPartiesRoles8862DB6C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockWitnessesB0335426",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockCasesMainCA51B7CF",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockDocumentsCB52E6CA",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockFinancialLedger6E7BF00C",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockMedicalRecords23265960",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockPartiesRoles8862DB6C",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockWitnessesB0335426",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SherlockCommunicationsBucketC33238A8",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockMedicalRecordsBucket40A2CF48",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "SherlockPrivilegedDocsBucket60039F03",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockCommunicationsBucketC33238A8",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockMedicalRecordsBucket40A2CF48",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SherlockPrivilegedDocsBucket60039F03",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SherlockParalegalRoleDefaultPolicy92A2CA10",
+    "Roles": [
+     {
+      "Ref": "SherlockParalegalRole6604807D"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockParalegalRole/DefaultPolicy/Resource"
+   }
+  },
+  "SherlockAdminRole55003985": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Administrative access role for system management",
+    "RoleName": "sherlock-admin-role",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAdminRole/Resource"
+   }
+  },
+  "SherlockAPIC0676297": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "ApiKeySourceType": "HEADER",
+    "Description": "API for Salesforce integration with Sherlock AI legal database",
+    "Name": "Sherlock AI Legal Database API",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAPI/Resource"
+   }
+  },
+  "SherlockAPICloudWatchRole282F074C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAPI/CloudWatchRole/Resource"
+   }
+  },
+  "SherlockAPIAccount66BDE91E": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "SherlockAPICloudWatchRole282F074C",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "SherlockAPIC0676297"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAPI/Account"
+   }
+  },
+  "SherlockAPIDeploymentF59FAED540fe35cd385f82ee062814395c7692e7": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "API for Salesforce integration with Sherlock AI legal database",
+    "RestApiId": {
+     "Ref": "SherlockAPIC0676297"
+    }
+   },
+   "DependsOn": [
+    "SherlockAPIOPTIONS4AE67E71"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAPI/Deployment/Resource"
+   }
+  },
+  "SherlockAPIDeploymentStageprodC6F07FDD": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "SherlockAPIDeploymentF59FAED540fe35cd385f82ee062814395c7692e7"
+    },
+    "RestApiId": {
+     "Ref": "SherlockAPIC0676297"
+    },
+    "StageName": "prod",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "DependsOn": [
+    "SherlockAPIAccount66BDE91E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAPI/DeploymentStage.prod/Resource"
+   }
+  },
+  "SherlockAPIOPTIONS4AE67E71": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "SherlockAPIC0676297",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "SherlockAPIC0676297"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockAPI/Default/OPTIONS/Resource"
+   }
+  },
+  "SalesforceAPIKey53CF0F41": {
+   "Type": "AWS::ApiGateway::ApiKey",
+   "Properties": {
+    "Description": "API Key for Salesforce integration",
+    "Enabled": true,
+    "Name": "salesforce-sherlock-integration",
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SalesforceAPIKey/Resource"
+   }
+  },
+  "SherlockUsagePlanDAEB3E08": {
+   "Type": "AWS::ApiGateway::UsagePlan",
+   "Properties": {
+    "ApiStages": [
+     {
+      "ApiId": {
+       "Ref": "SherlockAPIC0676297"
+      },
+      "Stage": {
+       "Ref": "SherlockAPIDeploymentStageprodC6F07FDD"
+      },
+      "Throttle": {}
+     }
+    ],
+    "Quota": {
+     "Limit": 10000,
+     "Period": "MONTH"
+    },
+    "Tags": [
+     {
+      "Key": "BusinessUnit",
+      "Value": "MassTortLitigation"
+     },
+     {
+      "Key": "CostCenter",
+      "Value": "Legal-Technology"
+     },
+     {
+      "Key": "CreatedBy",
+      "Value": "CDK-SherlockAI-V2"
+     },
+     {
+      "Key": "DeploymentDate",
+      "Value": "2025-07-21"
+     },
+     {
+      "Key": "Owner",
+      "Value": "WattsLawFirm-TechTeam"
+     }
+    ],
+    "Throttle": {
+     "BurstLimit": 200,
+     "RateLimit": 100
+    },
+    "UsagePlanName": "sherlock-salesforce-usage-plan"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockUsagePlan/Resource"
+   }
+  },
+  "SherlockUsagePlanUsagePlanKeyResourceSherlockAILegalDatabaseStackSalesforceAPIKey17A5054F6F5E0EBD": {
+   "Type": "AWS::ApiGateway::UsagePlanKey",
+   "Properties": {
+    "KeyId": {
+     "Ref": "SalesforceAPIKey53CF0F41"
+    },
+    "KeyType": "API_KEY",
+    "UsagePlanId": {
+     "Ref": "SherlockUsagePlanDAEB3E08"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/SherlockUsagePlan/UsagePlanKeyResource:SherlockAILegalDatabaseStackSalesforceAPIKey17A5054F"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22PT0/DMAzFP8vuqaEDce/gNiGmDs7ITU3Jmj/VklBFUb47SlooB07v954d29lD/VBDvcPZVrwfKyk6iGeHfGQ42/c4KgvxSIE9fugsjRRosymQmL2DePB8JJfDlRY5GSl42OLFJ9YHjcr0HcRX7CTlhgKJCVQQW7NkRbcZP69xEgM6mjFAbMm6ZhKle8OGc+O1Y080SRMU6XLaH3d2OJQVC7Rkjb9yOqAl9kzu0/S5uFIzifX7K71ZHOgkUefsf3OkkNLv3Fx68W7ybj20pIlp0xNc7M3X/h5quN1drBDV1WsnFEG76Deha8xznwEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SherlockAILegalDatabaseStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "SherlockAPIEndpointE924F198": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "SherlockAPIC0676297"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "SherlockAPIDeploymentStageprodC6F07FDD"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "SherlockAPIEndpoint": {
+   "Description": "Sherlock AI API Gateway endpoint for Salesforce integration",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "SherlockAPIC0676297"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "SherlockAPIDeploymentStageprodC6F07FDD"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "SalesforceAPIKeyId": {
+   "Description": "API Key ID for Salesforce Named Credential",
+   "Value": {
+    "Ref": "SalesforceAPIKey53CF0F41"
+   }
+  },
+  "KMSKeyArn": {
+   "Description": "KMS Key ARN for encryption",
+   "Value": {
+    "Fn::GetAtt": [
+     "SherlockKMSKey64E6B4DC",
+     "Arn"
+    ]
+   }
+  },
+  "PrivilegedDocsBucketName": {
+   "Description": "S3 bucket for privileged legal documents",
+   "Value": {
+    "Ref": "SherlockPrivilegedDocsBucket60039F03"
+   }
+  },
+  "MedicalRecordsBucketName": {
+   "Description": "S3 bucket for medical records (HIPAA compliant)",
+   "Value": {
+    "Ref": "SherlockMedicalRecordsBucket40A2CF48"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

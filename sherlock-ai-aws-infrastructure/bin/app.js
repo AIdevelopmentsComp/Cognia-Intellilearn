@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("source-map-support/register");
+const cdk = require("aws-cdk-lib");
+const sherlock_ai_stack_1 = require("../lib/sherlock-ai-stack");
+const sherlock_cognito_stack_1 = require("../lib/sherlock-cognito-stack");
+const sherlock_multi_table_stack_1 = require("../lib/sherlock-multi-table-stack");
+const app = new cdk.App();
+// Main database stack
+const databaseStack = new sherlock_ai_stack_1.SherlockAILegalDatabaseStack(app, 'SherlockAILegalDatabaseStack', {
+    env: {
+        account: process.env.CDK_DEFAULT_ACCOUNT,
+        region: 'us-east-1', // Primary region for legal operations
+    },
+    description: 'Sherlock AI Legal Case Management System - Mass Tort & Single Event Cases',
+    tags: {
+        Project: 'SherlockAI',
+        Environment: 'Production',
+        LawFirm: 'WattsLawFirm',
+        DataClassification: 'AttorneyClientPrivileged',
+        ComplianceRequirement: 'ABA-Rules-HIPAA-SOX',
+        RetentionPeriod: '7Years',
+    },
+});
+// Cognito authentication and authorization stack
+const authStack = new sherlock_cognito_stack_1.SherlockCognitoAuthStack(app, 'SherlockCognitoAuthStack', {
+    env: {
+        account: process.env.CDK_DEFAULT_ACCOUNT,
+        region: 'us-east-1',
+    },
+    description: 'Sherlock AI Authentication & Authorization - Cognito + Advanced Permissions',
+    tags: {
+        Project: 'SherlockAI',
+        Component: 'Authentication',
+        Environment: 'Production',
+        LawFirm: 'WattsLawFirm',
+        DataClassification: 'UserCredentials',
+        ComplianceRequirement: 'SOC2-Type2-ABA-Rules',
+        SecurityLevel: 'Critical',
+    },
+});
+// Multi-table specialized architecture stack
+const multiTableStack = new sherlock_multi_table_stack_1.SherlockMultiTableStack(app, 'SherlockMultiTableStack', {
+    env: {
+        account: process.env.CDK_DEFAULT_ACCOUNT,
+        region: 'us-east-1',
+    },
+    description: 'Sherlock AI Multi-Table Architecture - Specialized DynamoDB Tables for Legal Data',
+    tags: {
+        Project: 'SherlockAI',
+        Component: 'DataPersistence',
+        Environment: 'Production',
+        LawFirm: 'WattsLawFirm',
+        DataClassification: 'AttorneyClientPrivileged',
+        ComplianceRequirement: 'ABA-Rules-HIPAA-WorkProduct',
+        Architecture: 'MultiTableSpecialized',
+    },
+});
+// Add dependencies - auth stack can reference database resources if needed
+// authStack.addDependency(databaseStack);
+// multiTableStack.addDependency(databaseStack); // Keep legacy table during transition
+// Global tags
+cdk.Tags.of(app).add('CreatedBy', 'CDK-SherlockAI-V2');
+cdk.Tags.of(app).add('CostCenter', 'Legal-Technology');
+cdk.Tags.of(app).add('BusinessUnit', 'MassTortLitigation');
+cdk.Tags.of(app).add('DeploymentDate', new Date().toISOString().split('T')[0]);
+cdk.Tags.of(app).add('Owner', 'WattsLawFirm-TechTeam');
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYXBwLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYXBwLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUNBLHVDQUFxQztBQUNyQyxtQ0FBbUM7QUFDbkMsZ0VBQXdFO0FBQ3hFLDBFQUF5RTtBQUN6RSxrRkFBNEU7QUFFNUUsTUFBTSxHQUFHLEdBQUcsSUFBSSxHQUFHLENBQUMsR0FBRyxFQUFFLENBQUM7QUFFMUIsc0JBQXNCO0FBQ3RCLE1BQU0sYUFBYSxHQUFHLElBQUksZ0RBQTRCLENBQUMsR0FBRyxFQUFFLDhCQUE4QixFQUFFO0lBQzFGLEdBQUcsRUFBRTtRQUNILE9BQU8sRUFBRSxPQUFPLENBQUMsR0FBRyxDQUFDLG1CQUFtQjtRQUN4QyxNQUFNLEVBQUUsV0FBVyxFQUFFLHNDQUFzQztLQUM1RDtJQUNELFdBQVcsRUFBRSwyRUFBMkU7SUFDeEYsSUFBSSxFQUFFO1FBQ0osT0FBTyxFQUFFLFlBQVk7UUFDckIsV0FBVyxFQUFFLFlBQVk7UUFDekIsT0FBTyxFQUFFLGNBQWM7UUFDdkIsa0JBQWtCLEVBQUUsMEJBQTBCO1FBQzlDLHFCQUFxQixFQUFFLHFCQUFxQjtRQUM1QyxlQUFlLEVBQUUsUUFBUTtLQUMxQjtDQUNGLENBQUMsQ0FBQztBQUVILGlEQUFpRDtBQUNqRCxNQUFNLFNBQVMsR0FBRyxJQUFJLGlEQUF3QixDQUFDLEdBQUcsRUFBRSwwQkFBMEIsRUFBRTtJQUM5RSxHQUFHLEVBQUU7UUFDSCxPQUFPLEVBQUUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxtQkFBbUI7UUFDeEMsTUFBTSxFQUFFLFdBQVc7S0FDcEI7SUFDRCxXQUFXLEVBQUUsNkVBQTZFO0lBQzFGLElBQUksRUFBRTtRQUNKLE9BQU8sRUFBRSxZQUFZO1FBQ3JCLFNBQVMsRUFBRSxnQkFBZ0I7UUFDM0IsV0FBVyxFQUFFLFlBQVk7UUFDekIsT0FBTyxFQUFFLGNBQWM7UUFDdkIsa0JBQWtCLEVBQUUsaUJBQWlCO1FBQ3JDLHFCQUFxQixFQUFFLHNCQUFzQjtRQUM3QyxhQUFhLEVBQUUsVUFBVTtLQUMxQjtDQUNGLENBQUMsQ0FBQztBQUVILDZDQUE2QztBQUM3QyxNQUFNLGVBQWUsR0FBRyxJQUFJLG9EQUF1QixDQUFDLEdBQUcsRUFBRSx5QkFBeUIsRUFBRTtJQUNsRixHQUFHLEVBQUU7UUFDSCxPQUFPLEVBQUUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxtQkFBbUI7UUFDeEMsTUFBTSxFQUFFLFdBQVc7S0FDcEI7SUFDRCxXQUFXLEVBQUUsbUZBQW1GO0lBQ2hHLElBQUksRUFBRTtRQUNKLE9BQU8sRUFBRSxZQUFZO1FBQ3JCLFNBQVMsRUFBRSxpQkFBaUI7UUFDNUIsV0FBVyxFQUFFLFlBQVk7UUFDekIsT0FBTyxFQUFFLGNBQWM7UUFDdkIsa0JBQWtCLEVBQUUsMEJBQTBCO1FBQzlDLHFCQUFxQixFQUFFLDZCQUE2QjtRQUNwRCxZQUFZLEVBQUUsdUJBQXVCO0tBQ3RDO0NBQ0YsQ0FBQyxDQUFDO0FBRUgsMkVBQTJFO0FBQzNFLDBDQUEwQztBQUMxQyx1RkFBdUY7QUFFdkYsY0FBYztBQUNkLEdBQUcsQ0FBQyxJQUFJLENBQUMsRUFBRSxDQUFDLEdBQUcsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxXQUFXLEVBQUUsbUJBQW1CLENBQUMsQ0FBQztBQUN2RCxHQUFHLENBQUMsSUFBSSxDQUFDLEVBQUUsQ0FBQyxHQUFHLENBQUMsQ0FBQyxHQUFHLENBQUMsWUFBWSxFQUFFLGtCQUFrQixDQUFDLENBQUM7QUFDdkQsR0FBRyxDQUFDLElBQUksQ0FBQyxFQUFFLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxDQUFDLGNBQWMsRUFBRSxvQkFBb0IsQ0FBQyxDQUFDO0FBQzNELEdBQUcsQ0FBQyxJQUFJLENBQUMsRUFBRSxDQUFDLEdBQUcsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsRUFBRSxJQUFJLElBQUksRUFBRSxDQUFDLFdBQVcsRUFBRSxDQUFDLEtBQUssQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDO0FBQy9FLEdBQUcsQ0FBQyxJQUFJLENBQUMsRUFBRSxDQUFDLEdBQUcsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxPQUFPLEVBQUUsdUJBQXVCLENBQUMsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbmltcG9ydCAnc291cmNlLW1hcC1zdXBwb3J0L3JlZ2lzdGVyJztcbmltcG9ydCAqIGFzIGNkayBmcm9tICdhd3MtY2RrLWxpYic7XG5pbXBvcnQgeyBTaGVybG9ja0FJTGVnYWxEYXRhYmFzZVN0YWNrIH0gZnJvbSAnLi4vbGliL3NoZXJsb2NrLWFpLXN0YWNrJztcbmltcG9ydCB7IFNoZXJsb2NrQ29nbml0b0F1dGhTdGFjayB9IGZyb20gJy4uL2xpYi9zaGVybG9jay1jb2duaXRvLXN0YWNrJztcbmltcG9ydCB7IFNoZXJsb2NrTXVsdGlUYWJsZVN0YWNrIH0gZnJvbSAnLi4vbGliL3NoZXJsb2NrLW11bHRpLXRhYmxlLXN0YWNrJztcblxuY29uc3QgYXBwID0gbmV3IGNkay5BcHAoKTtcblxuLy8gTWFpbiBkYXRhYmFzZSBzdGFja1xuY29uc3QgZGF0YWJhc2VTdGFjayA9IG5ldyBTaGVybG9ja0FJTGVnYWxEYXRhYmFzZVN0YWNrKGFwcCwgJ1NoZXJsb2NrQUlMZWdhbERhdGFiYXNlU3RhY2snLCB7XG4gIGVudjoge1xuICAgIGFjY291bnQ6IHByb2Nlc3MuZW52LkNES19ERUZBVUxUX0FDQ09VTlQsXG4gICAgcmVnaW9uOiAndXMtZWFzdC0xJywgLy8gUHJpbWFyeSByZWdpb24gZm9yIGxlZ2FsIG9wZXJhdGlvbnNcbiAgfSxcbiAgZGVzY3JpcHRpb246ICdTaGVybG9jayBBSSBMZWdhbCBDYXNlIE1hbmFnZW1lbnQgU3lzdGVtIC0gTWFzcyBUb3J0ICYgU2luZ2xlIEV2ZW50IENhc2VzJyxcbiAgdGFnczoge1xuICAgIFByb2plY3Q6ICdTaGVybG9ja0FJJyxcbiAgICBFbnZpcm9ubWVudDogJ1Byb2R1Y3Rpb24nLFxuICAgIExhd0Zpcm06ICdXYXR0c0xhd0Zpcm0nLFxuICAgIERhdGFDbGFzc2lmaWNhdGlvbjogJ0F0dG9ybmV5Q2xpZW50UHJpdmlsZWdlZCcsXG4gICAgQ29tcGxpYW5jZVJlcXVpcmVtZW50OiAnQUJBLVJ1bGVzLUhJUEFBLVNPWCcsXG4gICAgUmV0ZW50aW9uUGVyaW9kOiAnN1llYXJzJyxcbiAgfSxcbn0pO1xuXG4vLyBDb2duaXRvIGF1dGhlbnRpY2F0aW9uIGFuZCBhdXRob3JpemF0aW9uIHN0YWNrXG5jb25zdCBhdXRoU3RhY2sgPSBuZXcgU2hlcmxvY2tDb2duaXRvQXV0aFN0YWNrKGFwcCwgJ1NoZXJsb2NrQ29nbml0b0F1dGhTdGFjaycsIHtcbiAgZW52OiB7XG4gICAgYWNjb3VudDogcHJvY2Vzcy5lbnYuQ0RLX0RFRkFVTFRfQUNDT1VOVCxcbiAgICByZWdpb246ICd1cy1lYXN0LTEnLFxuICB9LFxuICBkZXNjcmlwdGlvbjogJ1NoZXJsb2NrIEFJIEF1dGhlbnRpY2F0aW9uICYgQXV0aG9yaXphdGlvbiAtIENvZ25pdG8gKyBBZHZhbmNlZCBQZXJtaXNzaW9ucycsXG4gIHRhZ3M6IHtcbiAgICBQcm9qZWN0OiAnU2hlcmxvY2tBSScsXG4gICAgQ29tcG9uZW50OiAnQXV0aGVudGljYXRpb24nLFxuICAgIEVudmlyb25tZW50OiAnUHJvZHVjdGlvbicsXG4gICAgTGF3RmlybTogJ1dhdHRzTGF3RmlybScsXG4gICAgRGF0YUNsYXNzaWZpY2F0aW9uOiAnVXNlckNyZWRlbnRpYWxzJyxcbiAgICBDb21wbGlhbmNlUmVxdWlyZW1lbnQ6ICdTT0MyLVR5cGUyLUFCQS1SdWxlcycsXG4gICAgU2VjdXJpdHlMZXZlbDogJ0NyaXRpY2FsJyxcbiAgfSxcbn0pO1xuXG4vLyBNdWx0aS10YWJsZSBzcGVjaWFsaXplZCBhcmNoaXRlY3R1cmUgc3RhY2tcbmNvbnN0IG11bHRpVGFibGVTdGFjayA9IG5ldyBTaGVybG9ja011bHRpVGFibGVTdGFjayhhcHAsICdTaGVybG9ja011bHRpVGFibGVTdGFjaycsIHtcbiAgZW52OiB7XG4gICAgYWNjb3VudDogcHJvY2Vzcy5lbnYuQ0RLX0RFRkFVTFRfQUNDT1VOVCxcbiAgICByZWdpb246ICd1cy1lYXN0LTEnLFxuICB9LFxuICBkZXNjcmlwdGlvbjogJ1NoZXJsb2NrIEFJIE11bHRpLVRhYmxlIEFyY2hpdGVjdHVyZSAtIFNwZWNpYWxpemVkIER5bmFtb0RCIFRhYmxlcyBmb3IgTGVnYWwgRGF0YScsXG4gIHRhZ3M6IHtcbiAgICBQcm9qZWN0OiAnU2hlcmxvY2tBSScsXG4gICAgQ29tcG9uZW50OiAnRGF0YVBlcnNpc3RlbmNlJyxcbiAgICBFbnZpcm9ubWVudDogJ1Byb2R1Y3Rpb24nLFxuICAgIExhd0Zpcm06ICdXYXR0c0xhd0Zpcm0nLFxuICAgIERhdGFDbGFzc2lmaWNhdGlvbjogJ0F0dG9ybmV5Q2xpZW50UHJpdmlsZWdlZCcsXG4gICAgQ29tcGxpYW5jZVJlcXVpcmVtZW50OiAnQUJBLVJ1bGVzLUhJUEFBLVdvcmtQcm9kdWN0JyxcbiAgICBBcmNoaXRlY3R1cmU6ICdNdWx0aVRhYmxlU3BlY2lhbGl6ZWQnLFxuICB9LFxufSk7XG5cbi8vIEFkZCBkZXBlbmRlbmNpZXMgLSBhdXRoIHN0YWNrIGNhbiByZWZlcmVuY2UgZGF0YWJhc2UgcmVzb3VyY2VzIGlmIG5lZWRlZFxuLy8gYXV0aFN0YWNrLmFkZERlcGVuZGVuY3koZGF0YWJhc2VTdGFjayk7XG4vLyBtdWx0aVRhYmxlU3RhY2suYWRkRGVwZW5kZW5jeShkYXRhYmFzZVN0YWNrKTsgLy8gS2VlcCBsZWdhY3kgdGFibGUgZHVyaW5nIHRyYW5zaXRpb25cblxuLy8gR2xvYmFsIHRhZ3NcbmNkay5UYWdzLm9mKGFwcCkuYWRkKCdDcmVhdGVkQnknLCAnQ0RLLVNoZXJsb2NrQUktVjInKTtcbmNkay5UYWdzLm9mKGFwcCkuYWRkKCdDb3N0Q2VudGVyJywgJ0xlZ2FsLVRlY2hub2xvZ3knKTtcbmNkay5UYWdzLm9mKGFwcCkuYWRkKCdCdXNpbmVzc1VuaXQnLCAnTWFzc1RvcnRMaXRpZ2F0aW9uJyk7XG5jZGsuVGFncy5vZihhcHApLmFkZCgnRGVwbG95bWVudERhdGUnLCBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCkuc3BsaXQoJ1QnKVswXSk7XG5jZGsuVGFncy5vZihhcHApLmFkZCgnT3duZXInLCAnV2F0dHNMYXdGaXJtLVRlY2hUZWFtJyk7ICJdfQ==

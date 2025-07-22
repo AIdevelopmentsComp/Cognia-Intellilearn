@@ -1,0 +1,3996 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "SherlockAILegalDatabaseStack": {
+        "id": "SherlockAILegalDatabaseStack",
+        "path": "SherlockAILegalDatabaseStack",
+        "children": {
+          "SherlockKMSKey": {
+            "id": "SherlockKMSKey",
+            "path": "SherlockAILegalDatabaseStack/SherlockKMSKey",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockKMSKey/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::KMS::Key",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "KMS Key for Sherlock AI Legal Database encryption",
+                    "enableKeyRotation": true,
+                    "keyPolicy": {
+                      "Statement": [
+                        {
+                          "Action": "kms:*",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": "arn:aws:iam::655153555581:root"
+                          },
+                          "Resource": "*"
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "keySpec": "SYMMETRIC_DEFAULT",
+                    "keyUsage": "ENCRYPT_DECRYPT",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_kms.CfnKey",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_kms.Key",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockKMSKeyAlias": {
+            "id": "SherlockKMSKeyAlias",
+            "path": "SherlockAILegalDatabaseStack/SherlockKMSKeyAlias",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockKMSKeyAlias/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::KMS::Alias",
+                  "aws:cdk:cloudformation:props": {
+                    "aliasName": "alias/sherlock-ai-legal-db",
+                    "targetKeyId": {
+                      "Fn::GetAtt": [
+                        "SherlockKMSKey64E6B4DC",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_kms.CfnAlias",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_kms.Alias",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockPrivilegedDocsBucket": {
+            "id": "SherlockPrivilegedDocsBucket",
+            "path": "SherlockAILegalDatabaseStack/SherlockPrivilegedDocsBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockPrivilegedDocsBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "bucketEncryption": {
+                      "serverSideEncryptionConfiguration": [
+                        {
+                          "serverSideEncryptionByDefault": {
+                            "sseAlgorithm": "aws:kms",
+                            "kmsMasterKeyId": {
+                              "Fn::GetAtt": [
+                                "SherlockKMSKey64E6B4DC",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "bucketName": "sherlock-ai-privileged-documents",
+                    "lifecycleConfiguration": {
+                      "rules": [
+                        {
+                          "id": "LegalRetentionRule",
+                          "status": "Enabled",
+                          "transitions": [
+                            {
+                              "storageClass": "STANDARD_IA",
+                              "transitionInDays": 90
+                            },
+                            {
+                              "storageClass": "GLACIER",
+                              "transitionInDays": 365
+                            },
+                            {
+                              "storageClass": "DEEP_ARCHIVE",
+                              "transitionInDays": 2555
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    },
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ],
+                    "versioningConfiguration": {
+                      "status": "Enabled"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.161.1"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "SherlockAILegalDatabaseStack/SherlockPrivilegedDocsBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockAILegalDatabaseStack/SherlockPrivilegedDocsBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "SherlockPrivilegedDocsBucket60039F03"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "s3:*",
+                              "Condition": {
+                                "Bool": {
+                                  "aws:SecureTransport": "false"
+                                }
+                              },
+                              "Effect": "Deny",
+                              "Principal": {
+                                "AWS": "*"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockPrivilegedDocsBucket60039F03",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockPrivilegedDocsBucket60039F03",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockMedicalRecordsBucket": {
+            "id": "SherlockMedicalRecordsBucket",
+            "path": "SherlockAILegalDatabaseStack/SherlockMedicalRecordsBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockMedicalRecordsBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "bucketEncryption": {
+                      "serverSideEncryptionConfiguration": [
+                        {
+                          "serverSideEncryptionByDefault": {
+                            "sseAlgorithm": "aws:kms",
+                            "kmsMasterKeyId": {
+                              "Fn::GetAtt": [
+                                "SherlockKMSKey64E6B4DC",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "bucketName": "sherlock-ai-medical-records",
+                    "lifecycleConfiguration": {
+                      "rules": [
+                        {
+                          "id": "HIPAARetentionRule",
+                          "status": "Enabled",
+                          "transitions": [
+                            {
+                              "storageClass": "GLACIER",
+                              "transitionInDays": 730
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    },
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ],
+                    "versioningConfiguration": {
+                      "status": "Enabled"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.161.1"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "SherlockAILegalDatabaseStack/SherlockMedicalRecordsBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockAILegalDatabaseStack/SherlockMedicalRecordsBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "SherlockMedicalRecordsBucket40A2CF48"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "s3:*",
+                              "Condition": {
+                                "Bool": {
+                                  "aws:SecureTransport": "false"
+                                }
+                              },
+                              "Effect": "Deny",
+                              "Principal": {
+                                "AWS": "*"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockMedicalRecordsBucket40A2CF48",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockMedicalRecordsBucket40A2CF48",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockCommunicationsBucket": {
+            "id": "SherlockCommunicationsBucket",
+            "path": "SherlockAILegalDatabaseStack/SherlockCommunicationsBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockCommunicationsBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "bucketEncryption": {
+                      "serverSideEncryptionConfiguration": [
+                        {
+                          "serverSideEncryptionByDefault": {
+                            "sseAlgorithm": "aws:kms",
+                            "kmsMasterKeyId": {
+                              "Fn::GetAtt": [
+                                "SherlockKMSKey64E6B4DC",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "bucketName": "sherlock-ai-communications",
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    },
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ],
+                    "versioningConfiguration": {
+                      "status": "Enabled"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.161.1"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "SherlockAILegalDatabaseStack/SherlockCommunicationsBucket/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockAILegalDatabaseStack/SherlockCommunicationsBucket/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "bucket": {
+                          "Ref": "SherlockCommunicationsBucketC33238A8"
+                        },
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "s3:*",
+                              "Condition": {
+                                "Bool": {
+                                  "aws:SecureTransport": "false"
+                                }
+                              },
+                              "Effect": "Deny",
+                              "Principal": {
+                                "AWS": "*"
+                              },
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockCommunicationsBucketC33238A8",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockCommunicationsBucketC33238A8",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockCasesMain": {
+            "id": "SherlockCasesMain",
+            "path": "SherlockAILegalDatabaseStack/SherlockCasesMain",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockCasesMain/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI2PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI2SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI3PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI3SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI4PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI4SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "GSI1-LitigationStatus",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI1PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI1SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      },
+                      {
+                        "indexName": "GSI2-AttorneyWorkload",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI2PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI2SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      },
+                      {
+                        "indexName": "GSI3-JurisdictionCaseType",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI3PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI3SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      },
+                      {
+                        "indexName": "GSI4-ClientMatter",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI4PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI4SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true,
+                      "kmsMasterKeyId": {
+                        "Fn::GetAtt": [
+                          "SherlockKMSKey64E6B4DC",
+                          "Arn"
+                        ]
+                      },
+                      "sseType": "KMS"
+                    },
+                    "tableName": "sherlock-cases-main",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockCasesMain/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockPartiesRoles": {
+            "id": "SherlockPartiesRoles",
+            "path": "SherlockAILegalDatabaseStack/SherlockPartiesRoles",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockPartiesRoles/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "GSI1-PartyType",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI1PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI1SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true,
+                      "kmsMasterKeyId": {
+                        "Fn::GetAtt": [
+                          "SherlockKMSKey64E6B4DC",
+                          "Arn"
+                        ]
+                      },
+                      "sseType": "KMS"
+                    },
+                    "tableName": "sherlock-parties-roles",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockPartiesRoles/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockLegalRepresentatives": {
+            "id": "SherlockLegalRepresentatives",
+            "path": "SherlockAILegalDatabaseStack/SherlockLegalRepresentatives",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockLegalRepresentatives/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true,
+                      "kmsMasterKeyId": {
+                        "Fn::GetAtt": [
+                          "SherlockKMSKey64E6B4DC",
+                          "Arn"
+                        ]
+                      },
+                      "sseType": "KMS"
+                    },
+                    "tableName": "sherlock-legal-representatives",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockLegalRepresentatives/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockWitnesses": {
+            "id": "SherlockWitnesses",
+            "path": "SherlockAILegalDatabaseStack/SherlockWitnesses",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockWitnesses/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "GSI1-WitnessType",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI1PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI1SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true,
+                      "kmsMasterKeyId": {
+                        "Fn::GetAtt": [
+                          "SherlockKMSKey64E6B4DC",
+                          "Arn"
+                        ]
+                      },
+                      "sseType": "KMS"
+                    },
+                    "tableName": "sherlock-witnesses",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockWitnesses/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockMedicalRecords": {
+            "id": "SherlockMedicalRecords",
+            "path": "SherlockAILegalDatabaseStack/SherlockMedicalRecords",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockMedicalRecords/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI2PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI2SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "GSI1-ProviderSpecialty",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI1PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI1SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      },
+                      {
+                        "indexName": "GSI2-CausationOpinion",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI2PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI2SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true,
+                      "kmsMasterKeyId": {
+                        "Fn::GetAtt": [
+                          "SherlockKMSKey64E6B4DC",
+                          "Arn"
+                        ]
+                      },
+                      "sseType": "KMS"
+                    },
+                    "tableName": "sherlock-medical-records",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockMedicalRecords/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockFinancialLedger": {
+            "id": "SherlockFinancialLedger",
+            "path": "SherlockAILegalDatabaseStack/SherlockFinancialLedger",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockFinancialLedger/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI2PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI2SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "GSI1-TransactionType",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI1PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI1SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      },
+                      {
+                        "indexName": "GSI2-TrustAccount",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI2PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI2SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true,
+                      "kmsMasterKeyId": {
+                        "Fn::GetAtt": [
+                          "SherlockKMSKey64E6B4DC",
+                          "Arn"
+                        ]
+                      },
+                      "sseType": "KMS"
+                    },
+                    "tableName": "sherlock-financial-ledger",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockFinancialLedger/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockDocuments": {
+            "id": "SherlockDocuments",
+            "path": "SherlockAILegalDatabaseStack/SherlockDocuments",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockDocuments/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI2PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI2SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "GSI1-PrivilegeType",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI1PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI1SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      },
+                      {
+                        "indexName": "GSI2-DocumentCategory",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI2PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI2SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true,
+                      "kmsMasterKeyId": {
+                        "Fn::GetAtt": [
+                          "SherlockKMSKey64E6B4DC",
+                          "Arn"
+                        ]
+                      },
+                      "sseType": "KMS"
+                    },
+                    "tableName": "sherlock-documents",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockDocuments/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockAttorneyRole": {
+            "id": "SherlockAttorneyRole",
+            "path": "SherlockAILegalDatabaseStack/SherlockAttorneyRole",
+            "children": {
+              "ImportSherlockAttorneyRole": {
+                "id": "ImportSherlockAttorneyRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockAttorneyRole/ImportSherlockAttorneyRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockAttorneyRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "description": "Full access role for attorneys in Sherlock AI system",
+                    "roleName": "sherlock-attorney-role",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.161.1"
+                }
+              },
+              "DefaultPolicy": {
+                "id": "DefaultPolicy",
+                "path": "SherlockAILegalDatabaseStack/SherlockAttorneyRole/DefaultPolicy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockAILegalDatabaseStack/SherlockAttorneyRole/DefaultPolicy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "kms:Decrypt",
+                                "kms:DescribeKey",
+                                "kms:Encrypt",
+                                "kms:GenerateDataKey*",
+                                "kms:ReEncrypt*"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "SherlockKMSKey64E6B4DC",
+                                  "Arn"
+                                ]
+                              }
+                            },
+                            {
+                              "Action": "dynamodb:*",
+                              "Effect": "Allow",
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockCasesMainCA51B7CF",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockDocumentsCB52E6CA",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockFinancialLedger6E7BF00C",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockLegalRepresentatives50C255FD",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockMedicalRecords23265960",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockPartiesRoles8862DB6C",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockWitnessesB0335426",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockCasesMainCA51B7CF",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockDocumentsCB52E6CA",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockFinancialLedger6E7BF00C",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockMedicalRecords23265960",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockPartiesRoles8862DB6C",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockWitnessesB0335426",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Ref": "AWS::NoValue"
+                                }
+                              ]
+                            },
+                            {
+                              "Action": [
+                                "s3:Abort*",
+                                "s3:DeleteObject*",
+                                "s3:GetBucket*",
+                                "s3:GetObject*",
+                                "s3:List*",
+                                "s3:PutObject",
+                                "s3:PutObjectLegalHold",
+                                "s3:PutObjectRetention",
+                                "s3:PutObjectTagging",
+                                "s3:PutObjectVersionTagging"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockCommunicationsBucketC33238A8",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockMedicalRecordsBucket40A2CF48",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockPrivilegedDocsBucket60039F03",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockCommunicationsBucketC33238A8",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockMedicalRecordsBucket40A2CF48",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockPrivilegedDocsBucket60039F03",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "SherlockAttorneyRoleDefaultPolicyE2916371",
+                        "roles": [
+                          {
+                            "Ref": "SherlockAttorneyRole7B34D72B"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockParalegalRole": {
+            "id": "SherlockParalegalRole",
+            "path": "SherlockAILegalDatabaseStack/SherlockParalegalRole",
+            "children": {
+              "ImportSherlockParalegalRole": {
+                "id": "ImportSherlockParalegalRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockParalegalRole/ImportSherlockParalegalRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockParalegalRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "description": "Limited access role for paralegals in Sherlock AI system",
+                    "roleName": "sherlock-paralegal-role",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.161.1"
+                }
+              },
+              "DefaultPolicy": {
+                "id": "DefaultPolicy",
+                "path": "SherlockAILegalDatabaseStack/SherlockParalegalRole/DefaultPolicy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockAILegalDatabaseStack/SherlockParalegalRole/DefaultPolicy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "kms:Decrypt",
+                                "kms:DescribeKey",
+                                "kms:Encrypt",
+                                "kms:GenerateDataKey*",
+                                "kms:ReEncrypt*"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "SherlockKMSKey64E6B4DC",
+                                  "Arn"
+                                ]
+                              }
+                            },
+                            {
+                              "Action": [
+                                "dynamodb:BatchGetItem",
+                                "dynamodb:BatchWriteItem",
+                                "dynamodb:ConditionCheckItem",
+                                "dynamodb:DeleteItem",
+                                "dynamodb:DescribeTable",
+                                "dynamodb:GetItem",
+                                "dynamodb:GetRecords",
+                                "dynamodb:GetShardIterator",
+                                "dynamodb:PutItem",
+                                "dynamodb:Query",
+                                "dynamodb:Scan",
+                                "dynamodb:UpdateItem"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockCasesMainCA51B7CF",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockDocumentsCB52E6CA",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockFinancialLedger6E7BF00C",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockLegalRepresentatives50C255FD",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockMedicalRecords23265960",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockPartiesRoles8862DB6C",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockWitnessesB0335426",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockCasesMainCA51B7CF",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockDocumentsCB52E6CA",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockFinancialLedger6E7BF00C",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockMedicalRecords23265960",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockPartiesRoles8862DB6C",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockWitnessesB0335426",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/index/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Ref": "AWS::NoValue"
+                                }
+                              ]
+                            },
+                            {
+                              "Action": [
+                                "s3:GetBucket*",
+                                "s3:GetObject*",
+                                "s3:List*"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockCommunicationsBucketC33238A8",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockMedicalRecordsBucket40A2CF48",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "SherlockPrivilegedDocsBucket60039F03",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockCommunicationsBucketC33238A8",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockMedicalRecordsBucket40A2CF48",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "SherlockPrivilegedDocsBucket60039F03",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "SherlockParalegalRoleDefaultPolicy92A2CA10",
+                        "roles": [
+                          {
+                            "Ref": "SherlockParalegalRole6604807D"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockAdminRole": {
+            "id": "SherlockAdminRole",
+            "path": "SherlockAILegalDatabaseStack/SherlockAdminRole",
+            "children": {
+              "ImportSherlockAdminRole": {
+                "id": "ImportSherlockAdminRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockAdminRole/ImportSherlockAdminRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockAdminRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "description": "Administrative access role for system management",
+                    "roleName": "sherlock-admin-role",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockAPI": {
+            "id": "SherlockAPI",
+            "path": "SherlockAILegalDatabaseStack/SherlockAPI",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockAPI/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::RestApi",
+                  "aws:cdk:cloudformation:props": {
+                    "apiKeySourceType": "HEADER",
+                    "description": "API for Salesforce integration with Sherlock AI legal database",
+                    "name": "Sherlock AI Legal Database API",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnRestApi",
+                  "version": "2.161.1"
+                }
+              },
+              "CloudWatchRole": {
+                "id": "CloudWatchRole",
+                "path": "SherlockAILegalDatabaseStack/SherlockAPI/CloudWatchRole",
+                "children": {
+                  "ImportCloudWatchRole": {
+                    "id": "ImportCloudWatchRole",
+                    "path": "SherlockAILegalDatabaseStack/SherlockAPI/CloudWatchRole/ImportCloudWatchRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockAILegalDatabaseStack/SherlockAPI/CloudWatchRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "apigateway.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+                              ]
+                            ]
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "BusinessUnit",
+                            "value": "MassTortLitigation"
+                          },
+                          {
+                            "key": "CostCenter",
+                            "value": "Legal-Technology"
+                          },
+                          {
+                            "key": "CreatedBy",
+                            "value": "CDK-SherlockAI-V2"
+                          },
+                          {
+                            "key": "DeploymentDate",
+                            "value": "2025-07-21"
+                          },
+                          {
+                            "key": "Owner",
+                            "value": "WattsLawFirm-TechTeam"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.161.1"
+                }
+              },
+              "Account": {
+                "id": "Account",
+                "path": "SherlockAILegalDatabaseStack/SherlockAPI/Account",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Account",
+                  "aws:cdk:cloudformation:props": {
+                    "cloudWatchRoleArn": {
+                      "Fn::GetAtt": [
+                        "SherlockAPICloudWatchRole282F074C",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnAccount",
+                  "version": "2.161.1"
+                }
+              },
+              "Deployment": {
+                "id": "Deployment",
+                "path": "SherlockAILegalDatabaseStack/SherlockAPI/Deployment",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockAILegalDatabaseStack/SherlockAPI/Deployment/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Deployment",
+                      "aws:cdk:cloudformation:props": {
+                        "description": "API for Salesforce integration with Sherlock AI legal database",
+                        "restApiId": {
+                          "Ref": "SherlockAPIC0676297"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnDeployment",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Deployment",
+                  "version": "2.161.1"
+                }
+              },
+              "DeploymentStage.prod": {
+                "id": "DeploymentStage.prod",
+                "path": "SherlockAILegalDatabaseStack/SherlockAPI/DeploymentStage.prod",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockAILegalDatabaseStack/SherlockAPI/DeploymentStage.prod/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
+                      "aws:cdk:cloudformation:props": {
+                        "deploymentId": {
+                          "Ref": "SherlockAPIDeploymentF59FAED540fe35cd385f82ee062814395c7692e7"
+                        },
+                        "restApiId": {
+                          "Ref": "SherlockAPIC0676297"
+                        },
+                        "stageName": "prod",
+                        "tags": [
+                          {
+                            "key": "BusinessUnit",
+                            "value": "MassTortLitigation"
+                          },
+                          {
+                            "key": "CostCenter",
+                            "value": "Legal-Technology"
+                          },
+                          {
+                            "key": "CreatedBy",
+                            "value": "CDK-SherlockAI-V2"
+                          },
+                          {
+                            "key": "DeploymentDate",
+                            "value": "2025-07-21"
+                          },
+                          {
+                            "key": "Owner",
+                            "value": "WattsLawFirm-TechTeam"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnStage",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Stage",
+                  "version": "2.161.1"
+                }
+              },
+              "Endpoint": {
+                "id": "Endpoint",
+                "path": "SherlockAILegalDatabaseStack/SherlockAPI/Endpoint",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.161.1"
+                }
+              },
+              "Default": {
+                "id": "Default",
+                "path": "SherlockAILegalDatabaseStack/SherlockAPI/Default",
+                "children": {
+                  "OPTIONS": {
+                    "id": "OPTIONS",
+                    "path": "SherlockAILegalDatabaseStack/SherlockAPI/Default/OPTIONS",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "SherlockAILegalDatabaseStack/SherlockAPI/Default/OPTIONS/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                          "aws:cdk:cloudformation:props": {
+                            "apiKeyRequired": false,
+                            "authorizationType": "NONE",
+                            "httpMethod": "OPTIONS",
+                            "integration": {
+                              "type": "MOCK",
+                              "requestTemplates": {
+                                "application/json": "{ statusCode: 200 }"
+                              },
+                              "integrationResponses": [
+                                {
+                                  "statusCode": "204",
+                                  "responseParameters": {
+                                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                  }
+                                }
+                              ]
+                            },
+                            "methodResponses": [
+                              {
+                                "statusCode": "204",
+                                "responseParameters": {
+                                  "method.response.header.Access-Control-Allow-Headers": true,
+                                  "method.response.header.Access-Control-Allow-Origin": true,
+                                  "method.response.header.Access-Control-Allow-Methods": true
+                                }
+                              }
+                            ],
+                            "resourceId": {
+                              "Fn::GetAtt": [
+                                "SherlockAPIC0676297",
+                                "RootResourceId"
+                              ]
+                            },
+                            "restApiId": {
+                              "Ref": "SherlockAPIC0676297"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                          "version": "2.161.1"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.ResourceBase",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.RestApi",
+              "version": "2.161.1"
+            }
+          },
+          "SalesforceAPIKey": {
+            "id": "SalesforceAPIKey",
+            "path": "SherlockAILegalDatabaseStack/SalesforceAPIKey",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SalesforceAPIKey/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::ApiKey",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "API Key for Salesforce integration",
+                    "enabled": true,
+                    "name": "salesforce-sherlock-integration",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnApiKey",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.ApiKey",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockUsagePlan": {
+            "id": "SherlockUsagePlan",
+            "path": "SherlockAILegalDatabaseStack/SherlockUsagePlan",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockAILegalDatabaseStack/SherlockUsagePlan/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::UsagePlan",
+                  "aws:cdk:cloudformation:props": {
+                    "apiStages": [
+                      {
+                        "apiId": {
+                          "Ref": "SherlockAPIC0676297"
+                        },
+                        "stage": {
+                          "Ref": "SherlockAPIDeploymentStageprodC6F07FDD"
+                        },
+                        "throttle": {}
+                      }
+                    ],
+                    "quota": {
+                      "limit": 10000,
+                      "period": "MONTH"
+                    },
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ],
+                    "throttle": {
+                      "burstLimit": 200,
+                      "rateLimit": 100
+                    },
+                    "usagePlanName": "sherlock-salesforce-usage-plan"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnUsagePlan",
+                  "version": "2.161.1"
+                }
+              },
+              "UsagePlanKeyResource:SherlockAILegalDatabaseStackSalesforceAPIKey17A5054F": {
+                "id": "UsagePlanKeyResource:SherlockAILegalDatabaseStackSalesforceAPIKey17A5054F",
+                "path": "SherlockAILegalDatabaseStack/SherlockUsagePlan/UsagePlanKeyResource:SherlockAILegalDatabaseStackSalesforceAPIKey17A5054F",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::UsagePlanKey",
+                  "aws:cdk:cloudformation:props": {
+                    "keyId": {
+                      "Ref": "SalesforceAPIKey53CF0F41"
+                    },
+                    "keyType": "API_KEY",
+                    "usagePlanId": {
+                      "Ref": "SherlockUsagePlanDAEB3E08"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnUsagePlanKey",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.UsagePlan",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockAPIEndpoint": {
+            "id": "SherlockAPIEndpoint",
+            "path": "SherlockAILegalDatabaseStack/SherlockAPIEndpoint",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "SalesforceAPIKeyId": {
+            "id": "SalesforceAPIKeyId",
+            "path": "SherlockAILegalDatabaseStack/SalesforceAPIKeyId",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "KMSKeyArn": {
+            "id": "KMSKeyArn",
+            "path": "SherlockAILegalDatabaseStack/KMSKeyArn",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "PrivilegedDocsBucketName": {
+            "id": "PrivilegedDocsBucketName",
+            "path": "SherlockAILegalDatabaseStack/PrivilegedDocsBucketName",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "MedicalRecordsBucketName": {
+            "id": "MedicalRecordsBucketName",
+            "path": "SherlockAILegalDatabaseStack/MedicalRecordsBucketName",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "SherlockAILegalDatabaseStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "SherlockAILegalDatabaseStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.2"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "SherlockAILegalDatabaseStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.161.1"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "SherlockAILegalDatabaseStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.161.1"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.161.1"
+        }
+      },
+      "SherlockCognitoAuthStack": {
+        "id": "SherlockCognitoAuthStack",
+        "path": "SherlockCognitoAuthStack",
+        "children": {
+          "SherlockUserPool": {
+            "id": "SherlockUserPool",
+            "path": "SherlockCognitoAuthStack/SherlockUserPool",
+            "children": {
+              "smsRole": {
+                "id": "smsRole",
+                "path": "SherlockCognitoAuthStack/SherlockUserPool/smsRole",
+                "children": {
+                  "ImportsmsRole": {
+                    "id": "ImportsmsRole",
+                    "path": "SherlockCognitoAuthStack/SherlockUserPool/smsRole/ImportsmsRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockCognitoAuthStack/SherlockUserPool/smsRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Condition": {
+                                "StringEquals": {
+                                  "sts:ExternalId": "SherlockCognitoAuthStackSherlockUserPoolFF4CDA7D"
+                                }
+                              },
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "cognito-idp.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policies": [
+                          {
+                            "policyName": "sns-publish",
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sns:Publish",
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "BusinessUnit",
+                            "value": "MassTortLitigation"
+                          },
+                          {
+                            "key": "CostCenter",
+                            "value": "Legal-Technology"
+                          },
+                          {
+                            "key": "CreatedBy",
+                            "value": "CDK-SherlockAI-V2"
+                          },
+                          {
+                            "key": "DeploymentDate",
+                            "value": "2025-07-21"
+                          },
+                          {
+                            "key": "Owner",
+                            "value": "WattsLawFirm-TechTeam"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockCognitoAuthStack/SherlockUserPool/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPool",
+                  "aws:cdk:cloudformation:props": {
+                    "accountRecoverySetting": {
+                      "recoveryMechanisms": [
+                        {
+                          "name": "verified_email",
+                          "priority": 1
+                        }
+                      ]
+                    },
+                    "adminCreateUserConfig": {
+                      "allowAdminCreateUserOnly": true
+                    },
+                    "aliasAttributes": [
+                      "email"
+                    ],
+                    "autoVerifiedAttributes": [
+                      "email"
+                    ],
+                    "emailVerificationMessage": "The verification code to your new account is {####}",
+                    "emailVerificationSubject": "Verify your new account",
+                    "enabledMfas": [
+                      "SMS_MFA",
+                      "SOFTWARE_TOKEN_MFA"
+                    ],
+                    "mfaConfiguration": "OPTIONAL",
+                    "policies": {
+                      "passwordPolicy": {
+                        "temporaryPasswordValidityDays": 1,
+                        "minimumLength": 12,
+                        "requireLowercase": true,
+                        "requireUppercase": true,
+                        "requireNumbers": true,
+                        "requireSymbols": true
+                      }
+                    },
+                    "schema": [
+                      {
+                        "name": "email",
+                        "mutable": false,
+                        "required": true
+                      },
+                      {
+                        "name": "given_name",
+                        "mutable": true,
+                        "required": true
+                      },
+                      {
+                        "name": "family_name",
+                        "mutable": true,
+                        "required": true
+                      },
+                      {
+                        "name": "bar_number",
+                        "attributeDataType": "String",
+                        "mutable": true
+                      },
+                      {
+                        "name": "firm_department",
+                        "attributeDataType": "String",
+                        "mutable": true
+                      },
+                      {
+                        "name": "specialization",
+                        "attributeDataType": "String",
+                        "mutable": true
+                      }
+                    ],
+                    "smsConfiguration": {
+                      "externalId": "SherlockCognitoAuthStackSherlockUserPoolFF4CDA7D",
+                      "snsCallerArn": {
+                        "Fn::GetAtt": [
+                          "SherlockUserPoolsmsRoleCAC73946",
+                          "Arn"
+                        ]
+                      }
+                    },
+                    "smsVerificationMessage": "The verification code to your new account is {####}",
+                    "userPoolTags": {
+                      "BusinessUnit": "MassTortLitigation",
+                      "CostCenter": "Legal-Technology",
+                      "CreatedBy": "CDK-SherlockAI-V2",
+                      "DeploymentDate": "2025-07-21",
+                      "Owner": "WattsLawFirm-TechTeam"
+                    },
+                    "userPoolAddOns": {
+                      "advancedSecurityMode": "ENFORCED"
+                    },
+                    "userPoolName": "sherlock-ai-legal-users",
+                    "verificationMessageTemplate": {
+                      "defaultEmailOption": "CONFIRM_WITH_CODE",
+                      "emailMessage": "The verification code to your new account is {####}",
+                      "emailSubject": "Verify your new account",
+                      "smsMessage": "The verification code to your new account is {####}"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPool",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPool",
+              "version": "2.161.1"
+            }
+          },
+          "AdminGroup": {
+            "id": "AdminGroup",
+            "path": "SherlockCognitoAuthStack/AdminGroup",
+            "attributes": {
+              "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolGroup",
+              "aws:cdk:cloudformation:props": {
+                "description": "System administrators with full access",
+                "groupName": "Admin",
+                "precedence": 1,
+                "userPoolId": {
+                  "Ref": "SherlockUserPoolEFC0C201"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolGroup",
+              "version": "2.161.1"
+            }
+          },
+          "AttorneyGroup": {
+            "id": "AttorneyGroup",
+            "path": "SherlockCognitoAuthStack/AttorneyGroup",
+            "attributes": {
+              "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolGroup",
+              "aws:cdk:cloudformation:props": {
+                "description": "Licensed attorneys with full case management access",
+                "groupName": "Attorney",
+                "precedence": 2,
+                "userPoolId": {
+                  "Ref": "SherlockUserPoolEFC0C201"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolGroup",
+              "version": "2.161.1"
+            }
+          },
+          "ParalegalGroup": {
+            "id": "ParalegalGroup",
+            "path": "SherlockCognitoAuthStack/ParalegalGroup",
+            "attributes": {
+              "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolGroup",
+              "aws:cdk:cloudformation:props": {
+                "description": "Paralegals with case support access",
+                "groupName": "Paralegal",
+                "precedence": 3,
+                "userPoolId": {
+                  "Ref": "SherlockUserPoolEFC0C201"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolGroup",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockUserPoolClient": {
+            "id": "SherlockUserPoolClient",
+            "path": "SherlockCognitoAuthStack/SherlockUserPoolClient",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockCognitoAuthStack/SherlockUserPoolClient/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolClient",
+                  "aws:cdk:cloudformation:props": {
+                    "accessTokenValidity": 60,
+                    "allowedOAuthFlows": [
+                      "code"
+                    ],
+                    "allowedOAuthFlowsUserPoolClient": true,
+                    "allowedOAuthScopes": [
+                      "email",
+                      "openid",
+                      "profile",
+                      "phone"
+                    ],
+                    "callbackUrLs": [
+                      "https://localhost:3000/callback",
+                      "https://sherlock-ai.watts-law.com/callback"
+                    ],
+                    "clientName": "sherlock-ai-web-client",
+                    "enableTokenRevocation": true,
+                    "idTokenValidity": 60,
+                    "logoutUrLs": [
+                      "https://localhost:3000/logout",
+                      "https://sherlock-ai.watts-law.com/logout"
+                    ],
+                    "preventUserExistenceErrors": "ENABLED",
+                    "refreshTokenValidity": 43200,
+                    "supportedIdentityProviders": [
+                      "COGNITO"
+                    ],
+                    "tokenValidityUnits": {
+                      "idToken": "minutes",
+                      "accessToken": "minutes",
+                      "refreshToken": "minutes"
+                    },
+                    "userPoolId": {
+                      "Ref": "SherlockUserPoolEFC0C201"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolClient",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPoolClient",
+              "version": "2.161.1"
+            }
+          },
+          "UserRolesTable": {
+            "id": "UserRolesTable",
+            "path": "SherlockCognitoAuthStack/UserRolesTable",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockCognitoAuthStack/UserRolesTable/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "RoleIndex",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI1PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI1SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true
+                    },
+                    "tableName": "sherlock-user-roles",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockCognitoAuthStack/UserRolesTable/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "RolePermissionsTable": {
+            "id": "RolePermissionsTable",
+            "path": "SherlockCognitoAuthStack/RolePermissionsTable",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockCognitoAuthStack/RolePermissionsTable/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1PK",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "GSI1SK",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "PermissionIndex",
+                        "keySchema": [
+                          {
+                            "attributeName": "GSI1PK",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "GSI1SK",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "keySchema": [
+                      {
+                        "attributeName": "PK",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "SK",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "pointInTimeRecoverySpecification": {
+                      "pointInTimeRecoveryEnabled": true
+                    },
+                    "sseSpecification": {
+                      "sseEnabled": true
+                    },
+                    "tableName": "sherlock-role-permissions",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.161.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SherlockCognitoAuthStack/RolePermissionsTable/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.161.1"
+            }
+          },
+          "SherlockAuthorizerLambda": {
+            "id": "SherlockAuthorizerLambda",
+            "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "BusinessUnit",
+                            "value": "MassTortLitigation"
+                          },
+                          {
+                            "key": "CostCenter",
+                            "value": "Legal-Technology"
+                          },
+                          {
+                            "key": "CreatedBy",
+                            "value": "CDK-SherlockAI-V2"
+                          },
+                          {
+                            "key": "DeploymentDate",
+                            "value": "2025-07-21"
+                          },
+                          {
+                            "key": "Owner",
+                            "value": "WattsLawFirm-TechTeam"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "dynamodb:BatchGetItem",
+                                    "dynamodb:ConditionCheckItem",
+                                    "dynamodb:DescribeTable",
+                                    "dynamodb:GetItem",
+                                    "dynamodb:GetRecords",
+                                    "dynamodb:GetShardIterator",
+                                    "dynamodb:Query",
+                                    "dynamodb:Scan"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "RolePermissionsTable35C7C201",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::GetAtt": [
+                                        "UserRolesTable19FB5B19",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "RolePermissionsTable35C7C201",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/index/*"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "UserRolesTable19FB5B19",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/index/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "SherlockAuthorizerLambdaServiceRoleDefaultPolicy85794F0C",
+                            "roles": [
+                              {
+                                "Ref": "SherlockAuthorizerLambdaServiceRoleE8CA9F5E"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.161.1"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "zipFile": "\nimport json\nimport jwt\nimport boto3\nimport os\nfrom typing import Dict, List, Any\n\ndynamodb = boto3.resource('dynamodb')\nuser_roles_table = dynamodb.Table(os.environ['USER_ROLES_TABLE'])\nrole_permissions_table = dynamodb.Table(os.environ['ROLE_PERMISSIONS_TABLE'])\n\ndef lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:\n    \"\"\"\n    Sherlock AI Lambda Authorizer\n    Validates JWT tokens and builds permission context\n    \"\"\"\n    try:\n        # Extract JWT token\n        token = event['authorizationToken'].replace('Bearer ', '')\n        \n        # Decode JWT (simplified - in production use proper verification)\n        decoded_token = jwt.decode(token, options={\"verify_signature\": False})\n        \n        user_id = decoded_token.get('sub')\n        cognito_groups = decoded_token.get('cognito:groups', [])\n        email = decoded_token.get('email')\n        \n        if not user_id:\n            raise Exception('Invalid token: missing user ID')\n        \n        # Get additional roles from DynamoDB\n        additional_roles = get_user_additional_roles(user_id)\n        \n        # Combine Cognito groups with DynamoDB roles\n        all_roles = list(set(cognito_groups + additional_roles))\n        \n        # Get permissions for all roles\n        permissions = get_role_permissions(all_roles)\n        \n        # Build policy document\n        policy_document = build_policy_document(all_roles, permissions)\n        \n        return {\n            'principalId': user_id,\n            'policyDocument': policy_document,\n            'context': {\n                'userId': user_id,\n                'email': email,\n                'roles': ','.join(all_roles),\n                'permissions': json.dumps(permissions)\n            }\n        }\n        \n    except Exception as e:\n        print(f\"Authorization error: {str(e)}\")\n        raise Exception('Unauthorized')\n\ndef get_user_additional_roles(user_id: str) -> List[str]:\n    \"\"\"Get additional roles from DynamoDB UserRoles table\"\"\"\n    try:\n        response = user_roles_table.query(\n            KeyConditionExpression='PK = :pk',\n            ExpressionAttributeValues={\n                ':pk': f'USER#{user_id}'\n            }\n        )\n        \n        roles = []\n        for item in response.get('Items', []):\n            # Extract role from SK (ROLE#{role_name})\n            role = item['SK'].replace('ROLE#', '')\n            \n            # Check if role is still valid (not expired)\n            expires_at = item.get('expires_at')\n            if not expires_at or expires_at > context.aws_request_id:  # Simplified expiry check\n                roles.append(role)\n                \n        return roles\n        \n    except Exception as e:\n        print(f\"Error getting user roles: {str(e)}\")\n        return []\n\ndef get_role_permissions(roles: List[str]) -> Dict[str, List[str]]:\n    \"\"\"Get permissions for all roles\"\"\"\n    permissions = {}\n    \n    for role in roles:\n        try:\n            response = role_permissions_table.query(\n                KeyConditionExpression='PK = :pk',\n                ExpressionAttributeValues={\n                    ':pk': f'ROLE#{role}'\n                }\n            )\n            \n            role_perms = []\n            for item in response.get('Items', []):\n                # Extract permission from SK (PERM#{resource}#{action})\n                perm = item['SK'].replace('PERM#', '')\n                role_perms.append(perm)\n                \n            permissions[role] = role_perms\n            \n        except Exception as e:\n            print(f\"Error getting role permissions for {role}: {str(e)}\")\n            permissions[role] = []\n            \n    return permissions\n\ndef build_policy_document(roles: List[str], permissions: Dict[str, List[str]]) -> Dict[str, Any]:\n    \"\"\"Build IAM policy document based on roles and permissions\"\"\"\n    \n    statements = []\n    \n    # Admin has full access\n    if 'Admin' in roles:\n        statements.append({\n            'Action': '*',\n            'Effect': 'Allow',\n            'Resource': '*'\n        })\n    else:\n        # Build specific permissions for Attorney/Paralegal\n        allowed_actions = set()\n        \n        for role_perms in permissions.values():\n            allowed_actions.update(role_perms)\n        \n        if allowed_actions:\n            statements.append({\n                'Action': list(allowed_actions),\n                'Effect': 'Allow', \n                'Resource': '*'\n            })\n    \n    return {\n        'Version': '2012-10-17',\n        'Statement': statements\n    }\n      "
+                    },
+                    "environment": {
+                      "variables": {
+                        "USER_POOL_ID": {
+                          "Ref": "SherlockUserPoolEFC0C201"
+                        },
+                        "USER_ROLES_TABLE": {
+                          "Ref": "UserRolesTable19FB5B19"
+                        },
+                        "ROLE_PERMISSIONS_TABLE": {
+                          "Ref": "RolePermissionsTable35C7C201"
+                        },
+                        "REGION": "us-east-1"
+                      }
+                    },
+                    "functionName": "sherlock-ai-authorizer",
+                    "handler": "index.lambda_handler",
+                    "memorySize": 512,
+                    "role": {
+                      "Fn::GetAtt": [
+                        "SherlockAuthorizerLambdaServiceRoleE8CA9F5E",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "python3.11",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ],
+                    "timeout": 30
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.161.1"
+                }
+              },
+              "LogRetention": {
+                "id": "LogRetention",
+                "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/LogRetention",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/LogRetention/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.LogRetention",
+                  "version": "2.161.1"
+                }
+              },
+              "LogGroup": {
+                "id": "LogGroup",
+                "path": "SherlockCognitoAuthStack/SherlockAuthorizerLambda/LogGroup",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.161.1"
+            }
+          },
+          "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a": {
+            "id": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a",
+            "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.161.1"
+                }
+              },
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "BusinessUnit",
+                            "value": "MassTortLitigation"
+                          },
+                          {
+                            "key": "CostCenter",
+                            "value": "Legal-Technology"
+                          },
+                          {
+                            "key": "CreatedBy",
+                            "value": "CDK-SherlockAI-V2"
+                          },
+                          {
+                            "key": "DeploymentDate",
+                            "value": "2025-07-21"
+                          },
+                          {
+                            "key": "Owner",
+                            "value": "WattsLawFirm-TechTeam"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "logs:DeleteRetentionPolicy",
+                                    "logs:PutRetentionPolicy"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+                            "roles": [
+                              {
+                                "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.161.1"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockCognitoAuthStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.2"
+            }
+          },
+          "InitPermissionsLambda": {
+            "id": "InitPermissionsLambda",
+            "path": "SherlockCognitoAuthStack/InitPermissionsLambda",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "SherlockCognitoAuthStack/InitPermissionsLambda/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "SherlockCognitoAuthStack/InitPermissionsLambda/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SherlockCognitoAuthStack/InitPermissionsLambda/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ],
+                        "tags": [
+                          {
+                            "key": "BusinessUnit",
+                            "value": "MassTortLitigation"
+                          },
+                          {
+                            "key": "CostCenter",
+                            "value": "Legal-Technology"
+                          },
+                          {
+                            "key": "CreatedBy",
+                            "value": "CDK-SherlockAI-V2"
+                          },
+                          {
+                            "key": "DeploymentDate",
+                            "value": "2025-07-21"
+                          },
+                          {
+                            "key": "Owner",
+                            "value": "WattsLawFirm-TechTeam"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "SherlockCognitoAuthStack/InitPermissionsLambda/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "SherlockCognitoAuthStack/InitPermissionsLambda/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "dynamodb:BatchWriteItem",
+                                    "dynamodb:DeleteItem",
+                                    "dynamodb:DescribeTable",
+                                    "dynamodb:PutItem",
+                                    "dynamodb:UpdateItem"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "RolePermissionsTable35C7C201",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "RolePermissionsTable35C7C201",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/index/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "InitPermissionsLambdaServiceRoleDefaultPolicy590DF830",
+                            "roles": [
+                              {
+                                "Ref": "InitPermissionsLambdaServiceRole46B9C848"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.161.1"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SherlockCognitoAuthStack/InitPermissionsLambda/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "zipFile": "\nimport boto3\nimport json\n\ndynamodb = boto3.resource('dynamodb')\ntable = dynamodb.Table(os.environ['ROLE_PERMISSIONS_TABLE'])\n\ndef lambda_handler(event, context):\n    \"\"\"Initialize default role permissions\"\"\"\n    \n    # Default permissions by role\n    permissions = {\n        'Admin': [\n            'cases#create', 'cases#read', 'cases#update', 'cases#delete',\n            'parties#create', 'parties#read', 'parties#update', 'parties#delete',\n            'medical#create', 'medical#read', 'medical#update', 'medical#delete',\n            'financial#create', 'financial#read', 'financial#update', 'financial#delete',\n            'documents#create', 'documents#read', 'documents#update', 'documents#delete',\n            'users#create', 'users#read', 'users#update', 'users#delete',\n            'system#configure'\n        ],\n        'Attorney': [\n            'cases#create', 'cases#read', 'cases#update',\n            'parties#create', 'parties#read', 'parties#update',\n            'medical#create', 'medical#read', 'medical#update',\n            'financial#create', 'financial#read', 'financial#update',\n            'documents#create', 'documents#read', 'documents#update',\n            'reports#generate', 'settlements#negotiate'\n        ],\n        'Paralegal': [\n            'cases#read', 'cases#update',\n            'parties#read', 'parties#update',\n            'medical#read', 'medical#update',\n            'financial#read',\n            'documents#read', 'documents#update',\n            'reports#view'\n        ]\n    }\n    \n    # Insert permissions\n    for role, perms in permissions.items():\n        for perm in perms:\n            table.put_item(Item={\n                'PK': f'ROLE#{role}',\n                'SK': f'PERM#{perm}',\n                'permission': perm,\n                'created_at': context.aws_request_id,\n                'active': True\n            })\n    \n    return {'statusCode': 200, 'body': 'Permissions initialized'}\n      "
+                    },
+                    "environment": {
+                      "variables": {
+                        "ROLE_PERMISSIONS_TABLE": {
+                          "Ref": "RolePermissionsTable35C7C201"
+                        }
+                      }
+                    },
+                    "functionName": "sherlock-ai-init-permissions",
+                    "handler": "index.lambda_handler",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "InitPermissionsLambdaServiceRole46B9C848",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "python3.11",
+                    "tags": [
+                      {
+                        "key": "BusinessUnit",
+                        "value": "MassTortLitigation"
+                      },
+                      {
+                        "key": "CostCenter",
+                        "value": "Legal-Technology"
+                      },
+                      {
+                        "key": "CreatedBy",
+                        "value": "CDK-SherlockAI-V2"
+                      },
+                      {
+                        "key": "DeploymentDate",
+                        "value": "2025-07-21"
+                      },
+                      {
+                        "key": "Owner",
+                        "value": "WattsLawFirm-TechTeam"
+                      }
+                    ],
+                    "timeout": 300
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.161.1"
+            }
+          },
+          "InitPermissionsTrigger": {
+            "id": "InitPermissionsTrigger",
+            "path": "SherlockCognitoAuthStack/InitPermissionsTrigger",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "SherlockCognitoAuthStack/InitPermissionsTrigger/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CustomResource",
+              "version": "2.161.1"
+            }
+          },
+          "UserPoolId": {
+            "id": "UserPoolId",
+            "path": "SherlockCognitoAuthStack/UserPoolId",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "UserPoolClientId": {
+            "id": "UserPoolClientId",
+            "path": "SherlockCognitoAuthStack/UserPoolClientId",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "AuthorizerLambdaArn": {
+            "id": "AuthorizerLambdaArn",
+            "path": "SherlockCognitoAuthStack/AuthorizerLambdaArn",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "UserRolesTableName": {
+            "id": "UserRolesTableName",
+            "path": "SherlockCognitoAuthStack/UserRolesTableName",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "RolePermissionsTableName": {
+            "id": "RolePermissionsTableName",
+            "path": "SherlockCognitoAuthStack/RolePermissionsTableName",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.161.1"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "SherlockCognitoAuthStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "SherlockCognitoAuthStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.2"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "SherlockCognitoAuthStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.161.1"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "SherlockCognitoAuthStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.161.1"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.161.1"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.4.2"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.161.1"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "version": "38.0.1",
+  "files": {
+    "a3103ffaefd8a5614d7296554cf78bdb85d9ba12cca184c036e8f63ebb2dcb4d": {
+      "source": {
+        "path": "SherlockAILegalDatabaseStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "655153555581-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-655153555581-us-east-1",
+          "objectKey": "a3103ffaefd8a5614d7296554cf78bdb85d9ba12cca184c036e8f63ebb2dcb4d.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::655153555581:role/cdk-hnb659fds-file-publishing-role-655153555581-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
