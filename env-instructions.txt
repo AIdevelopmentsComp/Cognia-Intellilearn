@@ -1,0 +1,11 @@
+# Instrucciones para configurar el archivo .env.local
+
+Crea un archivo llamado ".env.local" en la raíz del proyecto con el siguiente contenido:
+
+# NextAuth.js
+NEXTAUTH_URL=https://cogniaintellilearn.web.app
+NEXTAUTH_SECRET=parra
+
+# Google OAuth
+GOOGLE_CLIENT_ID=271373685316-mcrruvatd9fis4ghspqe2d7ls4cqtmnif.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
