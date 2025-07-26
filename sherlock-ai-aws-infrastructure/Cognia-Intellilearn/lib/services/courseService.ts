@@ -942,6 +942,23 @@ export class CourseService {
       throw new Error('Failed to import courses')
     }
   }
+
+  /**
+   * Fuerza la limpieza del localStorage y reinicializa con datos correctos
+   */
+  async forceReset(): Promise<void> {
+    if (typeof window !== 'undefined') {
+      // Limpiar completamente el localStorage relacionado con cursos
+      localStorage.removeItem(COURSES_STORAGE_KEY)
+      localStorage.removeItem('intellilearn_user_progress')
+      console.log('🧹 Cleared all course data from localStorage')
+      
+      // Reinicializar con el curso correcto
+      const initialCourses = { '000000000': { ...INITIAL_PROJECT_MANAGEMENT_COURSE, id: '000000000' } }
+      this.saveCoursesToStorage(initialCourses)
+      console.log('🆕 Reinitialized with correct course ID: 000000000')
+    }
+  }
 }
 
 // Instancia singleton del servicio

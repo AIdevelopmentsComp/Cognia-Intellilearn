@@ -133,7 +133,7 @@ aws s3 sync out s3://intellilearn-final/ --delete
 - `components/` - Componentes optimizados con 'use client' donde necesario
 - `lib/` - Servicios y utilidades actualizadas
 - `public/` - Assets estáticos organizados
-
+image.png
 ---
 
 **Desarrollado por:** Equipo CognIA  

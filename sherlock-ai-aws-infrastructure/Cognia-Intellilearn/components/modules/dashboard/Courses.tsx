@@ -42,6 +42,9 @@ const Courses = () => {
       try {
         setLoading(true)
         
+        // Forzar reset para asegurar datos correctos
+        await courseService.forceReset()
+        
         // Cargar todos los cursos disponibles dinámicamente
         const allCourses = await courseService.getAllCourses()
         

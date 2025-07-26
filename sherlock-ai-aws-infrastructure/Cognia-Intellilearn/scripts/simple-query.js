@@ -17,7 +17,7 @@ async function getCourse() {
     
     const result = await docClient.send(new GetCommand({
       TableName: 'intellilearn-courses',
-      Key: { id: '1' }
+      Key: { id: '000000000' }
     }))
     
     if (result.Item) {
