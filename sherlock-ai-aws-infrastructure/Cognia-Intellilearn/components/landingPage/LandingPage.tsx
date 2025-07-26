@@ -141,6 +141,68 @@ export default function LandingPage() {
                 </div>
             </section>
 
+            {/* Video Section - Neumorphic Pure White */}
+            <section className="px-6 py-16 bg-white">
+                <div className="max-w-6xl mx-auto">
+                    <div 
+                        className="neuro-container rounded-3xl p-8 bg-white hover:shadow-xl transition-all duration-500 group"
+                        style={{ 
+                            background: '#ffffff',
+                            boxShadow: '12px 12px 24px rgba(163, 177, 198, 0.15), -12px -12px 24px rgba(255, 255, 255, 0.7)'
+                        }}
+                    >
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl md:text-4xl font-bold text-[#132944] mb-4">
+                                Descubre CognIA en Acción
+                            </h2>
+                            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                                Mira cómo nuestra plataforma está revolucionando la educación en línea con inteligencia artificial.
+                            </p>
+                        </div>
+                        
+                        <div 
+                            className="relative overflow-hidden rounded-3xl group-hover:shadow-inner transition-all duration-500"
+                            style={{ 
+                                boxShadow: 'inset 8px 8px 16px rgba(163, 177, 198, 0.1), inset -8px -8px 16px rgba(255, 255, 255, 0.8)'
+                            }}
+                        >
+                            <video
+                                className="w-full h-[220px] md:h-[450px] object-cover rounded-3xl shadow-lg transition-all duration-500 hover:scale-[1.02]"
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                poster="/assets/images/video-thumbnail.jpg"
+                                style={{
+                                    filter: 'brightness(1.05) contrast(1.02)',
+                                    boxShadow: '0 8px 32px rgba(60, 49, 163, 0.1)'
+                                }}
+                            >
+                                <source 
+                                    src="https://intellilearn-final.s3.amazonaws.com/assets/videos/Dise%C3%B1o%20sin+t%C3%ADtulo+%281%29.mp4" 
+                                    type="video/mp4" 
+                                />
+                                Tu navegador no soporta la reproducción de videos HTML5.
+                            </video>
+                            
+                            {/* Overlay gradient for neumorphic effect */}
+                            <div 
+                                className="absolute inset-0 rounded-3xl pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity duration-500"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(163,177,198,0.1) 100%)'
+                                }}
+                            ></div>
+                        </div>
+                        
+                        <div className="text-center mt-6">
+                            <p className="text-sm text-gray-500 font-medium">
+                                ✨ Experiencia educativa impulsada por IA
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Stats Section with neumorphism */}
             <section className="grid grid-cols-2 md:grid-cols-4 gap-6 px-6 py-10 bg-white text-center">
                 <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
