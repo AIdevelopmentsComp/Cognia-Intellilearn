@@ -1,24 +1,25 @@
 'use client'
 /**
- * @fileoverview Floating AI Assistant Component
+ * @fileoverview Floating AI Assistant Component with Neumorphism
  * @author Luis Arturo Parra Rosas
  * @created 2023-12-15
- * @updated 2023-12-20
- * @version 1.0.0
+ * @updated 2025-01-27
+ * @version 2.0.0
  * 
  * @description
- * Provides a floating chat interface for AI assistance throughout the application.
+ * Provides a floating chat interface for AI assistance with neumorphic design.
  * Allows users to interact with the Gemini AI model from any page.
  * 
  * @context
  * A global component accessible from any part of the application.
  * Integrated with Firebase AI (Gemini) for natural language processing.
- * Provides predefined suggestions and maintains conversation history.
+ * Features modern neumorphic design with smooth animations.
  * 
  * @changelog
  * v1.0.0 - Initial implementation with basic chat functionality
  * v1.0.1 - Added conversation history and loading states
  * v1.0.2 - Integrated with Gemini AI model via Firebase
+ * v2.0.0 - Added neumorphic design system
  */
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -30,108 +31,93 @@ import { chatWithAI } from '@/lib/aws-bedrock';
  * Message type definition
  * @context Defines the structure of chat messages
  */
-type Message = {
+interface Message {
   id: string;
   text: string;
-  sender: 'user' | 'assistant';
+  role: 'user' | 'model';
   timestamp: Date;
 }
 
 /**
- * Floating Assistant Component
+ * Floating Assistant Component with Neumorphism
  * 
- * @returns {JSX.Element} Floating chat interface component
+ * @returns {JSX.Element} Floating chat interface component with neumorphic design
  * 
  * @context
- * Persistent UI element across the application.
+ * Persistent UI element across the application with modern neumorphic styling.
  * 
  * @description
- * Renders a floating button that expands into a chat interface.
+ * Renders a floating button that expands into a neumorphic chat interface.
  * Manages conversation state and integrates with Gemini AI.
  * Features:
  * - User authentication integration
  * - Personalized greeting
- * - Message history
+ * - Message history with neumorphic bubbles
  * - Typing indicators
- * - Predefined suggestions
+ * - Neumorphic input field and buttons
+ * - Smooth animations and transitions
  */
 export const FloatingAssistant = () => {
-  // UI state
+  const { user } = useAuth(); // Get user authentication state
   const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(true);
-  
-  // Chat state
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [chatHistory, setChatHistory] = useState<Array<{role: string, content: string}>>([]);
-  
-  // References
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  // Authentication
-  const { user } = useAuth();
 
   /**
-   * Predefined suggestion topics
-   * @context Quick access prompts for common user queries
+   * Scrolls to the bottom of the messages container
+   * @context Ensures latest messages are visible
    */
-  const suggestionTopics = [
-    { id: '1', title: 'Explícame regresión lineal', icon: <FaLightbulb className="text-[#3C31A3]" /> },
-    { id: '2', title: 'Resumir mi próxima lección', icon: <FaBookReader className="text-[#3C31A3]" /> },
-    { id: '3', title: 'Ver mi progreso', icon: <FaChartLine className="text-[#3C31A3]" /> }
-  ];
-
-  /**
-   * Initialize chat with personalized welcome message
-   * @context Sets up initial chat state when user is authenticated
-   */
-  useEffect(() => {
-    if (user) {
-      const welcomeMessage: Message = {
-        id: 'welcome',
-        sender: 'assistant',
-        text: `¡Hola ${user.displayName?.split(' ')[0] || 'estudiante'}! Soy tu asistente CognIA. ¿En qué puedo ayudarte hoy?`,
-        timestamp: new Date()
-      };
-      
-      setMessages([welcomeMessage]);
-      setChatHistory([{ role: 'model', content: welcomeMessage.text }]);
-    }
-  }, [user]);
-
-  /**
-   * Auto-scroll to latest messages
-   * @context Improves UX by keeping the latest messages visible
-   */
-  useEffect(() => {
+  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [messages]);
 
   /**
-   * Handle sending user messages and getting AI responses
-   * @context Core chat functionality
+   * Handles chat window toggle with authentication check
+   * @context Opens/closes chat interface
    */
-  const handleSend = async () => {
-    if (!inputValue.trim()) return;
-
-    // Add user message to conversation
-    const userMessage: Message = { 
-      id: Date.now().toString(),
-      sender: 'user', 
-      text: inputValue,
-      timestamp: new Date()
-    };
+  const handleToggle = () => {
+    // If user is not authenticated, redirect to login
+    if (!user) {
+      console.log('🔒 Chat blocked: User not authenticated');
+      window.location.href = '/auth/login';
+      return;
+    }
     
-    setMessages([...messages, userMessage]);
+    setIsOpen(!isOpen);
+  };
+
+  /**
+   * Sends message to AI and handles response
+   * @context Core chat functionality with AWS Bedrock integration
+   */
+  const handleSendMessage = async () => {
+    // Double check authentication before allowing chat
+    if (!user) {
+      console.log('🔒 Message blocked: User not authenticated');
+      window.location.href = '/auth/login';
+      return;
+    }
+
+    if (!inputValue.trim() || isLoading) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: inputValue.trim(),
+      role: 'user',
+      timestamp: new Date(),
+    };
+
+    const newChatHistory = [...messages, userMessage];
+    setMessages(newChatHistory);
     setInputValue('');
     setIsLoading(true);
-    setShowSuggestions(false);
 
-    // Update chat history
-    const newChatHistory = [...chatHistory, { role: 'user', content: userMessage.text }];
-    setChatHistory(newChatHistory);
-    
     try {
       // Get response from AWS Bedrock (Claude 3 Haiku)
       const systemPrompt = "Eres un asistente educativo experto en ayudar a estudiantes. Proporciona respuestas útiles, precisas y motivadoras sobre temas académicos.";
@@ -148,14 +134,10 @@ export const FloatingAssistant = () => {
         if (bedrockHistory.length === 0 || bedrockHistory[bedrockHistory.length - 1].role !== role) {
           bedrockHistory.push({
             role: role,
-            content: msg.content
+            content: msg.text
           });
         }
       }
-      
-      // Ensure the conversation starts with a user message and ends with user message
-      // If the last message in history is from user, we're good
-      // If it's from assistant, we need to make sure the new user message will be added by chatWithAI
       
       console.log('Bedrock History before sending:', bedrockHistory);
       
@@ -165,21 +147,21 @@ export const FloatingAssistant = () => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: aiResponseText,
-        sender: 'assistant',
-        timestamp: new Date()
+        role: 'model',
+        timestamp: new Date(),
       };
-      
+
       setMessages(prev => [...prev, aiMessage]);
-      setChatHistory(prev => [...prev, { role: 'model', content: aiResponseText }]);
     } catch (error) {
-      console.error('Error al obtener respuesta de IA:', error);
-      // Add error message
+      console.error('Error getting AI response:', error);
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Lo siento, ha ocurrido un error. Por favor, intenta de nuevo más tarde.',
-        sender: 'assistant',
-        timestamp: new Date()
+        text: 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.',
+        role: 'model',
+        timestamp: new Date(),
       };
+
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -187,84 +169,142 @@ export const FloatingAssistant = () => {
   };
 
   /**
-   * Handle clicking on suggestion topics
-   * @param {string} suggestion - The suggestion text
-   * @context Facilitates quick interactions with predefined topics
+   * Handles Enter key press for sending messages
+   * @context Keyboard interaction support
    */
-  const handleSuggestionClick = (suggestion: string) => {
-    setInputValue(suggestion);
-    setTimeout(() => {
-      handleSend();
-    }, 100);
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
+  // Don't render anything if user is not authenticated
+  if (!user) {
+    return null;
+  }
+
   /**
-   * Toggle chat window visibility
-   * @context Controls the open/closed state of the chat interface
+   * Initialize chat with personalized welcome message
+   * @context Sets up initial chat state when user is authenticated
    */
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-  };
+  useEffect(() => {
+    if (user) {
+      const welcomeMessage: Message = {
+        id: 'welcome',
+        text: `¡Hola ${user.displayName?.split(' ')[0] || 'estudiante'}! Soy tu asistente CognIA. ¿En qué puedo ayudarte hoy?`,
+        role: 'model',
+        timestamp: new Date()
+      };
+      
+      setMessages([welcomeMessage]);
+    }
+  }, [user]);
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {/* Assistant button - visible when chat is closed */}
+      {/* Assistant button with neumorphism - visible when chat is closed */}
       {!isOpen && (
         <button
-          onClick={toggleChat}
-          className="flex items-center gap-2 px-5 py-3 rounded-md text-white font-medium shadow-lg bg-gradient-to-r from-[#132944] to-[#3C31A3] hover:scale-105 transition-transform"
+          onClick={handleToggle}
+          className="neuro-button-primary flex items-center gap-3 px-6 py-4 rounded-2xl text-white font-semibold shadow-xl transition-all duration-300 neuro-fade-in"
+          style={{
+            background: 'linear-gradient(135deg, #132944, #3C31A3)',
+            boxShadow: '-8px -8px 16px rgba(19, 41, 68, 0.3), 8px 8px 16px rgba(60, 49, 163, 0.6)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
+            e.currentTarget.style.boxShadow = '-12px -12px 24px rgba(19, 41, 68, 0.4), 12px 12px 24px rgba(60, 49, 163, 0.7)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1) translateY(0)';
+            e.currentTarget.style.boxShadow = '-8px -8px 16px rgba(19, 41, 68, 0.3), 8px 8px 16px rgba(60, 49, 163, 0.6)';
+          }}
         >
-          <div>
-            <img src="/assets/images/IA.svg" alt="Asistente CognIA" width={33} height={33} />
+          <div className="neuro-avatar w-8 h-8 rounded-full flex items-center justify-center">
+            <img src="/assets/images/IA.svg" alt="Asistente CognIA" width={24} height={24} />
           </div>
           <span>Asistente CognIA</span>
         </button>
       )}
 
-      {/* Chat window - visible when opened */}
+      {/* Chat window with neumorphism - visible when opened */}
       {isOpen && (
-        <div className="absolute bottom-0 right-0 w-96 h-[500px] max-h-[80vh] bg-white rounded-lg shadow-xl overflow-hidden flex flex-col transition-all">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-[#132944] to-[#3C31A3] p-3 text-white flex items-center justify-between cursor-move">
+        <div className="absolute bottom-0 right-0 w-96 h-[500px] max-h-[80vh] neuro-chat overflow-hidden flex flex-col transition-all duration-300 neuro-fade-in">
+          {/* Header with neumorphic design */}
+          <div 
+            className="p-4 text-white flex items-center justify-between cursor-move"
+            style={{
+              background: 'linear-gradient(135deg, #132944, #3C31A3)',
+              boxShadow: 'inset -2px -2px 4px rgba(255, 255, 255, 0.1), inset 2px 2px 4px rgba(0, 0, 0, 0.3)'
+            }}
+          >
             <div className="flex items-center">
-              <img src="/assets/images/IA.svg" alt="CognIA" width={28} height={28} className="mr-2" />
-              <h3 className="font-medium">Asistente CognIA</h3>
+              <div 
+                className="neuro-avatar w-8 h-8 rounded-full flex items-center justify-center mr-3"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  boxShadow: '-2px -2px 4px rgba(255, 255, 255, 0.1), 2px 2px 4px rgba(0, 0, 0, 0.3)'
+                }}
+              >
+                <img src="/assets/images/IA.svg" alt="CognIA" width={20} height={20} />
+              </div>
+              <h3 className="font-semibold">Asistente CognIA</h3>
             </div>
-            <button onClick={toggleChat} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+            <button 
+              onClick={handleToggle} 
+              className="neuro-button p-2 rounded-full transition-all duration-300 text-white"
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                boxShadow: '-3px -3px 6px rgba(255, 255, 255, 0.1), 3px 3px 6px rgba(0, 0, 0, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = 'inset -2px -2px 4px rgba(255, 255, 255, 0.1), inset 2px 2px 4px rgba(0, 0, 0, 0.3)';
+                e.currentTarget.style.transform = 'scale(0.95)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '-3px -3px 6px rgba(255, 255, 255, 0.1), 3px 3px 6px rgba(0, 0, 0, 0.3)';
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
               <FaTimes size={14} />
             </button>
           </div>
 
-          {/* Chat message area */}
-          <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+          {/* Chat message area with neumorphic background */}
+          <div 
+            className="flex-1 overflow-y-auto p-4"
+            style={{ 
+              background: 'var(--neuro-bg-light)',
+              boxShadow: 'inset -4px -4px 8px rgba(255, 255, 255, 0.5), inset 4px 4px 8px rgba(0, 0, 0, 0.1)'
+            }}
+          >
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`mb-4 flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`mb-4 flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-lg p-3 ${
-                    message.sender === 'user'
-                      ? 'bg-[#3C31A3] text-white rounded-tr-none'
-                      : 'bg-white shadow text-gray-700 rounded-tl-none'
+                  className={`neuro-message max-w-[85%] rounded-lg p-3 transition-all duration-300 ${
+                    message.role === 'user' ? 'user' : 'assistant'
                   }`}
                 >
-                  <p>{message.text}</p>
-                  <p className="text-xs mt-1 opacity-70 text-right">
+                  <p className="text-sm leading-relaxed">{message.text}</p>
+                  <p className="text-xs mt-2 opacity-70 text-right">
                     {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                   </p>
                 </div>
               </div>
             ))}
             
-            {/* Typing indicator - shown when loading */}
+            {/* Typing indicator with neumorphic design */}
             {isLoading && (
               <div className="flex justify-start mb-4">
-                <div className="bg-white shadow text-gray-700 rounded-lg rounded-tl-none max-w-[80%] p-3">
+                <div className="neuro-message assistant max-w-[80%] p-3">
                   <div className="flex space-x-2">
-                    <div className="w-2 h-2 rounded-full bg-[#3C31A3] animate-bounce"></div>
-                    <div className="w-2 h-2 rounded-full bg-[#3C31A3] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 rounded-full bg-[#3C31A3] animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce"></div>
+                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                   </div>
                 </div>
               </div>
@@ -274,44 +314,44 @@ export const FloatingAssistant = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Suggestions area */}
-          {showSuggestions && (
-            <div className="px-3 py-2 border-t border-gray-200 bg-white">
-              <div className="flex flex-wrap gap-2">
-                {suggestionTopics.map(topic => (
-                  <button
-                    key={topic.id}
-                    onClick={() => handleSuggestionClick(topic.title)}
-                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-1.5 rounded-full flex items-center transition-colors"
-                  >
-                    <span className="mr-1">{topic.icon}</span>
-                    {topic.title}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Input area */}
-          <div className="p-3 border-t border-gray-200 bg-white">
-            <div className="flex items-center gap-2">
+          {/* Input area with neumorphic design */}
+          <div 
+            className="p-4"
+            style={{ 
+              background: 'var(--neuro-bg-light)',
+              borderTop: '1px solid rgba(0, 0, 0, 0.1)'
+            }}
+          >
+            <div className="flex items-end gap-3">
               <div className="relative flex-grow">
                 <textarea
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-8 focus:outline-none focus:border-[#3C31A3] resize-none h-9 text-sm leading-tight"
+                  onKeyPress={handleKeyPress}
+                  className="neuro-input w-full px-4 py-3 pr-12 resize-none text-sm leading-tight"
                   placeholder="Escribe un mensaje..."
                   rows={1}
+                  style={{
+                    minHeight: '44px',
+                    maxHeight: '120px'
+                  }}
                 />
                 <button
-                  onClick={handleSend}
-                  disabled={!inputValue.trim()}
-                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full ${
-                    inputValue.trim() ? 'text-[#3C31A3] hover:bg-gray-100' : 'text-gray-400'
+                  onClick={handleSendMessage}
+                  disabled={!inputValue.trim() || isLoading}
+                  className={`absolute right-3 top-1/2 transform -translate-y-1/2 neuro-button p-2 rounded-full transition-all duration-300 ${
+                    inputValue.trim() && !isLoading 
+                      ? 'text-purple-600 hover:text-purple-700' 
+                      : 'text-gray-400 cursor-not-allowed'
                   }`}
+                  style={inputValue.trim() && !isLoading ? {
+                    boxShadow: '-3px -3px 6px rgba(255, 255, 255, 0.7), 3px 3px 6px rgba(0, 0, 0, 0.15)'
+                  } : {
+                    boxShadow: 'none',
+                    background: 'transparent'
+                  }}
                 >
-                  <FaPaperPlane size={12} />
+                  <FaPaperPlane size={14} />
                 </button>
               </div>
             </div>

@@ -1,52 +1,49 @@
+/**
+ * COGNIA INTELLILEARN - NEXT.JS CONFIGURATION
+ * 
+ * CONTEXTO DE NEGOCIO:
+ * - Configuración para la plataforma educativa CognIA Intellilearn
+ * - Optimizada para despliegue en AWS S3 con CloudFront CDN
+ * - Configurada para exportación estática (JAMstack architecture)
+ * - Integrada con servicios AWS (Cognito, Bedrock, S3)
+ * 
+ * PROPÓSITO:
+ * - Generar build estático optimizado para S3 hosting
+ * - Configurar dominios permitidos para imágenes
+ * - Optimizar performance para usuarios educativos
+ * - Facilitar CI/CD con AWS services
+ */
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Exportación estática para hosting en AWS S3
   output: 'export',
-  reactStrictMode: true,
+  
+  // Configuración de imágenes optimizada para AWS
+  images: {
+    unoptimized: true, // Requerido para exportación estática
+    domains: [
+      'localhost', 
+      'd2sn3lk5751y3y.cloudfront.net', // CloudFront distribution
+      'intellilearn-final.s3.amazonaws.com', // S3 bucket directo
+      's3.amazonaws.com' // AWS S3 general
+    ],
+  },
+  
+  // Configuración de trailing slash para consistencia
   trailingSlash: true,
-  images: { 
-    unoptimized: true,
-    domains: ['localhost', 'firebasestorage.googleapis.com'],
-  },
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': require('path').resolve(__dirname),
-    }
-    return config
-  },
-  async headers() {
-    return [
-      {
-        source: '/favicon.ico',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'image/x-icon',
-          },
-        ],
-      },
-      {
-        source: '/faviconcognia.jpeg',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'image/jpeg',
-          },
-        ],
-      },
-    ]
-  },
-  env: {
-    AWS_ACCESS_KEY_ID: 'AKIAVI3ULX4ZB3253Q6R',
-    AWS_SECRET_ACCESS_KEY: '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',
-    AWS_REGION: 'us-east-1'
-  },
+  
+  // Configuración de ESLint
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  }
+  
+  // Variables de entorno públicas
+  env: {
+    NEXT_PUBLIC_APP_NAME: 'CognIA Intellilearn',
+    NEXT_PUBLIC_APP_VERSION: '2.0.0',
+    NEXT_PUBLIC_AWS_REGION: 'us-east-1',
+  },
 }
 
 module.exports = nextConfig

@@ -62,20 +62,51 @@ export async function chatWithAI(
     // Prepare conversation history for Claude, ensuring alternating roles
     let messages = [...chatHistory.slice(-10)]; // Keep last 10 messages for context
     
-    // Only add the user message if the last message isn't already from the user
-    if (messages.length === 0 || messages[messages.length - 1].role !== 'user') {
+    // Ensure the conversation starts with a user message
+    // If history is empty or doesn't start with user, add the current user message
+    if (messages.length === 0) {
       messages.push({ role: 'user' as const, content: userMessage });
     } else {
-      // If the last message is already from user, replace it with the new message
-      messages[messages.length - 1] = { role: 'user' as const, content: userMessage };
+      // Ensure first message is from user
+      if (messages[0].role !== 'user') {
+        // Remove any initial assistant messages
+        while (messages.length > 0 && messages[0].role !== 'user') {
+          messages.shift();
+        }
+      }
+      
+      // Add current user message if the last message isn't already from the user
+      if (messages.length === 0 || messages[messages.length - 1].role !== 'user') {
+        messages.push({ role: 'user' as const, content: userMessage });
+      } else {
+        // If the last message is already from user, replace it with the new message
+        messages[messages.length - 1] = { role: 'user' as const, content: userMessage };
+      }
     }
 
-    console.log('Messages being sent to Bedrock:', messages);
+    // Final validation: ensure conversation starts with user and has valid alternating pattern
+    const validMessages: ChatMessage[] = [];
+    let expectedRole: 'user' | 'assistant' = 'user';
+    
+    for (const message of messages) {
+      if (message.role === expectedRole) {
+        validMessages.push(message);
+        expectedRole = expectedRole === 'user' ? 'assistant' : 'user';
+      }
+      // Skip messages that break the alternating pattern
+    }
+    
+    // Ensure we end with a user message
+    if (validMessages.length === 0 || validMessages[validMessages.length - 1].role !== 'user') {
+      validMessages.push({ role: 'user' as const, content: userMessage });
+    }
+
+    console.log('Messages being sent to Bedrock:', validMessages);
 
     const response = await invokeBedrock(
       userMessage,
       systemPrompt,
-      messages,
+      validMessages,
       BEDROCK_CONFIG.modelId
     );
 

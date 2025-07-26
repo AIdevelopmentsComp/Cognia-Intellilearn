@@ -55,12 +55,6 @@ const LoginForm = () => {
         </p>
       </div>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-          {error}
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
@@ -115,38 +109,38 @@ const LoginForm = () => {
           </label>
         </div>
 
-        <div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-[#132944] to-[#3C31A3] text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#132944] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#1a3a5c] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+        >
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              Iniciando sesión...
+            </div>
+          ) : (
+            'Iniciar sesión'
+          )}
+        </button>
+
+        {error && (
+          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+            {error}
+          </div>
+        )}
       </form>
 
-      <div className="mt-8 text-center">
-        <div className="bg-gray-100 rounded-lg p-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Usuarios de prueba:</p>
-          <div className="text-xs text-gray-600 space-y-1">
-            <p><strong>Admin:</strong> admin@mattermind.com / AdminPass123!</p>
-            <p><strong>Attorney:</strong> attorney@mattermind.com / AttorneyPass123!</p>
-            <p><strong>Paralegal:</strong> paralegal@mattermind.com / ParalegalPass123!</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 text-center">
+      <div className="text-center mt-6">
         <p className="text-gray-600">
           ¿No tienes una cuenta?{' '}
-          <Link href="/auth/register" className="text-[#3C31A3] font-medium hover:underline">
+          <button className="text-[#132944] hover:underline font-medium">
             Regístrate
-          </Link>
+          </button>
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default LoginForm
