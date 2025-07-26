@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { 
   FaPlay, 
@@ -75,6 +75,16 @@ export default function CourseDetailPage() {
   
   // Referencias
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Verificar y corregir ID del curso
+  useEffect(() => {
+    if (courseId === '1') {
+      // Si acceden con el ID antiguo, redirigir al correcto
+      console.log('🔄 Redirecting from old course ID to new one')
+      window.location.replace('/dashboard/courses/000000000')
+      return
+    }
+  }, [courseId])
 
   // Funciones de modo de usuario
   // El toggle de modo se maneja globalmente desde el sidebar
@@ -406,18 +416,19 @@ export default function CourseDetailPage() {
               </button>
             </div>
 
-            {/* Selector de modo */}
-            <button
-              onClick={toggleUserMode}
-              className={`neuro-button flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${
-                userMode === UserMode.ADMIN 
-                  ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' 
-                  : 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg'
-              }`}
-            >
-              {userMode === UserMode.ADMIN ? <FaCog /> : <FaUser />}
-              <span>{userMode === UserMode.ADMIN ? 'Modo Admin' : 'Modo Estudiante'}</span>
-            </button>
+            {/* Indicador de modo actual */}
+            <div className={`neuro-container flex items-center space-x-2 px-4 py-2 rounded-lg ${
+              userMode === 'admin' 
+                ? 'bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200' 
+                : 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200'
+            }`}>
+              {userMode === 'admin' ? <FaCog className="text-orange-600" /> : <FaUser className="text-blue-600" />}
+              <span className={`font-medium ${
+                userMode === 'admin' ? 'text-orange-700' : 'text-blue-700'
+              }`}>
+                Modo {userMode === 'admin' ? 'Administrador' : 'Estudiante'}
+              </span>
+            </div>
           </div>
         </div>
 

@@ -40,7 +40,8 @@ import {
   FiTrendingUp,
   FiFileText,
   FiToggleLeft,
-  FiToggleRight
+  FiToggleRight,
+  FiChevronDown
 } from 'react-icons/fi';
 import { useAuth } from '@/lib/AuthContext'
 import { useUserMode } from '@/lib/contexts/UserModeContext';
@@ -73,6 +74,7 @@ export const Sidebar = () => {
   const { user, signOut } = useAuth()
   const { userMode, toggleUserMode } = useUserMode()
   const [isOpen, setIsOpen] = useState(false)
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
 
   /**
    * Handle user sign out
@@ -246,37 +248,82 @@ export const Sidebar = () => {
           </div>
         </nav>
 
-        {/* User mode toggle and sign out buttons */}
+        {/* Profile dropdown and sign out */}
         <div className="p-4 mt-auto space-y-3">
-          {/* User Mode Toggle */}
-          <div className="neuro-inset rounded-lg p-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-xs font-medium">Modo de Usuario</span>
-              <div className={`px-2 py-1 rounded text-xs font-semibold ${
-                userMode === 'admin' 
-                  ? 'bg-orange-100 text-orange-700' 
-                  : 'bg-blue-100 text-blue-700'
-              }`}>
-                {userMode === 'admin' ? 'Administrador' : 'Estudiante'}
-              </div>
-            </div>
+          {/* Profile Dropdown */}
+          <div className="relative">
             <button
-              onClick={toggleUserMode}
-              className="neuro-button flex items-center justify-center gap-2 w-full py-2 px-3 text-gray-700 text-sm rounded-lg transition-all duration-300 hover:text-gray-900"
+              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              className="neuro-button flex items-center justify-between w-full py-3 px-4 text-gray-700 text-sm rounded-lg transition-all duration-300 hover:text-gray-900"
             >
-              {userMode === 'admin' ? <FiToggleRight className="text-orange-500" /> : <FiToggleLeft className="text-blue-500" />}
-              <span>Cambiar a {userMode === 'admin' ? 'Estudiante' : 'Admin'}</span>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 neuro-container rounded-full flex items-center justify-center">
+                  <FiUser className="text-gray-600" />
+                </div>
+                <div className="text-left">
+                  <div className="font-semibold text-xs text-gray-800">
+                    {user?.email || 'Usuario Demo'}
+                  </div>
+                  <div className={`text-xs font-medium ${
+                    userMode === 'admin' 
+                      ? 'text-orange-600' 
+                      : 'text-blue-600'
+                  }`}>
+                    {userMode === 'admin' ? 'Administrador' : 'Estudiante'}
+                  </div>
+                </div>
+              </div>
+              <FiChevronDown className={`transition-transform duration-200 ${
+                isProfileDropdownOpen ? 'rotate-180' : ''
+              }`} />
             </button>
-          </div>
 
-          {/* Sign out button */}
-          <button
-            onClick={handleSignOut}
-            className="neuro-button flex items-center justify-center gap-2 w-full py-3 px-4 text-gray-700 text-sm rounded-lg transition-all duration-300 font-semibold hover:text-gray-900"
-          >
-            <FiLogOut className="text-lg" />
-            Cerrar Sesión
-          </button>
+            {/* Dropdown Menu */}
+            {isProfileDropdownOpen && (
+              <div className="absolute bottom-full left-0 right-0 mb-2 neuro-container rounded-lg shadow-lg border border-gray-100 bg-white z-50">
+                <div className="p-2">
+                  {/* Mode Toggle */}
+                  <button
+                    onClick={() => {
+                      toggleUserMode()
+                      setIsProfileDropdownOpen(false)
+                    }}
+                    className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    {userMode === 'admin' ? (
+                      <FiToggleRight className="text-orange-500" />
+                    ) : (
+                      <FiToggleLeft className="text-blue-500" />
+                    )}
+                    <span>Cambiar a {userMode === 'admin' ? 'Estudiante' : 'Admin'}</span>
+                  </button>
+
+                  {/* Profile Settings */}
+                  <button
+                    onClick={() => setIsProfileDropdownOpen(false)}
+                    className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <FiSettings className="text-gray-500" />
+                    <span>Configuración</span>
+                  </button>
+
+                  <hr className="my-2 border-gray-100" />
+
+                  {/* Sign Out */}
+                  <button
+                    onClick={() => {
+                      handleSignOut()
+                      setIsProfileDropdownOpen(false)
+                    }}
+                    className="flex items-center gap-3 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <FiLogOut className="text-red-500" />
+                    <span>Cerrar Sesión</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 

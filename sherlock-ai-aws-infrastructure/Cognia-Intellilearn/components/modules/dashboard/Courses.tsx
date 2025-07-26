@@ -42,8 +42,18 @@ const Courses = () => {
       try {
         setLoading(true)
         
-        // Forzar reset para asegurar datos correctos
-        await courseService.forceReset()
+        // Limpiar localStorage manualmente antes de cargar
+        if (typeof window !== 'undefined') {
+          const keysToRemove = []
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i)
+            if (key && (key.includes('intellilearn') || key.includes('course'))) {
+              keysToRemove.push(key)
+            }
+          }
+          keysToRemove.forEach(key => localStorage.removeItem(key))
+          console.log('🧹 Manual localStorage cleanup completed')
+        }
         
         // Cargar todos los cursos disponibles dinámicamente
         const allCourses = await courseService.getAllCourses()

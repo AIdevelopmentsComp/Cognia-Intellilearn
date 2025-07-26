@@ -948,15 +948,31 @@ export class CourseService {
    */
   async forceReset(): Promise<void> {
     if (typeof window !== 'undefined') {
-      // Limpiar completamente el localStorage relacionado con cursos
-      localStorage.removeItem(COURSES_STORAGE_KEY)
-      localStorage.removeItem('intellilearn_user_progress')
-      console.log('🧹 Cleared all course data from localStorage')
+      // Limpiar TODAS las claves relacionadas con intellilearn
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && (key.includes('intellilearn') || key.includes('course') || key.includes('Course'))) {
+          keysToRemove.push(key)
+        }
+      }
+      
+      keysToRemove.forEach(key => {
+        localStorage.removeItem(key)
+        console.log(`🗑️ Removed: ${key}`)
+      })
+      
+      console.log('🧹 Cleared ALL course-related data from localStorage')
       
       // Reinicializar con el curso correcto
       const initialCourses = { '000000000': { ...INITIAL_PROJECT_MANAGEMENT_COURSE, id: '000000000' } }
       this.saveCoursesToStorage(initialCourses)
       console.log('🆕 Reinitialized with correct course ID: 000000000')
+      
+      // Forzar recarga para aplicar cambios
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     }
   }
 }
