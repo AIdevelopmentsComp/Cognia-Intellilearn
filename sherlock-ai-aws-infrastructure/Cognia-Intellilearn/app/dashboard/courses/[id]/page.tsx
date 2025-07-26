@@ -385,7 +385,7 @@ export default function CourseDetailPage() {
                 course.title
               )}
             </h1>
-            {userMode === UserMode.ADMIN && isEditing !== 'course' && (
+            {userMode === 'admin' && isEditing !== 'course' && (
               <button
                 onClick={startEditingCourse}
                 className="neuro-button p-2 rounded-lg hover:bg-gray-50 transition-all duration-300"
@@ -547,7 +547,7 @@ export default function CourseDetailPage() {
             <div className="neuro-container rounded-2xl p-6 sticky top-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-[#132944]">Contenido del Curso</h2>
-                {userMode === UserMode.ADMIN && (
+                {userMode === 'admin' && (
                   <button
                     onClick={() => setShowAddModuleModal(true)}
                     className="neuro-button p-2 rounded-lg hover:bg-gray-50 transition-all duration-300"
@@ -558,7 +558,7 @@ export default function CourseDetailPage() {
                 )}
           </div>
 
-              {userMode === UserMode.ADMIN ? (
+              {userMode === 'admin' ? (
                 // Vista de administrador
                 <div className="space-y-4">
                   {course.modules.map((moduleItem) => (
@@ -848,7 +848,7 @@ export default function CourseDetailPage() {
                 </div>
               ) : (
                 <div>
-                  {userMode === UserMode.STUDENT && currentLessonId ? (
+                  {userMode === 'student' && currentLessonId ? (
                     // Vista de estudiante con lección seleccionada
                     (() => {
                       const currentLesson = getCurrentLesson()
@@ -934,10 +934,10 @@ export default function CourseDetailPage() {
                     // Vista por defecto (admin o estudiante sin lección seleccionada)
                     <div>
                       <h2 className="text-2xl font-bold text-[#132944] mb-6">
-                        {userMode === UserMode.STUDENT ? 'Bienvenido al Curso' : course.modules[0]?.lessons[1]?.title || 'Metodologías Ágiles vs Tradicionales'}
+                        {userMode === 'student' ? 'Bienvenido al Curso' : course.modules[0]?.lessons[1]?.title || 'Metodologías Ágiles vs Tradicionales'}
                       </h2>
                       
-                      {userMode === UserMode.STUDENT ? (
+                      {userMode === 'student' ? (
                         <div className="text-center py-12">
                           <div className="neuro-container w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-6">
                             <FaBook className="text-4xl text-[#3C31A3]" />

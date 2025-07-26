@@ -102,7 +102,7 @@ export default function AddLessonModal({
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    type: 'reading' as 'video' | 'reading' | 'quiz' | 'assignment',
+    type: 'reading' as 'video' | 'reading' | 'quiz' | 'assignment' | 'podcast' | 'image',
     content: '',
     videoUrl: '',
     duration: '',

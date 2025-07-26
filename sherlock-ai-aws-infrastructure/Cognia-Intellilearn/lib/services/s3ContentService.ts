@@ -61,7 +61,7 @@ export class S3ContentService {
       const command = new PutObjectCommand({
         Bucket: S3_CONFIG.BUCKET_NAME,
         Key: s3Key,
-        Body: file instanceof File ? await file.arrayBuffer() : file,
+        Body: file instanceof File ? new Uint8Array(await file.arrayBuffer()) : file,
         ContentType: mimeType,
         Metadata: {
           courseNumber,

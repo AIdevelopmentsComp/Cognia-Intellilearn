@@ -16,7 +16,7 @@ export interface UseCourseResult {
   deleteModule: (moduleId: string) => Promise<void>
   
   // Lesson operations
-  createLesson: (moduleId: string, lessonData: { title: string; description: string; type: 'video' | 'reading' | 'quiz' | 'assignment'; content: string; videoUrl?: string; duration: string; order: number }) => Promise<void>
+  createLesson: (moduleId: string, lessonData: { title: string; description: string; type: 'video' | 'reading' | 'quiz' | 'assignment' | 'podcast' | 'image'; content: string; videoUrl?: string; duration: string; order: number }) => Promise<void>
   updateLesson: (lessonId: string, updates: Partial<Lesson>) => Promise<void>
   deleteLesson: (lessonId: string) => Promise<void>
   
@@ -142,7 +142,7 @@ export function useCourse(courseId: string): UseCourseResult {
   }
 
   // Crear lección
-  const createLesson = async (moduleId: string, lessonData: { title: string; description: string; type: 'video' | 'reading' | 'quiz' | 'assignment'; content: string; videoUrl?: string; duration: string; order: number }) => {
+  const createLesson = async (moduleId: string, lessonData: { title: string; description: string; type: 'video' | 'reading' | 'quiz' | 'assignment' | 'podcast' | 'image'; content: string; videoUrl?: string; duration: string; order: number }) => {
     try {
       setError(null)
       console.log('➕ Creating new lesson:', lessonData)
