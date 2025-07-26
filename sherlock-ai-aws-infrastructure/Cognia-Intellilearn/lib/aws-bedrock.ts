@@ -70,7 +70,7 @@ export async function chatWithAI(
       // Ensure first message is from user
       if (messages[0].role !== 'user') {
         // Remove any initial assistant messages
-        while (messages.length > 0 && messages[0].role !== 'user') {
+        while (messages.length > 0 && messages[0].role === 'assistant') {
           messages.shift();
         }
       }

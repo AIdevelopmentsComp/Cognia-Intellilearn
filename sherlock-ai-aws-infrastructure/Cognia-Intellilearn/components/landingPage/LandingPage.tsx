@@ -268,7 +268,7 @@ export default function LandingPage() {
                         ))}
                     </div>
 
-                    <div className="bg-gradient-to-br from-[#0B0D2A] to-[#2A1E90] text-white p-6 md:p-10 rounded-2xl shadow-xl space-y-6 neuro-container">
+                    <div className="bg-gradient-to-br from-[#132944] to-[#3C31A3] text-white p-6 md:p-10 rounded-2xl shadow-xl space-y-6 neuro-container">
                         <h3 className="text-lg md:text-xl font-bold">
                             Habla con nuestro asistente y descubre cómo implementar programas académicos en línea.
                         </h3>
@@ -286,7 +286,7 @@ export default function LandingPage() {
             </section>
 
             {/* CTA Section with neumorphism */}
-            <section className="relative bg-gradient-to-r from-[#0B0D2A] to-[#2A1E90] py-20 text-white text-center rounded-2xl shadow-lg mx-4 md:mx-6 overflow-hidden neuro-container">
+            <section className="relative bg-gradient-to-r from-[#132944] to-[#3C31A3] py-20 text-white text-center rounded-2xl shadow-lg mx-4 md:mx-6 overflow-hidden neuro-container">
                 {/* SVG izquierdo */}
                 <div className="absolute left-0 top-0 h-full w-1/2">
                     <img

@@ -151,7 +151,7 @@ export const DashboardLayout = ({
                     </div>
                     <div className="px-4 py-3 hover:bg-gray-50">
                       <p className="text-sm font-medium">Tarea próxima a vencer</p>
-                      <p className="text-xs text-gray-500">La tarea "Análisis de datos" vence mañana</p>
+                      <p className="text-xs text-gray-500">La tarea &quot;Análisis de datos&quot; vence mañana</p>
                     </div>
                   </div>
                 </div>

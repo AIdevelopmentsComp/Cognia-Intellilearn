@@ -130,39 +130,25 @@ export const Sidebar = () => {
     <>
       {/* Mobile sidebar toggle button with neumorphism */}
       <button
-        className="fixed top-4 left-4 neuro-button p-3 rounded-full shadow-md md:hidden z-30 bg-[#132944] text-white"
+        className="fixed top-4 left-4 neuro-button p-3 rounded-full shadow-md md:hidden z-30"
         onClick={toggleSidebar}
         aria-label="Toggle sidebar"
-        style={{
-          background: '#132944',
-          boxShadow: '-4px -4px 8px rgba(255, 255, 255, 0.1), 4px 4px 8px rgba(0, 0, 0, 0.8)'
-        }}
       >
         {isOpen ? <FiX /> : <FiMenu />}
       </button>
 
       {/* Sidebar container with neumorphic design */}
       <aside
-        className={`fixed md:static w-[280px] h-screen text-white z-20 transform transition-all duration-300 ${
+        className={`fixed md:static w-[280px] h-screen z-20 transform transition-all duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 flex flex-col neuro-sidebar`}
-        style={{
-          background: '#132944',
-          boxShadow: '-4px -4px 10px rgba(255, 255, 255, 0.05), 4px 4px 10px rgba(0, 0, 0, 0.8)'
-        }}
       >
         {/* Logo section with neumorphic container */}
         <div className="py-6 px-4 flex justify-center">
-          <div 
-            className="neuro-container p-4 rounded-lg"
-            style={{
-              background: '#132944',
-              boxShadow: '-6px -6px 12px rgba(255, 255, 255, 0.05), 6px 6px 12px rgba(0, 0, 0, 0.8)'
-            }}
-          >
+          <div className="neuro-container p-4 rounded-lg">
             <Link href="/dashboard" className="block">
               <img
-                src="/assets/images/logo-white.svg"
+                src="/assets/images/Logo.svg"
                 alt="CognIA Logo"
                 width={160}
                 height={40}
@@ -180,27 +166,15 @@ export const Sidebar = () => {
 
         {/* User profile section with neumorphic elements */}
         <div className="px-5 py-4 mb-6">
-          <div 
-            className="neuro-container p-4 rounded-lg flex items-center"
-            style={{
-              background: '#132944',
-              boxShadow: '-4px -4px 8px rgba(255, 255, 255, 0.05), 4px 4px 8px rgba(0, 0, 0, 0.8)'
-            }}
-          >
-            <div 
-              className="neuro-avatar w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center uppercase font-bold text-white"
-              style={{
-                background: 'linear-gradient(135deg, var(--neuro-purple), var(--neuro-purple-light))',
-                boxShadow: '-3px -3px 6px rgba(255, 255, 255, 0.1), 3px 3px 6px rgba(0, 0, 0, 0.8)'
-              }}
-            >
+          <div className="neuro-container p-4 rounded-lg flex items-center">
+            <div className="neuro-avatar w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center uppercase font-bold text-white">
               {user?.displayName ? user.displayName.charAt(0) : 'U'}
             </div>
             <div className="ml-3">
-              <p className="text-white text-sm font-medium">
+              <p className="text-gray-800 text-sm font-medium">
                 {user?.displayName || 'Usuario Demo'}
               </p>
-              <p className="text-xs text-white/60">
+              <p className="text-xs text-gray-500">
                 {user?.email || 'usuario@ejemplo.com'}
               </p>
             </div>
@@ -209,13 +183,7 @@ export const Sidebar = () => {
 
         {/* Main navigation menu with neumorphic items */}
         <nav className="flex-1 px-4 py-2 overflow-y-auto">
-          <div 
-            className="neuro-container p-4 rounded-lg mb-6"
-            style={{
-              background: '#132944',
-              boxShadow: 'inset -4px -4px 8px rgba(255, 255, 255, 0.02), inset 4px 4px 8px rgba(0, 0, 0, 0.8)'
-            }}
-          >
+          <div className="neuro-inset p-4 rounded-lg mb-6">
             <ul className="space-y-2">
               {mainNavItems.map((item) => (
                 <li key={item.path}>
@@ -224,16 +192,13 @@ export const Sidebar = () => {
                     className={`neuro-nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-300 ${
                       isActive(item.path)
                         ? 'text-white font-medium'
-                        : 'text-white/80 hover:text-white'
+                        : 'text-gray-700 hover:text-gray-900'
                     }`}
                     style={isActive(item.path) ? {
-                      background: 'linear-gradient(135deg, var(--neuro-purple-light), var(--neuro-purple))',
-                      boxShadow: 'inset -3px -3px 6px rgba(255, 255, 255, 0.1), inset 3px 3px 6px rgba(0, 0, 0, 0.8)',
-                      color: 'white'
-                    } : {
-                      background: '#132944',
-                      boxShadow: '-3px -3px 6px rgba(255, 255, 255, 0.02), 3px 3px 6px rgba(0, 0, 0, 0.8)'
-                    }}
+                      background: 'linear-gradient(135deg, var(--cognia-blue-dark), var(--cognia-blue-purple))',
+                      color: 'white',
+                      boxShadow: '0 2px 8px rgba(19, 41, 68, 0.25)'
+                    } : {}}
                   >
                     <span className="text-lg">{item.icon}</span>
                     {item.label}
@@ -245,19 +210,13 @@ export const Sidebar = () => {
 
           {/* Tools section header */}
           <div className="mb-4">
-            <p className="px-4 text-xs font-medium text-white/50 uppercase tracking-wider">
+            <p className="px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
               Herramientas
             </p>
           </div>
 
           {/* Secondary navigation menu with neumorphic items */}
-          <div 
-            className="neuro-container p-4 rounded-lg"
-            style={{
-              background: '#132944',
-              boxShadow: 'inset -4px -4px 8px rgba(255, 255, 255, 0.02), inset 4px 4px 8px rgba(0, 0, 0, 0.8)'
-            }}
-          >
+          <div className="neuro-inset p-4 rounded-lg">
             <ul className="space-y-2">
               {secondaryNavItems.map((item) => (
                 <li key={item.path}>
@@ -266,16 +225,13 @@ export const Sidebar = () => {
                     className={`neuro-nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-300 ${
                       isActive(item.path)
                         ? 'text-white font-medium'
-                        : 'text-white/80 hover:text-white'
+                        : 'text-gray-700 hover:text-gray-900'
                     }`}
                     style={isActive(item.path) ? {
-                      background: 'linear-gradient(135deg, var(--neuro-purple-light), var(--neuro-purple))',
-                      boxShadow: 'inset -3px -3px 6px rgba(255, 255, 255, 0.1), inset 3px 3px 6px rgba(0, 0, 0, 0.8)',
-                      color: 'white'
-                    } : {
-                      background: '#132944',
-                      boxShadow: '-3px -3px 6px rgba(255, 255, 255, 0.02), 3px 3px 6px rgba(0, 0, 0, 0.8)'
-                    }}
+                      background: 'linear-gradient(135deg, var(--cognia-blue-dark), var(--cognia-blue-purple))',
+                      color: 'white',
+                      boxShadow: '0 2px 8px rgba(19, 41, 68, 0.25)'
+                    } : {}}
                   >
                     <span className="text-lg">{item.icon}</span>
                     {item.label}
@@ -290,19 +246,7 @@ export const Sidebar = () => {
         <div className="p-4 mt-auto">
           <button
             onClick={handleSignOut}
-            className="neuro-button flex items-center justify-center gap-2 w-full py-3 px-4 text-white text-sm rounded-lg transition-all duration-300 font-semibold"
-            style={{
-              background: '#132944',
-              boxShadow: '-6px -6px 12px rgba(255, 255, 255, 0.05), 6px 6px 12px rgba(0, 0, 0, 0.8)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = 'inset -4px -4px 8px rgba(255, 255, 255, 0.02), inset 4px 4px 8px rgba(0, 0, 0, 0.8)';
-              e.currentTarget.style.transform = 'scale(0.98)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '-6px -6px 12px rgba(255, 255, 255, 0.05), 6px 6px 12px rgba(0, 0, 0, 0.8)';
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
+            className="neuro-button flex items-center justify-center gap-2 w-full py-3 px-4 text-gray-700 text-sm rounded-lg transition-all duration-300 font-semibold hover:text-gray-900"
           >
             <FiLogOut className="text-lg" />
             Cerrar Sesión

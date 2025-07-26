@@ -1,0 +1,3 @@
+secret=VHqetma/kDjD36ocyuU2H+RWkOXdsU9u+NZe6h9L
+id=AKIAVI3ULX4ZB3253Q6R
+us-east-1

@@ -344,4 +344,4 @@ export const auth = {
  * Aliases for backwards compatibility with Firebase
  */
 export const onAuthStateChanged = subscribeToAuthChanges;
-export const User = CognitoUser; 
+export type User = CognitoUser; 

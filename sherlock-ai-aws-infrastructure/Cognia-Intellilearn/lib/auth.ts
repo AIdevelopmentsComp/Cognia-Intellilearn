@@ -1,5 +1,6 @@
-import { getServerSession, type NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+/*
+// import { getServerSession, type NextAuthOptions } from "next-auth";
+// import GoogleProvider from "next-auth/providers/google";
 
 // Ampliar la definición de tipos de la sesión
 declare module "next-auth" {
@@ -44,3 +45,8 @@ export const authOptions: NextAuthOptions = {
 };
 
 export const getAuthSession = () => getServerSession(authOptions); 
+*/
+
+// Placeholder exports to prevent build errors - using Firebase Auth instead
+export const authOptions = {};
+export const getAuthSession = () => null; 

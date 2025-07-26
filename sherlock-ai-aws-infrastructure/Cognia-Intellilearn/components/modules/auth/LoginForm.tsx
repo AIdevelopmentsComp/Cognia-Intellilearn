@@ -112,7 +112,7 @@ const LoginForm = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#132944] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#1a3a5c] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="neuro-button-primary w-full py-3 px-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 text-white"
         >
           {loading ? (
             <div className="flex items-center justify-center">

@@ -179,11 +179,6 @@ export const FloatingAssistant = () => {
     }
   };
 
-  // Don't render anything if user is not authenticated
-  if (!user) {
-    return null;
-  }
-
   /**
    * Initialize chat with personalized welcome message
    * @context Sets up initial chat state when user is authenticated
@@ -201,6 +196,11 @@ export const FloatingAssistant = () => {
     }
   }, [user]);
 
+  // Don't render anything if user is not authenticated
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Assistant button with neumorphism - visible when chat is closed */}
@@ -208,20 +208,8 @@ export const FloatingAssistant = () => {
         <button
           onClick={handleToggle}
           className="neuro-button-primary flex items-center gap-3 px-6 py-4 rounded-2xl text-white font-semibold shadow-xl transition-all duration-300 neuro-fade-in"
-          style={{
-            background: 'linear-gradient(135deg, #132944, #3C31A3)',
-            boxShadow: '-8px -8px 16px rgba(19, 41, 68, 0.3), 8px 8px 16px rgba(60, 49, 163, 0.6)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
-            e.currentTarget.style.boxShadow = '-12px -12px 24px rgba(19, 41, 68, 0.4), 12px 12px 24px rgba(60, 49, 163, 0.7)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1) translateY(0)';
-            e.currentTarget.style.boxShadow = '-8px -8px 16px rgba(19, 41, 68, 0.3), 8px 8px 16px rgba(60, 49, 163, 0.6)';
-          }}
         >
-          <div className="neuro-avatar w-8 h-8 rounded-full flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
             <img src="/assets/images/IA.svg" alt="Asistente CognIA" width={24} height={24} />
           </div>
           <span>Asistente CognIA</span>
@@ -232,53 +220,26 @@ export const FloatingAssistant = () => {
       {isOpen && (
         <div className="absolute bottom-0 right-0 w-96 h-[500px] max-h-[80vh] neuro-chat overflow-hidden flex flex-col transition-all duration-300 neuro-fade-in">
           {/* Header with neumorphic design */}
-          <div 
-            className="p-4 text-white flex items-center justify-between cursor-move"
-            style={{
-              background: 'linear-gradient(135deg, #132944, #3C31A3)',
-              boxShadow: 'inset -2px -2px 4px rgba(255, 255, 255, 0.1), inset 2px 2px 4px rgba(0, 0, 0, 0.3)'
-            }}
-          >
+          <div className="p-4 text-white flex items-center justify-between cursor-move rounded-t-2xl"
+               style={{
+                 background: 'linear-gradient(135deg, var(--cognia-blue-dark), var(--cognia-blue-purple))'
+               }}>
             <div className="flex items-center">
-              <div 
-                className="neuro-avatar w-8 h-8 rounded-full flex items-center justify-center mr-3"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  boxShadow: '-2px -2px 4px rgba(255, 255, 255, 0.1), 2px 2px 4px rgba(0, 0, 0, 0.3)'
-                }}
-              >
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3">
                 <img src="/assets/images/IA.svg" alt="CognIA" width={20} height={20} />
               </div>
               <h3 className="font-semibold">Asistente CognIA</h3>
             </div>
             <button 
               onClick={handleToggle} 
-              className="neuro-button p-2 rounded-full transition-all duration-300 text-white"
-              style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                boxShadow: '-3px -3px 6px rgba(255, 255, 255, 0.1), 3px 3px 6px rgba(0, 0, 0, 0.3)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = 'inset -2px -2px 4px rgba(255, 255, 255, 0.1), inset 2px 2px 4px rgba(0, 0, 0, 0.3)';
-                e.currentTarget.style.transform = 'scale(0.95)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '-3px -3px 6px rgba(255, 255, 255, 0.1), 3px 3px 6px rgba(0, 0, 0, 0.3)';
-                e.currentTarget.style.transform = 'scale(1)';
-              }}
+              className="neuro-button p-2 rounded-full transition-all duration-300 text-white bg-white/10 hover:bg-white/20"
             >
               <FaTimes size={14} />
             </button>
           </div>
 
           {/* Chat message area with neumorphic background */}
-          <div 
-            className="flex-1 overflow-y-auto p-4"
-            style={{ 
-              background: 'var(--neuro-bg-light)',
-              boxShadow: 'inset -4px -4px 8px rgba(255, 255, 255, 0.5), inset 4px 4px 8px rgba(0, 0, 0, 0.1)'
-            }}
-          >
+          <div className="flex-1 overflow-y-auto p-4 neuro-inset">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -302,9 +263,9 @@ export const FloatingAssistant = () => {
               <div className="flex justify-start mb-4">
                 <div className="neuro-message assistant max-w-[80%] p-3">
                   <div className="flex space-x-2">
-                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce"></div>
-                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <div className="w-2 h-2 rounded-full animate-bounce" style={{backgroundColor: 'var(--cognia-blue-purple)'}}></div>
+                    <div className="w-2 h-2 rounded-full animate-bounce" style={{backgroundColor: 'var(--cognia-blue-purple)', animationDelay: '0.2s'}}></div>
+                    <div className="w-2 h-2 rounded-full animate-bounce" style={{backgroundColor: 'var(--cognia-blue-purple)', animationDelay: '0.4s'}}></div>
                   </div>
                 </div>
               </div>
@@ -315,13 +276,7 @@ export const FloatingAssistant = () => {
           </div>
 
           {/* Input area with neumorphic design */}
-          <div 
-            className="p-4"
-            style={{ 
-              background: 'var(--neuro-bg-light)',
-              borderTop: '1px solid rgba(0, 0, 0, 0.1)'
-            }}
-          >
+          <div className="p-4 border-t border-gray-200">
             <div className="flex items-end gap-3">
               <div className="relative flex-grow">
                 <textarea
@@ -341,15 +296,9 @@ export const FloatingAssistant = () => {
                   disabled={!inputValue.trim() || isLoading}
                   className={`absolute right-3 top-1/2 transform -translate-y-1/2 neuro-button p-2 rounded-full transition-all duration-300 ${
                     inputValue.trim() && !isLoading 
-                      ? 'text-purple-600 hover:text-purple-700' 
+                      ? 'text-gray-600 hover:text-gray-800' 
                       : 'text-gray-400 cursor-not-allowed'
                   }`}
-                  style={inputValue.trim() && !isLoading ? {
-                    boxShadow: '-3px -3px 6px rgba(255, 255, 255, 0.7), 3px 3px 6px rgba(0, 0, 0, 0.15)'
-                  } : {
-                    boxShadow: 'none',
-                    background: 'transparent'
-                  }}
                 >
                   <FaPaperPlane size={14} />
                 </button>
