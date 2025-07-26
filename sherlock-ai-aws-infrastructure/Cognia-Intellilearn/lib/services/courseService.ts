@@ -20,6 +20,7 @@ const bedrockClient = new BedrockRuntimeClient(awsConfig)
 
 // Constantes para el bucket vectorial existente
 const VECTOR_BUCKET_NAME = 'cognia-intellilearn'
+const CONTENT_BUCKET_NAME = 'cogniaintellilearncontent'
 const COURSES_TABLE = 'intellilearn-courses'
 const MODULES_TABLE = 'intellilearn-modules'
 const LESSONS_TABLE = 'intellilearn-lessons'
@@ -63,7 +64,7 @@ export interface Lesson {
   courseId: string
   title: string
   description: string
-  type: 'video' | 'reading' | 'quiz' | 'assignment'
+  type: 'video' | 'reading' | 'quiz' | 'assignment' | 'podcast' | 'image'
   content: string
   videoUrl?: string
   duration: string

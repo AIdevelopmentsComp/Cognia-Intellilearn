@@ -246,7 +246,7 @@ export default function CourseDetailPage() {
   const handleSaveLesson = async (lessonData: { 
     title: string; 
     description: string; 
-    type: 'video' | 'reading' | 'quiz' | 'assignment'; 
+    type: 'video' | 'reading' | 'quiz' | 'assignment' | 'podcast' | 'image'; 
     content: string; 
     videoUrl?: string; 
     duration: string; 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { FaPlay, FaBookOpen, FaQuestionCircle, FaClipboardList, FaArrowRight, FaArrowLeft, FaSave, FaCheck, FaUpload, FaSpinner } from 'react-icons/fa'
+import { FaPlay, FaBookOpen, FaQuestionCircle, FaClipboardList, FaArrowRight, FaArrowLeft, FaSave, FaCheck, FaUpload, FaSpinner, FaMicrophone, FaImage } from 'react-icons/fa'
 import NeumorphicModal from '@/components/common/NeumorphicModal'
 
 interface AddLessonModalProps {
@@ -10,7 +10,7 @@ interface AddLessonModalProps {
   onSave: (lessonData: { 
     title: string; 
     description: string; 
-    type: 'video' | 'reading' | 'quiz' | 'assignment'; 
+    type: 'video' | 'reading' | 'quiz' | 'assignment' | 'podcast' | 'image'; 
     content: string; 
     videoUrl?: string; 
     duration: string; 
@@ -34,33 +34,55 @@ const lessonTypes = [
     type: 'video' as const,
     icon: FaPlay,
     title: 'Video Lección',
-    description: 'Contenido educativo en formato de video',
+    description: 'Se guardará en S3/Videos/',
     color: 'text-red-500',
-    bgColor: 'bg-red-50'
+    bgColor: 'bg-red-50',
+    s3Folder: 'Videos'
   },
   {
     type: 'reading' as const,
     icon: FaBookOpen,
     title: 'Lectura',
-    description: 'Material de lectura y documentos',
+    description: 'Se guardará en S3/Documents/',
     color: 'text-blue-500',
-    bgColor: 'bg-blue-50'
+    bgColor: 'bg-blue-50',
+    s3Folder: 'Documents'
+  },
+  {
+    type: 'podcast' as const,
+    icon: FaMicrophone,
+    title: 'Podcast',
+    description: 'Se guardará en S3/Podcast/',
+    color: 'text-orange-500',
+    bgColor: 'bg-orange-50',
+    s3Folder: 'Podcast'
   },
   {
     type: 'quiz' as const,
     icon: FaQuestionCircle,
     title: 'Quiz',
-    description: 'Evaluación con preguntas interactivas',
+    description: 'Se guardará en S3/Quiz/',
     color: 'text-green-500',
-    bgColor: 'bg-green-50'
+    bgColor: 'bg-green-50',
+    s3Folder: 'Quiz'
   },
   {
     type: 'assignment' as const,
     icon: FaClipboardList,
     title: 'Tarea',
-    description: 'Asignación práctica para completar',
+    description: 'Se guardará en S3/Tasks/',
     color: 'text-purple-500',
-    bgColor: 'bg-purple-50'
+    bgColor: 'bg-purple-50',
+    s3Folder: 'Tasks'
+  },
+  {
+    type: 'image' as const,
+    icon: FaImage,
+    title: 'Imagen',
+    description: 'Se guardará en S3/Images/',
+    color: 'text-pink-500',
+    bgColor: 'bg-pink-50',
+    s3Folder: 'Images'
   }
 ]
 
