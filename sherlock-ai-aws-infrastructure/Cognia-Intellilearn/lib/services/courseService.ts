@@ -32,6 +32,7 @@ export interface Course {
   description: string
   instructor: string
   thumbnail: string
+  imageUrl?: string // Nueva propiedad para la imagen personalizada del curso
   category: string
   level: 'beginner' | 'intermediate' | 'advanced'
   duration: string
@@ -117,6 +118,7 @@ const INITIAL_PROJECT_MANAGEMENT_COURSE: Course = {
   description: 'Aprende los conceptos básicos de gestión de proyectos con metodologías ágiles y tradicionales.',
   instructor: 'Dr. Carlos Mendoza',
   thumbnail: '/assets/images/Image.svg',
+  imageUrl: '/assets/images/course-pm.jpg', // Imagen por defecto del curso
   category: 'Management',
   level: 'beginner',
   duration: '6 horas',
