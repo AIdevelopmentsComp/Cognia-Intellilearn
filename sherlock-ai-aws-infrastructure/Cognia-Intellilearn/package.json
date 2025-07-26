@@ -1,0 +1,38 @@
+{
+  "name": "cognia-intellilearn-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.848.0",
+    "@aws-sdk/client-cognito-identity": "^3.848.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.848.0",
+    "@aws-sdk/client-s3": "^3.850.0",
+    "@next/font": "^14.2.15",
+    "autoprefixer": "^10.4.21",
+    "aws-amplify": "^6.15.4",
+    "next": "15.2.2",
+    "postcss": "^8.5.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "recharts": "^2.15.3"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.2",
+    "file-loader": "^6.2.0",
+    "responsive-loader": "^3.1.2",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5"
+  }
+}
