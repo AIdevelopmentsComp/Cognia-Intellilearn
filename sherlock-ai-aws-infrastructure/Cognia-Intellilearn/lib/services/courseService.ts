@@ -114,7 +114,7 @@ const COURSES_STORAGE_KEY = 'intellilearn_courses'
 
 // Datos iniciales del curso de Project Management
 const INITIAL_PROJECT_MANAGEMENT_COURSE: Course = {
-  id: '1',
+  id: '000000000',
   title: 'Fundamentos de Project Management',
   description: 'Aprende los conceptos básicos de gestión de proyectos con metodologías ágiles y tradicionales.',
   instructor: 'Dr. Carlos Mendoza',
@@ -335,7 +335,7 @@ export class CourseService {
   private loadCoursesFromStorage(): Record<string, Course> {
     if (typeof window === 'undefined') {
       // Si estamos en el servidor, devolver datos por defecto
-      return { '1': INITIAL_PROJECT_MANAGEMENT_COURSE }
+      return { '000000000': INITIAL_PROJECT_MANAGEMENT_COURSE }
     }
 
     try {
@@ -343,6 +343,15 @@ export class CourseService {
       if (stored) {
         const courses = JSON.parse(stored)
         console.log('📦 Courses loaded from localStorage')
+        
+        // Migrar curso '1' a '000000000' si existe
+        if (courses['1'] && !courses['000000000']) {
+          courses['000000000'] = { ...courses['1'], id: '000000000' }
+          delete courses['1']
+          this.saveCoursesToStorage(courses)
+          console.log('🔄 Migrated course from ID 1 to 000000000')
+        }
+        
         return courses
       }
     } catch (error) {
@@ -350,7 +359,7 @@ export class CourseService {
     }
 
     // Si no hay datos almacenados, inicializar con el curso por defecto
-    const initialCourses = { '1': INITIAL_PROJECT_MANAGEMENT_COURSE }
+    const initialCourses = { '000000000': { ...INITIAL_PROJECT_MANAGEMENT_COURSE, id: '000000000' } }
     this.saveCoursesToStorage(initialCourses)
     console.log('🆕 Initialized courses with default data')
     return initialCourses
@@ -441,6 +450,24 @@ export class CourseService {
     } catch (error) {
       console.error('Error getting course:', error)
       throw new Error('Failed to get course')
+    }
+  }
+
+  /**
+   * Obtiene todos los cursos disponibles
+   */
+  async getAllCourses(): Promise<Course[]> {
+    try {
+      console.log('🔍 Getting all courses')
+      
+      const courses = this.loadCoursesFromStorage()
+      const courseList = Object.values(courses)
+      
+      console.log(`✅ Found ${courseList.length} courses`)
+      return courseList
+    } catch (error) {
+      console.error('Error getting all courses:', error)
+      throw new Error('Failed to get courses')
     }
   }
 

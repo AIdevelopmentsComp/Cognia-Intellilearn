@@ -38,9 +38,12 @@ import {
   FiMessageSquare,
   FiUser,
   FiTrendingUp,
-  FiFileText
+  FiFileText,
+  FiToggleLeft,
+  FiToggleRight
 } from 'react-icons/fi';
-import { useAuth } from '@/lib/AuthContext';
+import { useAuth } from '@/lib/AuthContext'
+import { useUserMode } from '@/lib/contexts/UserModeContext';
 
 /**
  * Sidebar Navigation Component with Neumorphism
@@ -68,6 +71,7 @@ export const Sidebar = () => {
   const router = useRouter()
   const pathname = usePathname()
   const { user, signOut } = useAuth()
+  const { userMode, toggleUserMode } = useUserMode()
   const [isOpen, setIsOpen] = useState(false)
 
   /**
@@ -242,8 +246,30 @@ export const Sidebar = () => {
           </div>
         </nav>
 
-        {/* Sign out button with neumorphic design */}
-        <div className="p-4 mt-auto">
+        {/* User mode toggle and sign out buttons */}
+        <div className="p-4 mt-auto space-y-3">
+          {/* User Mode Toggle */}
+          <div className="neuro-inset rounded-lg p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-xs font-medium">Modo de Usuario</span>
+              <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                userMode === 'admin' 
+                  ? 'bg-orange-100 text-orange-700' 
+                  : 'bg-blue-100 text-blue-700'
+              }`}>
+                {userMode === 'admin' ? 'Administrador' : 'Estudiante'}
+              </div>
+            </div>
+            <button
+              onClick={toggleUserMode}
+              className="neuro-button flex items-center justify-center gap-2 w-full py-2 px-3 text-gray-700 text-sm rounded-lg transition-all duration-300 hover:text-gray-900"
+            >
+              {userMode === 'admin' ? <FiToggleRight className="text-orange-500" /> : <FiToggleLeft className="text-blue-500" />}
+              <span>Cambiar a {userMode === 'admin' ? 'Estudiante' : 'Admin'}</span>
+            </button>
+          </div>
+
+          {/* Sign out button */}
           <button
             onClick={handleSignOut}
             className="neuro-button flex items-center justify-center gap-2 w-full py-3 px-4 text-gray-700 text-sm rounded-lg transition-all duration-300 font-semibold hover:text-gray-900"

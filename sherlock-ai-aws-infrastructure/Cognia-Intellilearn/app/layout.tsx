@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { AuthProvider } from '@/lib/AuthContext'
+import { UserModeProvider } from '@/lib/contexts/UserModeContext'
 
 export const metadata: Metadata = {
   title: 'CognIA | Tu Campus Virtual con Inteligencia Artificial',
@@ -19,7 +20,9 @@ export default function RootLayout({
     <html lang="es">
       <body className="font-sans antialiased">
         <AuthProvider>
-          {children}
+          <UserModeProvider>
+            {children}
+          </UserModeProvider>
         </AuthProvider>
       </body>
     </html>

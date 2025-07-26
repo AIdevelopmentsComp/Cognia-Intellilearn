@@ -24,14 +24,11 @@ import {
 } from 'react-icons/fa'
 import { useCourse, useSemanticSearch } from '@/hooks/useCourse'
 import { Course, Module, Lesson } from '@/lib/services/courseService'
+import { useUserMode } from '@/lib/contexts/UserModeContext'
 import AddModuleModal from '@/components/course/AddModuleModal'
 import AddLessonModal from '@/components/course/AddLessonModal'
 
-// Tipos para el modo de usuario
-enum UserMode {
-  STUDENT = 'student',
-  ADMIN = 'admin'
-}
+// El modo de usuario ahora se gestiona globalmente
 
 export default function CourseDetailPage() {
   const params = useParams()
@@ -55,7 +52,7 @@ export default function CourseDetailPage() {
   const { searchContent, getRecommendations } = useSemanticSearch()
 
   // Estados del componente
-  const [userMode, setUserMode] = useState<UserMode>(UserMode.ADMIN)
+  const { userMode } = useUserMode() // Usar contexto global
   const [isEditing, setIsEditing] = useState<string | null>(null)
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [editingLesson, setEditingLesson] = useState<string | null>(null)
@@ -80,18 +77,7 @@ export default function CourseDetailPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Funciones de modo de usuario
-  const toggleUserMode = () => {
-    setUserMode(prev => prev === UserMode.ADMIN ? UserMode.STUDENT : UserMode.ADMIN)
-    setIsEditing(null)
-    setEditingModule(null)
-    setEditingLesson(null)
-    
-    // Si cambia a modo estudiante, seleccionar la primera lección
-    if (userMode === UserMode.ADMIN && course?.modules[0]?.lessons[0]) {
-      setCurrentLessonId(course.modules[0].lessons[0].id)
-      setExpandedModules(new Set([course.modules[0].id]))
-    }
-  }
+  // El toggle de modo se maneja globalmente desde el sidebar
 
   // Funciones para navegación de estudiante
   const selectLesson = (lessonId: string) => {
@@ -349,14 +335,14 @@ export default function CourseDetailPage() {
   }
 
   if (loading) {
-    return (
+        return (
       <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 flex items-center justify-center">
         <div className="neuro-container rounded-2xl p-8 text-center">
           <FaSpinner className="animate-spin inline mr-2 text-[#3C31A3] text-2xl" />
           <span className="text-[#132944] text-xl font-medium">Cargando curso...</span>
-        </div>
-      </div>
-    )
+            </div>
+          </div>
+        )
   }
 
   if (error || !course) {
@@ -397,8 +383,8 @@ export default function CourseDetailPage() {
                 <FaEdit className="text-[#3C31A3]" />
               </button>
             )}
-          </div>
-          
+            </div>
+            
           <div className="flex items-center space-x-4">
             {/* Búsqueda semántica */}
             <div className="flex items-center space-x-2">
@@ -474,8 +460,8 @@ export default function CourseDetailPage() {
                   onChange={(e) => setEditData(prev => ({...prev, tags: e.target.value}))}
                   className="w-full neuro-inset px-4 py-2 rounded-lg text-[#132944] bg-transparent border-none outline-none focus:ring-2 focus:ring-[#3C31A3]"
                 />
-              </div>
-            </div>
+        </div>
+      </div>
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Descripción</label>
               <textarea
@@ -522,7 +508,7 @@ export default function CourseDetailPage() {
                     onChange={handleImageUpload}
                     className="hidden"
                   />
-                </div>
+              </div>
               </div>
             </div>
             <div className="flex space-x-4">
@@ -559,8 +545,8 @@ export default function CourseDetailPage() {
                     <FaPlus className="text-[#3C31A3]" />
                   </button>
                 )}
-              </div>
-              
+          </div>
+
               {userMode === UserMode.ADMIN ? (
                 // Vista de administrador
                 <div className="space-y-4">
@@ -588,7 +574,7 @@ export default function CourseDetailPage() {
                               >
                                 <FaSave />
                               </button>
-                              <button
+                <button
                                 onClick={cancelEdit}
                                 className="neuro-button px-3 py-1 rounded text-sm text-gray-700 hover:bg-gray-50"
                               >
@@ -601,7 +587,7 @@ export default function CourseDetailPage() {
                             <div className="flex-1">
                               <h3 className="font-medium text-[#132944]">{moduleItem.title}</h3>
                               <p className="text-gray-600 text-sm mt-1">{moduleItem.description}</p>
-                            </div>
+                  </div>
                             <div className="flex space-x-2 ml-2">
                               <button
                                 onClick={() => startEditingModule(moduleItem)}
@@ -614,7 +600,7 @@ export default function CourseDetailPage() {
                                 className="text-gray-400 hover:text-red-500 text-sm transition-colors"
                               >
                                 <FaTrash />
-                              </button>
+                </button>
                             </div>
                           </>
                         )}
@@ -716,13 +702,13 @@ export default function CourseDetailPage() {
                                   {lesson.duration}
                                 </p>
                               </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
               )}
             </div>
           </div>
@@ -777,7 +763,7 @@ export default function CourseDetailPage() {
                       <option value="quiz">Quiz</option>
                       <option value="assignment">Tarea</option>
                     </select>
-                  </div>
+        </div>
 
                   {editData.type === 'video' && (
                     <div>
@@ -809,7 +795,7 @@ export default function CourseDetailPage() {
                     </div>
                   )}
 
-                  <div>
+            <div>
                     <label className="block text-gray-700 font-medium mb-2">Contenido</label>
                     <textarea
                       value={editData.content}
@@ -877,7 +863,7 @@ export default function CourseDetailPage() {
                                   <span>⏱️ {currentLesson.duration}</span>
                                   <span className="capitalize">📚 {currentLesson.type}</span>
                                 </div>
-                              </div>
+                </div>
                             </div>
                             
                             {/* Imagen del curso si existe */}
@@ -890,9 +876,9 @@ export default function CourseDetailPage() {
                                 />
                               </div>
                             )}
-                          </div>
+              </div>
 
-                          {/* Contenido de la lección */}
+              {/* Contenido de la lección */}
                           <div className="neuro-container rounded-xl p-8">
                             {currentLesson.type === 'video' && currentLesson.videoUrl && (
                               <div className="mb-8">
@@ -928,7 +914,7 @@ export default function CourseDetailPage() {
                             <button className="neuro-button-primary px-6 py-3 rounded-lg text-white flex items-center space-x-2 transition-all duration-300">
                               <span>Siguiente Lección</span>
                               <FaArrowRight />
-                            </button>
+                </button>
                           </div>
                         </div>
                       )
@@ -1054,12 +1040,12 @@ export default function CourseDetailPage() {
                       </div>
                     </div>
                   ))}
-                </div>
-              ) : (
+            </div>
+          ) : (
                 <div className="text-center py-8">
                   <FaSearch className="text-4xl text-gray-300 mx-auto mb-4" />
                   <p className="text-gray-500">No se encontraron resultados</p>
-                </div>
+              </div>
               )}
             </div>
           </div>

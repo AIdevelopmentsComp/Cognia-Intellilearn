@@ -42,29 +42,29 @@ const Courses = () => {
       try {
         setLoading(true)
         
-        // Cargar solo el curso de Project Management
-        const course = await courseService.getCourse('1')
+        // Cargar todos los cursos disponibles dinámicamente
+        const allCourses = await courseService.getAllCourses()
         
-        if (course) {
-          const courseCard: CourseCard = {
-            id: course.id,
-            title: course.title,
-            instructor: course.instructor,
-            description: course.description,
-            progress: 0, // Sin progreso por defecto
-            image: '/assets/images/course-pm.jpg',
-            lessons: course.modules.reduce((total, module) => total + module.lessons.length, 0),
-            duration: course.duration,
-            category: course.category,
-            level: course.level === 'beginner' ? 'Básico' : 
-                   course.level === 'intermediate' ? 'Intermedio' : 'Avanzado',
-            rating: course.rating,
-            totalStudents: course.totalStudents,
-            lastAccessed: 'Nuevo'
-          }
-          
-          setCourses([courseCard])
-        }
+        const courseCards: CourseCard[] = allCourses.map(course => ({
+          id: course.id,
+          title: course.title,
+          instructor: course.instructor,
+          description: course.description,
+          progress: 0, // Sin progreso por defecto (se puede calcular después)
+          image: course.imageUrl || '/assets/images/course-default.jpg',
+          lessons: course.modules.reduce((total, module) => total + module.lessons.length, 0),
+          duration: course.duration,
+          category: course.category,
+          level: course.level === 'beginner' ? 'Básico' : 
+                 course.level === 'intermediate' ? 'Intermedio' : 'Avanzado',
+          rating: course.rating,
+          totalStudents: course.totalStudents,
+          lastAccessed: 'Nuevo'
+        }))
+        
+        setCourses(courseCards)
+        console.log(`✅ Loaded ${courseCards.length} courses dynamically`)
+        
       } catch (error) {
         console.error('Error loading courses:', error)
         setCourses([])
