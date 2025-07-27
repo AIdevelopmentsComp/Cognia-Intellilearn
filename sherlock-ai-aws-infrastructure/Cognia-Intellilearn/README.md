@@ -1,141 +1,99 @@
-# 🎓 CognIA IntelliLearn
+# 🚀 CognIA IntelliLearn
 
-**Tu Campus Virtual con Inteligencia Artificial**
+**Plataforma EdTech inteligente con IA y Ciudad 3D interactiva**
 
-## 📋 Descripción
+## ✨ Características principales
 
-CognIA IntelliLearn es una plataforma educativa avanzada que utiliza inteligencia artificial para personalizar el aprendizaje. Ofrece un campus virtual completo con asistente IA, gamificación y análisis de progreso.
+- 🎨 **Diseño neumórfico** completo con soporte dark/light mode
+- 🏙️ **Ciudad 3D interactiva** con colores CognIA en landing page
+- 🔐 **AWS Cognito** para autenticación segura
+- 🤖 **Google Gemini AI** integrado para asistente educativo
+- 📚 **Sistema de cursos dinámico** con contenido generativo
+- 📊 **Dashboard completo** con analytics en tiempo real
+- 📱 **Responsive design** optimizado para todos los dispositivos
+- ⚡ **Despliegue automático** con GitHub Actions
 
-## 🚀 Stack Tecnológico
+## 🎯 Stack tecnológico
 
-- **Frontend:** Next.js 15.2.2 con App Router
-- **Estilos:** TailwindCSS
-- **Autenticación:** AWS Cognito
-- **IA:** AWS Bedrock
-- **Hosting:** AWS S3 + CloudFront
+### Frontend
+- **Next.js 15.2.2** + React 19 + TypeScript
+- **TailwindCSS v4** + Framer Motion 12
+- **Three.js** para ciudad 3D interactiva
+- **React Hook Form** + Zod validation
 
-## 🌐 URLs de Producción
+### Backend & Cloud
+- **AWS Cognito** (Autenticación)
+- **AWS S3** (Almacenamiento)
+- **AWS CloudFront** (CDN)
+- **Google Gemini 1.5 Flash** (IA)
+- **Firebase AI** (Servicios adicionales)
 
-- **CloudFront (HTTPS):** https://d2sn3lk5751y3y.cloudfront.net
-- **S3 Website (HTTP):** http://intellilearn-final.s3-website-us-east-1.amazonaws.com
+### DevOps
+- **GitHub Actions** (CI/CD)
+- **AWS S3** + **CloudFront** (Hosting)
+- **Despliegue automático** en cada push
 
-## 📁 Estructura del Proyecto
+## 🌐 URLs del proyecto
+
+- **🌍 Aplicación**: https://d2sn3lk5751y3y.cloudfront.net/
+- **📦 Repositorio**: https://github.com/AIdevelopmentsComp/Cognia-Intellilearn
+- **☁️ S3 Bucket**: `intellilearn-final`
+- **🚀 CloudFront**: `E1UF9C891JJD1F`
+
+## 🏗️ Arquitectura
 
 ```
-app/
-├── layout.tsx          # Layout principal con AuthProvider
-├── page.tsx           # Landing page
-├── globals.css        # Estilos globales
-├── auth/
-│   └── login/
-│       └── page.tsx   # Página de login con Cognito
-└── dashboard/
-    ├── layout.tsx     # Layout del dashboard con sidebar
-    └── page.tsx       # Dashboard principal
-
-components/
-├── common/            # Componentes reutilizables
-│   ├── header.tsx
-│   ├── footer.tsx
-│   ├── FloatingAssistant.tsx
-│   ├── Sidebar.tsx
-│   └── ProtectedRoute.tsx
-├── landingPage/       # Componentes de la landing
-└── modules/           # Módulos específicos
-    ├── auth/
-    └── dashboard/
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   GitHub Repo   │───▶│  GitHub Actions  │───▶│   AWS S3 +      │
+│                 │    │                  │    │   CloudFront    │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                                ▼
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   AWS Cognito   │◀───│   Next.js App    │───▶│  Google Gemini  │
+│ (Autenticación) │    │  (Frontend +     │    │      AI         │
+│                 │    │   Three.js)      │    │                 │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-## 🛠️ Instalación y Desarrollo
+## 🚀 Despliegue automático
 
-1. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
+El proyecto utiliza GitHub Actions para despliegue automático:
 
-2. **Configurar variables de entorno:**
-   Crear archivo `.env.local` con:
-   ```
-   NEXT_PUBLIC_AWS_REGION=us-east-1
-   NEXT_PUBLIC_AWS_COGNITO_USER_POOL_ID=tu-pool-id
-   NEXT_PUBLIC_AWS_COGNITO_CLIENT_ID=tu-client-id
-   ```
+1. **Push a `master`** → Activa workflow
+2. **Build con Next.js** → Genera archivos estáticos
+3. **Deploy a S3** → Sube archivos al bucket
+4. **Invalidate CloudFront** → Actualiza CDN
+5. **✅ Listo!** → Aplicación actualizada
 
-3. **Ejecutar en desarrollo:**
-   ```bash
-   npm run dev
-   ```
+## 🎨 Características de diseño
 
-4. **Construir para producción:**
-   ```bash
-   npm run build
-   ```
+### Ciudad 3D interactiva
+- Colores CognIA (azul #3C31A3)
+- Animación de partículas
+- Interacción con mouse
+- Edificios generados proceduralmente
 
-## 🔐 Autenticación
+### Diseño neumórfico
+- Sombras suaves y profundidad
+- Modo claro y oscuro
+- Botones y componentes consistentes
+- Sidebar colapsible
 
-La aplicación utiliza AWS Cognito para la autenticación de usuarios. El flujo incluye:
-- Login con email/password
-- Registro de nuevos usuarios
-- Recuperación de contraseña
-- Sesiones persistentes
+## 🤖 Integración con IA
 
-## 🎨 Diseño
+- **Gemini 1.5 Flash** para asistente conversacional
+- **Generación de contenido** educativo dinámico
+- **Análisis de progreso** personalizado
+- **Recomendaciones inteligentes**
 
-El diseño se mantiene fiel a los mockups de Figma con:
-- Paleta de colores principal: #132944, #3C31A3
-- Tipografía: Arial, Helvetica, sans-serif
-- Componentes responsivos
-- Animaciones suaves
+## 📊 Dashboard y Analytics
 
-## 📱 Características
+- Visualización de progreso de cursos
+- Estadísticas de aprendizaje
+- Gráficos interactivos con Recharts
+- Datos en tiempo real
 
-- ✅ Landing page informativa
-- ✅ Sistema de autenticación completo
-- ✅ Dashboard con sidebar navegable
-- ✅ Asistente IA flotante
-- ✅ Diseño responsivo
-- ✅ Módulos de cursos (implementados)
-- ✅ Sistema de gamificación (implementado)
-- ✅ Analytics de progreso (implementado)
-- ✅ Gestión de contenido
-- ✅ Tareas y certificados
-- ✅ Perfil de usuario
-
-## 🚀 Despliegue
-
-El proyecto está configurado para desplegarse automáticamente en AWS S3 con CloudFront:
-
-```bash
-npm run build
-aws s3 sync out s3://intellilearn-final/ --delete
-```
-
-## 📄 Licencia
-
-© 2025 CognIA. Todos los derechos reservados.
-
-## 🏗️ Estado de Migración
-
-**Status:** COMPLETED ✅
-
-### Tareas Completadas:
-- ✅ Migración completa a Next.js 15.2.2 con App Router
-- ✅ Todas las páginas del dashboard implementadas
-- ✅ Sistema de autenticación AWS Cognito integrado
-- ✅ Corrección de isActive con usePathname en Sidebar
-- ✅ Resolución de problemas de localStorage para build estático
-- ✅ Eliminación de código basura (scripts, backups, archivos obsoletos)
-- ✅ Despliegue exitoso en AWS S3 + CloudFront
-- ✅ Logos y assets correctamente configurados
-
-### Estructura Final:
-- `app/` - Todas las rutas migradas con App Router
-- `components/` - Componentes optimizados con 'use client' donde necesario
-- `lib/` - Servicios y utilidades actualizadas
-- `public/` - Assets estáticos organizados
-image.png
 ---
 
-**Desarrollado por:** Equipo CognIA  
-**Versión:** 1.0.0  
-**Última actualización:** Julio 2025
+**🏢 Desarrollado por AIdevelopmentsComp**  
+**🌟 Parte del ecosistema Sherlock AI**
