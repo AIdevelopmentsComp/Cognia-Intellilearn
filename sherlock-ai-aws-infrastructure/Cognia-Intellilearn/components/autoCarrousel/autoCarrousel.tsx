@@ -48,20 +48,22 @@ export default function AutoCarousel({ items, speed = 1 }: AutoCarouselProps) {
 
   return (
     <div
-      className="w-[80vw] mx-auto overflow-x-scroll no-scrollbar px-4"
+      className="w-full overflow-x-scroll no-scrollbar px-4"
       ref={containerRef}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="flex gap-6 w-max">
         {[...items, ...items].map((item, i) => (
-          <div key={i} className="testimonialItem">
-            <div>
-              <p className="text-[16px] text-[#132944] text-start p-2.5">{item.text}</p>
-              <p className="text-[16px] text-start pl-2 font-semibold text-[#132944]">{item.author}</p>
+          <div key={i} className="neuro-testimonial flex flex-col justify-between" style={{ width: '463px', minHeight: '139px' }}>
+            <div className="flex-1">
+              <p className="text-[16px] text-[#132944] text-start mb-3 leading-relaxed">{item.text}</p>
+              <p className="text-[16px] text-start font-semibold text-[#132944]">{item.author}</p>
             </div>
-            <div className="flex justify-end mb-4">
-              <span className="icon-testimonial">{item.icon}</span>
+            <div className="flex justify-end mt-4">
+              <div className="neuro-icon-container w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#2A1E90]">
+                {item.icon}
+              </div>
             </div>
           </div>
         ))}

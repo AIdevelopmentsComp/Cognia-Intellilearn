@@ -1,36 +1,25 @@
-'use client'
 /**
- * @fileoverview Floating AI Assistant Component with Neumorphism
+ * @fileoverview Floating AI Assistant Component
  * @author Luis Arturo Parra Rosas
- * @created 2023-12-15
+ * @created 2023-12-14
  * @updated 2025-01-27
  * @version 2.0.0
  * 
  * @description
- * Provides a floating chat interface for AI assistance with neumorphic design.
- * Allows users to interact with the Gemini AI model from any page.
+ * Floating AI assistant that provides contextual help throughout the application.
+ * Uses AWS Bedrock (Claude 3 Haiku) for intelligent responses.
  * 
  * @context
- * A global component accessible from any part of the application.
- * Integrated with Firebase AI (Gemini) for natural language processing.
- * Features modern neumorphic design with smooth animations.
- * 
- * @changelog
- * v1.0.0 - Initial implementation with basic chat functionality
- * v1.0.1 - Added conversation history and loading states
- * v1.0.2 - Integrated with Gemini AI model via Firebase
- * v2.0.0 - Added neumorphic design system
+ * Global component that appears on all pages to provide instant educational support.
+ * Integrates with the user authentication system and maintains conversation context.
  */
 
-import React, { useState, useRef, useEffect } from 'react';
-import { FaTimes, FaPaperPlane, FaLightbulb, FaBookReader, FaChartLine } from 'react-icons/fa';
+'use client'
+import React, { useState, useEffect, useRef } from 'react';
+import { FiMessageCircle, FiX, FiSend, FiMinimize2, FiMaximize2 } from 'react-icons/fi';
 import { useAuth } from '@/lib/AuthContext';
-import { chatWithAI } from '@/lib/aws-bedrock';
+import { chatWithAI } from '@/lib/firebase';
 
-/**
- * Message type definition
- * @context Defines the structure of chat messages
- */
 interface Message {
   id: string;
   text: string;
@@ -39,35 +28,21 @@ interface Message {
 }
 
 /**
- * Floating Assistant Component with Neumorphism
- * 
- * @returns {JSX.Element} Floating chat interface component with neumorphic design
- * 
- * @context
- * Persistent UI element across the application with modern neumorphic styling.
- * 
- * @description
- * Renders a floating button that expands into a neumorphic chat interface.
- * Manages conversation state and integrates with Gemini AI.
- * Features:
- * - User authentication integration
- * - Personalized greeting
- * - Message history with neumorphic bubbles
- * - Typing indicators
- * - Neumorphic input field and buttons
- * - Smooth animations and transitions
+ * Floating Assistant Component
+ * @context Provides instant AI support across the entire application
  */
 export const FloatingAssistant = () => {
-  const { user } = useAuth(); // Get user authentication state
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   /**
    * Scrolls to the bottom of the messages container
-   * @context Ensures latest messages are visible
+   * @context Ensures new messages are always visible
    */
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -78,70 +53,35 @@ export const FloatingAssistant = () => {
   }, [messages]);
 
   /**
-   * Handles chat window toggle with authentication check
-   * @context Opens/closes chat interface
-   */
-  const handleToggle = () => {
-    // If user is not authenticated, redirect to login
-    if (!user) {
-      console.log('🔒 Chat blocked: User not authenticated');
-      window.location.href = '/auth/login';
-      return;
-    }
-    
-    setIsOpen(!isOpen);
-  };
-
-  /**
-   * Sends message to AI and handles response
-   * @context Core chat functionality with AWS Bedrock integration
+   * Handles sending a message to the AI assistant
+   * @context Core functionality for AI interaction
    */
   const handleSendMessage = async () => {
-    // Double check authentication before allowing chat
-    if (!user) {
-      console.log('🔒 Message blocked: User not authenticated');
-      window.location.href = '/auth/login';
-      return;
-    }
+    if (!inputMessage.trim() || isLoading) return;
 
-    if (!inputValue.trim() || isLoading) return;
-
+    // Create user message
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: inputValue.trim(),
+      text: inputMessage.trim(),
       role: 'user',
       timestamp: new Date(),
     };
 
-    const newChatHistory = [...messages, userMessage];
-    setMessages(newChatHistory);
-    setInputValue('');
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
     setIsLoading(true);
 
     try {
-      // Get response from AWS Bedrock (Claude 3 Haiku)
-      const systemPrompt = "Eres un asistente educativo experto en ayudar a estudiantes. Proporciona respuestas útiles, precisas y motivadoras sobre temas académicos.";
+      // Get AI response using AWS Bedrock
+      const systemPrompt = `You are CognIA, an expert educational assistant. You help students with:
+      - Course explanations and concepts
+      - Study guidance and tips
+      - Academic support and motivation
+      - Platform navigation help
       
-      // Convert chat history to AWS Bedrock format and ensure alternating roles
-      const bedrockHistory: Array<{role: 'user' | 'assistant', content: string}> = [];
-      
-      // Process chat history to ensure alternating roles
-      for (let i = 0; i < newChatHistory.length; i++) {
-        const msg = newChatHistory[i];
-        const role = msg.role === 'model' ? 'assistant' : msg.role as 'user' | 'assistant';
-        
-        // Only add if it's different from the last role to ensure alternating
-        if (bedrockHistory.length === 0 || bedrockHistory[bedrockHistory.length - 1].role !== role) {
-          bedrockHistory.push({
-            role: role,
-            content: msg.text
-          });
-        }
-      }
-      
-      console.log('Bedrock History before sending:', bedrockHistory);
-      
-      const aiResponseText = await chatWithAI(userMessage.text, systemPrompt, bedrockHistory);
+      Respond in a friendly, educational, and helpful manner. Keep responses concise but informative.`;
+
+      const aiResponseText = await chatWithAI(userMessage.text, systemPrompt);
       
       // Add AI response to chat
       const aiMessage: Message = {
@@ -157,7 +97,7 @@ export const FloatingAssistant = () => {
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.',
+        text: 'Sorry, there was an error processing your message. Please try again.',
         role: 'model',
         timestamp: new Date(),
       };
@@ -187,7 +127,7 @@ export const FloatingAssistant = () => {
     if (user) {
       const welcomeMessage: Message = {
         id: 'welcome',
-        text: `¡Hola ${user.displayName?.split(' ')[0] || 'estudiante'}! Soy tu asistente CognIA. ¿En qué puedo ayudarte hoy?`,
+        text: `Hello ${user.displayName?.split(' ')[0] || 'student'}! I'm your CognIA assistant. How can I help you today?`,
         role: 'model',
         timestamp: new Date()
       };
@@ -202,111 +142,144 @@ export const FloatingAssistant = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      {/* Assistant button with neumorphism - visible when chat is closed */}
+    <>
+      {/* Floating Button */}
       {!isOpen && (
         <button
-          onClick={handleToggle}
-          className="neuro-button-primary flex items-center gap-3 px-6 py-4 rounded-2xl text-white font-semibold shadow-xl transition-all duration-300 neuro-fade-in"
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-[#2A1E90] to-[#4A3B9A] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 neuro-button"
+          aria-label="Open AI Assistant"
         >
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-            <img src="/assets/images/IA.svg" alt="Asistente CognIA" width={24} height={24} />
-          </div>
-          <span>Asistente CognIA</span>
+          <FiMessageCircle className="text-2xl" />
         </button>
       )}
 
-      {/* Chat window with neumorphism - visible when opened */}
+      {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-0 right-0 w-96 h-[500px] max-h-[80vh] neuro-chat overflow-hidden flex flex-col transition-all duration-300 neuro-fade-in">
-          {/* Header with neumorphic design */}
-          <div className="p-4 text-white flex items-center justify-between cursor-move rounded-t-2xl"
-               style={{
-                 background: 'linear-gradient(135deg, var(--cognia-blue-dark), var(--cognia-blue-purple))'
-               }}>
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3">
-                <img src="/assets/images/IA.svg" alt="CognIA" width={20} height={20} />
+        <div className={`fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl neuro-container transition-all duration-300 ${
+          isMinimized ? 'w-80 h-16' : 'w-96 h-[500px]'
+        }`}>
+          
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-[#2A1E90] to-[#4A3B9A] text-white rounded-t-2xl">
+            <div className="flex items-center gap-3">
+              <img
+                src="/assets/images/chatassistant.jpeg"
+                alt="CognIA Assistant"
+                className="w-8 h-8 rounded-full"
+              />
+              <div>
+                <h3 className="font-semibold text-sm">CognIA Assistant</h3>
+                <p className="text-xs text-white/80">Always here to help</p>
               </div>
-              <h3 className="font-semibold">Asistente CognIA</h3>
             </div>
-            <button 
-              onClick={handleToggle} 
-              className="neuro-button p-2 rounded-full transition-all duration-300 text-white bg-white/10 hover:bg-white/20"
-            >
-              <FaTimes size={14} />
-            </button>
-          </div>
-
-          {/* Chat message area with neumorphic background */}
-          <div className="flex-1 overflow-y-auto p-4 neuro-inset">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`mb-4 flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsMinimized(!isMinimized)}
+                className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+                aria-label={isMinimized ? "Maximize" : "Minimize"}
               >
-                <div
-                  className={`neuro-message max-w-[85%] rounded-lg p-3 transition-all duration-300 ${
-                    message.role === 'user' ? 'user' : 'assistant'
-                  }`}
-                >
-                  <p className="text-sm leading-relaxed">{message.text}</p>
-                  <p className="text-xs mt-2 opacity-70 text-right">
-                    {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                  </p>
-                </div>
-              </div>
-            ))}
-            
-            {/* Typing indicator with neumorphic design */}
-            {isLoading && (
-              <div className="flex justify-start mb-4">
-                <div className="neuro-message assistant max-w-[80%] p-3">
-                  <div className="flex space-x-2">
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{backgroundColor: 'var(--cognia-blue-purple)'}}></div>
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{backgroundColor: 'var(--cognia-blue-purple)', animationDelay: '0.2s'}}></div>
-                    <div className="w-2 h-2 rounded-full animate-bounce" style={{backgroundColor: 'var(--cognia-blue-purple)', animationDelay: '0.4s'}}></div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Auto-scroll anchor */}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input area with neumorphic design */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="flex items-end gap-3">
-              <div className="relative flex-grow">
-                <textarea
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className="neuro-input w-full px-4 py-3 pr-12 resize-none text-sm leading-tight"
-                  placeholder="Escribe un mensaje..."
-                  rows={1}
-                  style={{
-                    minHeight: '44px',
-                    maxHeight: '120px'
-                  }}
-                />
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!inputValue.trim() || isLoading}
-                  className={`absolute right-3 top-1/2 transform -translate-y-1/2 neuro-button p-2 rounded-full transition-all duration-300 ${
-                    inputValue.trim() && !isLoading 
-                      ? 'text-gray-600 hover:text-gray-800' 
-                      : 'text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  <FaPaperPlane size={14} />
-                </button>
-              </div>
+                {isMinimized ? <FiMaximize2 className="text-sm" /> : <FiMinimize2 className="text-sm" />}
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+                aria-label="Close Assistant"
+              >
+                <FiX className="text-sm" />
+              </button>
             </div>
           </div>
+
+          {/* Chat Content */}
+          {!isMinimized && (
+            <>
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 h-80">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex gap-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    {message.role === 'model' && (
+                      <img
+                        src="/assets/images/chatassistant.jpeg"
+                        alt="Assistant"
+                        className="w-6 h-6 rounded-full flex-shrink-0 mt-1"
+                      />
+                    )}
+                    <div
+                      className={`max-w-[80%] p-3 rounded-2xl text-sm ${
+                        message.role === 'user'
+                          ? 'bg-gradient-to-br from-[#2A1E90] to-[#4A3B9A] text-white neuro-button'
+                          : 'bg-gray-100 text-gray-800 neuro-inset'
+                      }`}
+                    >
+                      <p className="whitespace-pre-wrap leading-relaxed">{message.text}</p>
+                      <div className={`text-xs mt-1 ${
+                        message.role === 'user' ? 'text-white/70' : 'text-gray-500'
+                      }`}>
+                        {message.timestamp.toLocaleTimeString([], { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {isLoading && (
+                  <div className="flex gap-2 justify-start">
+                    <img
+                      src="/assets/images/chatassistant.jpeg"
+                      alt="Assistant"
+                      className="w-6 h-6 rounded-full flex-shrink-0 mt-1"
+                    />
+                    <div className="bg-gray-100 p-3 rounded-2xl neuro-inset">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input */}
+              <div className="p-4 border-t border-gray-200">
+                <div className="flex gap-2">
+                  <div className="flex-1 neuro-inset rounded-2xl p-1">
+                    <input
+                      type="text"
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Ask me anything..."
+                      className="w-full p-2 bg-transparent border-none outline-none text-sm text-gray-800 placeholder-gray-500"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={!inputMessage.trim() || isLoading}
+                    className="neuro-button bg-gradient-to-br from-[#2A1E90] to-[#4A3B9A] text-white p-3 rounded-2xl hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                    aria-label="Send message"
+                  >
+                    <FiSend className="text-sm" />
+                  </button>
+                </div>
+                
+                <div className="mt-2 text-center">
+                  <p className="text-xs text-gray-500">Powered by AWS Bedrock</p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 }; 

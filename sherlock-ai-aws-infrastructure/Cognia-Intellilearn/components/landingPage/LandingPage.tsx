@@ -29,6 +29,109 @@ import AutoCarousel from '../autoCarrousel/autoCarrousel';
 import Link from 'next/link';
 import VideoSection from './VideoSection';
 
+/**
+ * Particle component for reusability across sections
+ */
+const SectionParticles = ({ density = 'medium', color = '#2A1E90' }: { density?: 'light' | 'medium' | 'dense', color?: string }) => {
+    const particleCounts = {
+        light: { large: 8, medium: 12, small: 16, lines: 4, nodes: 3 },
+        medium: { large: 12, medium: 18, small: 24, lines: 6, nodes: 4 },
+        dense: { large: 16, medium: 24, small: 32, lines: 8, nodes: 6 }
+    };
+    
+    const counts = particleCounts[density] || particleCounts.medium;
+    
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Large particles */}
+            {[...Array(counts.large)].map((_, i) => (
+                <div
+                    key={`particle-large-${i}`}
+                    className="absolute rounded-full animate-pulse"
+                    style={{
+                        width: '8px',
+                        height: '8px',
+                        backgroundColor: `${color}40`,
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 4}s`,
+                        animationDuration: `${3 + Math.random() * 2}s`,
+                        boxShadow: `0 0 10px ${color}30`
+                    }}
+                />
+            ))}
+            
+            {/* Medium particles */}
+            {[...Array(counts.medium)].map((_, i) => (
+                <div
+                    key={`particle-medium-${i}`}
+                    className="absolute rounded-full animate-bounce"
+                    style={{
+                        width: '6px',
+                        height: '6px',
+                        backgroundColor: `${color}30`,
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 5}s`,
+                        animationDuration: `${2 + Math.random() * 3}s`
+                    }}
+                />
+            ))}
+            
+            {/* Small particles */}
+            {[...Array(counts.small)].map((_, i) => (
+                <div
+                    key={`particle-small-${i}`}
+                    className="absolute rounded-full animate-ping"
+                    style={{
+                        width: '4px',
+                        height: '4px',
+                        backgroundColor: `${color}20`,
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 6}s`,
+                        animationDuration: `${4 + Math.random() * 2}s`
+                    }}
+                />
+            ))}
+
+            {/* Connecting lines */}
+            {[...Array(counts.lines)].map((_, i) => (
+                <div
+                    key={`line-${i}`}
+                    className="absolute animate-pulse"
+                    style={{
+                        height: '1px',
+                        background: `linear-gradient(to right, transparent, ${color}15, transparent)`,
+                        left: `${Math.random() * 60}%`,
+                        top: `${Math.random() * 80}%`,
+                        width: `${30 + Math.random() * 40}%`,
+                        transform: `rotate(${Math.random() * 360}deg)`,
+                        animationDelay: `${Math.random() * 4}s`,
+                        animationDuration: `${5 + Math.random() * 3}s`
+                    }}
+                />
+            ))}
+
+            {/* Connection nodes */}
+            {[...Array(counts.nodes)].map((_, i) => (
+                <div
+                    key={`node-${i}`}
+                    className="absolute rounded-full animate-spin border"
+                    style={{
+                        borderColor: `${color}20`,
+                        left: `${Math.random() * 90}%`,
+                        top: `${Math.random() * 90}%`,
+                        width: `${15 + Math.random() * 25}px`,
+                        height: `${15 + Math.random() * 25}px`,
+                        animationDuration: `${15 + Math.random() * 10}s`,
+                        animationDelay: `${Math.random() * 8}s`
+                    }}
+                />
+            ))}
+        </div>
+    );
+};
 
 /**
  * Main landing page component with neumorphic styling
@@ -42,30 +145,30 @@ export default function LandingPage() {
      */
     const testimonials1 = [
         {
-            text: '"Gracias a esta plataforma, digitalizamos nuestras licenciaturas sin complicaciones. La implementación fue rápida y eficiente."',
-            author: '- Dr. Luis Mendoza, Rector de Universidad Global',
+            text: '"Thanks to this platform, we digitized our degree programs without complications. Implementation was fast and efficient."',
+            author: '- Dr. Luis Mendoza, Rector of Global University',
             icon: (
                 <TbUserShare />
 
             ),
         },
         {
-            text: '"Ahora podemos ofrecer programas en línea con la misma calidad que nuestros cursos presenciales. Una solución integral y escalable."',
-            author: '— Marta Ríos, Instituto Avanza',
+            text: '"Now we can offer online programs with the same quality as our in-person courses. A comprehensive and scalable solution."',
+            author: '— Marta Ríos, Avanza Institute',
             icon: (
                 <FaUniversity />
             ),
         },
         {
-            text: '"Ampliamos nuestra oferta educativa a estudiantes de todo el mundo. Ha sido una revolución para nuestra institución."',
-            author: '— Carlos Benítez, Educación Virtual',
+            text: '"We expanded our educational offering to students worldwide. It has been a revolution for our institution."',
+            author: '— Carlos Benítez, Virtual Education',
             icon: (
                 <TbUserShare />
             ),
         },
         {
-            text: '"Ampliamos nuestra oferta educativa a estudiantes de todo el mundo. Ha sido una revolución para nuestra institución."',
-            author: '— Carlos Benítez, Educación Virtual',
+            text: '"We expanded our educational offering to students worldwide. It has been a revolution for our institution."',
+            author: '— Carlos Benítez, Virtual Education',
             icon: (
                 <TbUserShare />
             ),
@@ -73,69 +176,60 @@ export default function LandingPage() {
 
     ]
     
-    /**
-     * Testimonials data for students carousel
-     */
     const testimonials2 = [
         {
-            text: '"Puedo estudiar a mi propio ritmo y recibir explicaciones claras gracias a la inteligencia artificial. ¡Me siento más seguro en mis exámenes!"',
-            author: '— Daniel Romero, Estudiante de Administración',
+            text: '"The integration with our existing systems was seamless. Students love the interactive experience and AI-powered assistance."',
+            author: '— Dr. Maria Rodriguez, Tech Institute',
             icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#2A1E90]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M12 14l9-5-9-5-9 5 9 5z" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M12 14l6.16-3.422A12.083 12.083 0 0121 13.458M12 14v7m0 0H7m5 0h5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <FaGraduationCap />
             ),
         },
         {
-            text: '"Las clases en línea ahora son más interactivas y prácticas. Se siente como tener un tutor personal disponible 24/7."',
-            author: '— Sofía Martínez, Ingeniería de Software',
+            text: '"Our enrollment increased by 300% after implementing CognIA. The platform scales perfectly with our growth."',
+            author: '— John Smith, Online Academy',
             icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#2A1E90]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M9 12h6m2 0a2 2 0 100-4h-2a2 2 0 00-2-2h-2a2 2 0 00-2 2H7a2 2 0 100 4h2" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <TbUserShare />
             ),
         },
         {
-            text: '"Antes tenía dificultades para organizar mi estudio, pero ahora todo está estructurado y adaptado a mi ritmo."',
-            author: '— Andrés Gutiérrez, Estudiante de Psicología',
+            text: '"The analytics and progress tracking features help us understand our students better and improve our courses continuously."',
+            author: '— Dr. Ana García, Educational Innovation Center',
             icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#2A1E90]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M12 14l9-5-9-5-9 5 9 5z" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M12 14l6.16-3.422A12.083 12.083 0 0121 13.458M12 14v7m0 0H7m5 0h5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <FaUniversity />
             ),
         },
     ]
     
     return (
-        <div className="bg-white text-gray-800">
-            {/* Hero Section with neumorphism */}
-            <section className="bg-gradient-banner py-16 px-6 text-center md:text-left md:flex md:items-center md:justify-between gap-8">
-                <div className="max-w-xl mx-auto md:mx-0">
+        <div className="min-h-screen relative overflow-hidden" style={{ background: '#ffffff' }}>
+            {/* Hero Section with Neumorphic Elements */}
+            <section className="py-16 px-6 text-center md:text-left md:flex md:items-center md:justify-between gap-8 relative z-10 overflow-hidden" style={{ background: '#ffffff' }}>
+                <SectionParticles density="medium" color="#3C31A3" />
+                
+                <div className="max-w-xl mx-auto md:mx-0 relative z-10">
                     <h1 className="text-[65px] font-bold mb-4 leading-tight text-gray-900">
-                        Tu Campus Virtual con <span className="textCognIa z-10 relative">CognIA
+                        Your Virtual Campus with <span className="textCognIa z-10 relative">CognIA
                             <img
                                 className='absolute left-0 top-1/2 -translate-y-1/2 z-20 w-[511px] text-[20px]'
                                 src={'/assets/images/Subrayado.svg'}
-                                alt="subrayado"
+                                alt="underline"
                                 width={310}
                                 height={73}
                             />
                         </span>
                     </h1>
-                    <p className="mb-6 text-base">Transforma tu institución con nuestra plataforma para ofrecer carreras en línea de alta calidad, impulsadas por inteligencia artificial.</p>
+                    <p className="mb-6 text-base">Transform your institution with our platform to offer high-quality online careers, powered by artificial intelligence.</p>
                     <button className="btn-proof flex items-center gap-2 neuro-button-primary transition-all duration-300">
                         <span className="w-2 h-2 bg-white rounded-full"></span>
-                        Prueba nuestro asistente
+                        Try our assistant
                     </button>
                 </div>
-                <div className="mt-10 md:mt-0 w-full md:w-1/2 flex justify-center">
+                <div className="mt-10 md:mt-0 w-full md:w-1/2 flex justify-center relative z-10">
                     <div className="neuro-container rounded-3xl p-4">
                         <img
                             className='w-full max-w-md rounded-2xl'
                             src={'/assets/images/OBJECTS.svg'}
-                            alt="Descriptive text for accessibility"
+                            alt="Educational platform illustration"
                             width={800}
                             height={600}
                         />
@@ -143,445 +237,189 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Video Section con Cards y Partículas */}
+            {/* Stats Section with Neumorphic Design - Numbers that speak for themselves */}
+            <section className="py-16 px-6 w-full relative z-10 overflow-hidden" style={{ background: '#ffffff' }}>
+                <SectionParticles density="light" color="#6366f1" />
+                
+                <div className="max-w-7xl mx-auto text-center relative z-10">
+                    <h2 className="text-[54px] font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#132944] to-[#3C31A3]">
+                        Numbers that speak for themselves
+                    </h2>
+                    <p className="text-xl text-gray-600 mb-12 max-w-4xl mx-auto">
+                        Join thousands of institutions that have already transformed their education with CognIA
+                    </p>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
+                        {[
+                            { number: '500+', label: 'Institutions transforming online education', icon: <FaUniversity className="text-white" /> },
+                            { number: '50K+', label: 'Students learning with artificial intelligence', icon: <FaGraduationCap className="text-white" /> },
+                            { number: '5K+', label: 'Teachers optimizing their teaching', icon: <TbUserShare className="text-white" /> },
+                            { number: '98%', label: 'Satisfaction with the learning experience', icon: <FaStar className="text-white" /> }
+                        ].map((stat, index) => (
+                            <div key={index} className="bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white p-8 neuro-card-purple w-full">
+                                <div className="text-start">
+                                    <p className="text-[40px] font-bold text-white mb-2">{stat.number}</p>
+                                    <p className="text-[16px] text-white/90 text-start mb-4">{stat.label}</p>
+                </div>
+                                                                 <div className="flex justify-end">
+                                     <div className="neuro-icon-container-purple w-12 h-12 rounded-2xl flex items-center justify-center">
+                                         {stat.icon}
+                </div>
+                        </div>
+                    </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Video Section with Cards and Particles */}
             <VideoSection />
 
-            {/* Campus Virtual Integral Section with neumorphism */}
-            <section className="py-4 px-6 bg-white relative overflow-hidden">
-                {/* Partículas de fondo */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Partículas grandes azules */}
-                    {[...Array(12)].map((_, i) => (
-                        <div
-                            key={`large-${i}`}
-                            className="absolute w-3 h-3 bg-blue-400/40 rounded-full animate-pulse shadow-lg"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                animationDuration: `${2 + Math.random() * 2}s`,
-                                boxShadow: '0 0 10px rgba(59, 130, 246, 0.3)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Partículas medianas */}
-                    {[...Array(20)].map((_, i) => (
-                        <div
-                            key={`medium-${i}`}
-                            className="absolute w-2 h-2 bg-blue-300/50 rounded-full animate-bounce shadow-md"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 4}s`,
-                                animationDuration: `${1.5 + Math.random() * 2}s`,
-                                boxShadow: '0 0 8px rgba(96, 165, 250, 0.2)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Líneas conectoras artísticas */}
-                    {[...Array(5)].map((_, i) => (
-                        <div
-                            key={`line-${i}`}
-                            className="absolute h-0.5 bg-gradient-to-r from-transparent via-blue-400/20 to-transparent animate-pulse rounded-full"
-                            style={{
-                                left: `${Math.random() * 70}%`,
-                                top: `${Math.random() * 70}%`,
-                                width: `${30 + Math.random() * 40}%`,
-                                transform: `rotate(${Math.random() * 360}deg)`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                boxShadow: '0 0 4px rgba(96, 165, 250, 0.2)'
-                            }}
-                        />
-                    ))}
-                </div>
-                <div className="text-center mb-10 relative z-10">
-                    <h2 className="textCognIA">Descubre cómo ofrecer carreras en línea con CognIA</h2>
-                </div>
-                <div className="flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
-                    <div className="bg-gradient-to-r from-[#132944] to-[#3C31A3] text-white text-center p-10 rounded-2xl shadow-lg neuro-container">
-                        <h2 className="text-[40px] font-bold mb-4">Campus virtual integral</h2>
-                        <p className="text-[16px] mx-auto font-light">
-                            Todo lo que necesitas para ofrecer
-                        </p>
-                        <p className="text-[16px] font-light">
-                            servicios educativos completos en línea.
-                        </p>
-                        <div className="neuro-inset rounded-2xl p-4 mt-6">
-                            <img
-                                className="mx-auto w-full max-w-4xl rounded-xl"
-                                src={'/assets/images/Image.svg'}
-                                alt="subrayado"
-                                width={541}
-                                height={281}
-                            />
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/2 space-y-6 mt-8 md:mt-0">
-                        <div className="wrappItem neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                            <h3 className="text-[20px] font-bold mb-1">Gestión académica completa.</h3>
-                            <p className="text-[16px]">Administra planes de estudio, materias, evaluaciones y titulación en un solo lugar. Compatible con normas educativas internacionales.</p>
-                        </div>
-                        <div className="wrappItem neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                            <h3 className="text-[20px] font-bold mb-1">Comunidad de aprendizaje.</h3>
-                            <p className="text-[16px]">Foros, trabajo colaborativo, sesiones en vivo y networking profesional integrado en la plataforma para una experiencia universitaria completa.</p>
-                        </div>
-                        <div className="wrappItem neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                            <h3 className="text-[20px] font-bold mb-1">Analítica educativa avanzada.</h3>
-                            <p className="text-[16px]">Métricas de progresión académica, detección temprana de deserción y análisis de efectividad de programas para optimizar tu oferta educativa.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Benefits Section with neumorphism */}
-            <section className="text-center py-10 relative overflow-hidden">
-                {/* Partículas de fondo */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Partículas grandes azules */}
-                    {[...Array(8)].map((_, i) => (
-                        <div
-                            key={`large-${i}`}
-                            className="absolute w-2 h-2 bg-blue-400/35 rounded-full animate-pulse shadow-lg"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                animationDuration: `${2 + Math.random() * 2}s`,
-                                boxShadow: '0 0 8px rgba(59, 130, 246, 0.25)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Líneas conectoras artísticas */}
-                    {[...Array(3)].map((_, i) => (
-                        <div
-                            key={`line-${i}`}
-                            className="absolute h-px bg-gradient-to-r from-transparent via-blue-400/15 to-transparent animate-pulse rounded-full"
-                            style={{
-                                left: `${Math.random() * 70}%`,
-                                top: `${Math.random() * 70}%`,
-                                width: `${25 + Math.random() * 35}%`,
-                                transform: `rotate(${Math.random() * 360}deg)`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                boxShadow: '0 0 3px rgba(96, 165, 250, 0.15)'
-                            }}
-                        />
-                    ))}
-                </div>
-                <div className="neuro-container rounded-2xl p-8 mx-6 relative z-10">
-                    <h2 className="textCognIA">Beneficios de nuestra plataforma</h2>
-                </div>
-            </section>
-
-            {/* Informative Section + Chatbot with neumorphism */}
-            <section className="py-20 px-4 md:px-6 relative overflow-hidden">
-                {/* Partículas de fondo */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Partículas grandes azules */}
-                    {[...Array(10)].map((_, i) => (
-                        <div
-                            key={`large-${i}`}
-                            className="absolute w-2.5 h-2.5 bg-blue-400/45 rounded-full animate-pulse shadow-lg"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                animationDuration: `${2 + Math.random() * 2}s`,
-                                boxShadow: '0 0 8px rgba(59, 130, 246, 0.3)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Partículas medianas */}
-                    {[...Array(15)].map((_, i) => (
-                        <div
-                            key={`medium-${i}`}
-                            className="absolute w-1.5 h-1.5 bg-blue-300/55 rounded-full animate-bounce shadow-md"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 4}s`,
-                                animationDuration: `${1.5 + Math.random() * 2}s`,
-                                boxShadow: '0 0 6px rgba(96, 165, 250, 0.25)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Líneas conectoras artísticas más largas */}
-                    {[...Array(4)].map((_, i) => (
-                        <div
-                            key={`line-${i}`}
-                            className="absolute h-0.5 bg-gradient-to-r from-transparent via-blue-400/25 to-transparent animate-pulse rounded-full"
-                            style={{
-                                left: `${Math.random() * 60}%`,
-                                top: `${Math.random() * 60}%`,
-                                width: `${35 + Math.random() * 45}%`,
-                                transform: `rotate(${Math.random() * 360}deg)`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                boxShadow: '0 0 4px rgba(96, 165, 250, 0.2)'
-                            }}
-                        />
-                    ))}
-                </div>
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 relative z-10">
-                    <div className="space-y-6">
-                        {[
-                            {
-                                title: 'Infraestructura para Programas Académicos Online.',
-                                text: 'Facilita la gestión de licenciaturas, maestrías y diplomados en un entorno digital completo.'
-                            },
-                            {
-                                title: 'Expansión Educativa sin Fronteras.',
-                                text: 'Llega a estudiantes de cualquier parte del mundo sin límites geográficos.'
-                            },
-                            {
-                                title: 'Aprendizaje Adaptativo con IA.',
-                                text: 'Personaliza la enseñanza según el ritmo y necesidades de cada estudiante.'
-                            },
-                            {
-                                title: 'Inversión Inteligente y Rentable.',
-                                text: 'Aumenta la retención estudiantil y optimiza costos operativos.'
+            {/* Features Section */}
+            <section className="py-16 px-6 w-full relative overflow-hidden z-10" style={{ background: '#ffffff' }}>
+                <SectionParticles density="medium" color="#3C31A3" />
+                
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12 w-full">
+                        <div className="lg:w-1/2 space-y-6">
+                            {[
+                                {
+                                    title: 'Complete Academic Management Infrastructure',
+                                    text: 'Manage study plans, subjects, evaluations and certification in one place. Compatible with international educational standards.'
+                                },
+                                {
+                                    title: 'Learning Community Platform',
+                                    text: 'Forums, collaborative work, live sessions and professional networking integrated into the platform for a complete university experience.'
+                                },
+                                {
+                                    title: 'Advanced Educational Analytics',
+                                    text: 'Academic progression metrics, early dropout detection and program effectiveness analysis to optimize your educational offering.'
                             }
                         ].map(({ title, text }, i) => (
                             <div
                                 key={i}
-                                className="neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300"
-                                style={{
-                                    background: 'linear-gradient(135deg, rgba(19, 41, 68, 0.05), rgba(171, 171, 239, 0.05))'
-                                }}
-                            >
-                                <div className="rounded-xl bg-white/50 p-1">
-                                    <div className="neuro-inset rounded-lg p-5">
-                                        <h3 className="font-semibold text-[#132944] mb-1 text-[20px]">{title}</h3>
-                                        <p className="text-[#132944] text-[16px]">{text}</p>
-                                    </div>
-                                </div>
+                                    className="bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white p-6 w-full neuro-card-purple"
+                                >
+                                    <h3 className="font-semibold text-white mb-3 text-[20px]">{title}</h3>
+                                    <p className="text-white/90 text-[16px] leading-relaxed">{text}</p>
                             </div>
                         ))}
                     </div>
 
-                    <div className="bg-gradient-to-br from-[#132944] to-[#3C31A3] text-white p-6 md:p-10 rounded-2xl shadow-xl space-y-6 neuro-container">
-                        <h3 className="text-lg md:text-xl font-bold">
-                            Habla con nuestro asistente y descubre cómo implementar programas académicos en línea.
+                        <div className="lg:w-1/2 w-full">
+                            <div className="neuro-container bg-gradient-to-br from-[#132944] to-[#3C31A3] text-white p-8 rounded-2xl shadow-xl">
+                                <h3 className="text-2xl font-bold mb-6 text-center">
+                                    Complete Virtual Campus Platform
                         </h3>
-                        <div className="neuro-inset bg-white rounded-2xl overflow-hidden p-2">
-                            <img
-                                className="w-full h-auto object-cover rounded-xl"
-                                src={'/assets/images/Chat.svg'}
-                                alt="chat-demo"
+                                <p className="text-center mb-6 opacity-90">
+                                    Everything you need to offer comprehensive online educational services
+                                </p>
+                                <div className="neuro-inset rounded-2xl p-4">
+                                    <img
+                                        className="w-full rounded-xl"
+                                        src={'/assets/images/Image.svg'}
+                                        alt="Virtual Campus Platform"
                                 width={541}
                                 height={281}
                             />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* CTA Section with neumorphism */}
-            <section className="relative bg-gradient-to-r from-[#132944] to-[#3C31A3] py-20 text-white text-center rounded-2xl shadow-lg mx-4 md:mx-6 overflow-hidden neuro-container">
-                {/* Partículas de fondo para sección CTA */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Partículas grandes doradas/blancas */}
-                    {[...Array(8)].map((_, i) => (
-                        <div
-                            key={`large-${i}`}
-                            className="absolute w-2 h-2 bg-white/30 rounded-full animate-pulse shadow-lg"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                animationDuration: `${2 + Math.random() * 2}s`,
-                                boxShadow: '0 0 8px rgba(255, 255, 255, 0.4)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Partículas medianas */}
-                    {[...Array(12)].map((_, i) => (
-                        <div
-                            key={`medium-${i}`}
-                            className="absolute w-1 h-1 bg-blue-200/40 rounded-full animate-bounce shadow-md"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 4}s`,
-                                animationDuration: `${1.5 + Math.random() * 2}s`,
-                                boxShadow: '0 0 6px rgba(191, 219, 254, 0.3)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Líneas conectoras artísticas doradas */}
-                    {[...Array(3)].map((_, i) => (
-                        <div
-                            key={`line-${i}`}
-                            className="absolute h-px bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse rounded-full"
-                            style={{
-                                left: `${Math.random() * 70}%`,
-                                top: `${Math.random() * 70}%`,
-                                width: `${30 + Math.random() * 40}%`,
-                                transform: `rotate(${Math.random() * 360}deg)`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                boxShadow: '0 0 3px rgba(255, 255, 255, 0.2)'
-                            }}
-                        />
-                    ))}
+            {/* Testimonials Section - What our partners say */}
+            <section className="py-20 px-6 w-full relative overflow-hidden z-10" style={{ background: '#ffffff' }}>
+                <SectionParticles density="light" color="#8b5cf6" />
+                
+                <div className="w-full relative z-10">
+                    <div className="text-center mb-16 px-6">
+                        <h2 className="text-[54px] font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#132944] to-[#3C31A3]">
+                            What our partners say
+                        </h2>
+                        <p className="text-xl text-gray-600 max-w-4xl mx-auto">
+                            Discover how educational institutions worldwide are transforming their offerings with CognIA
+                        </p>
+                    </div>
+
+                    {/* Testimonials Carousels - Full Width */}
+                    <div className="space-y-8 w-full">
+                        {/* First Carousel */}
+                        <div className="w-full">
+                            <AutoCarousel items={testimonials1} speed={0.8} />
+                        </div>
+
+                        {/* Second Carousel */}
+                        <div className="w-full">
+                            <AutoCarousel items={testimonials2} speed={0.5} />
+                        </div>
+                    </div>
                 </div>
-                {/* SVG izquierdo */}
+            </section>
+
+            {/* CTA Section - Ready to digitize your academic offering */}
+            <section className="py-20 px-6 bg-gradient-to-r from-[#2A1E90] to-[#4A3B9A] relative overflow-hidden w-full z-10">
+                <SectionParticles density="dense" color="#ffffff" />
+                
+                {/* Left SVG */}
                 <div className="absolute left-0 top-0 h-full w-1/2">
                     <img
                         className="h-full w-full object-cover"
                         src={'/assets/images/TexturaLeft.svg'}
-                        alt="textura-left"
+                        alt="texture-left"
                         width={541}
                         height={281}
                     />
                 </div>
 
-                {/* SVG derecho */}
+                {/* Right SVG */}
                 <div className="absolute right-0 top-0 h-full w-1/2">
                     <img
                         className="h-full w-full object-cover"
                         src={'/assets/images/TexturaReight.svg'}
-                        alt="textura-right"
+                        alt="texture-right"
                         width={541}
                         height={281}
                     />
                 </div>
 
-                {/* Contenido */}
-                <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
-                    <h2 className="text-2xl sm:text-3xl md:text-[54px] font-bold mb-4">
-                        ¿Listo para digitalizar tu oferta académica?
+                {/* Content */}
+                <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 text-center">
+                    <h2 className="text-2xl sm:text-3xl md:text-[54px] font-bold mb-4 text-white">
+                        Ready to digitize your academic offering?
                     </h2>
-                    <p className="text-base sm:text-lg md:text-[20px] mb-8">
-                        Comienza ahora iniciando sesión para acceder <br />
-                        a todas las herramientas de aprendizaje.
+                    <p className="text-base sm:text-lg md:text-[20px] mb-8 text-white">
+                        Start now by logging in to access <br />
+                        all learning tools.
                     </p>
                     <div className="flex flex-col md:flex-row gap-4 justify-center">
                         {user ? (
                             <Link 
                                 href="/dashboard"
-                                className="neuro-button bg-white text-[#2A1E90] font-semibold px-6 py-3 rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 flex items-center gap-2 justify-center"
+                                className="neuro-button bg-white text-[#2A1E90] font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 justify-center"
                             >
                                 <span className="w-2 h-2 bg-[#2A1E90] rounded-full"></span>
-                                Ir al Dashboard
+                                Go to Dashboard
                             </Link>
                         ) : (
                             <Link 
                                 href="/auth/login"
-                                className="neuro-button bg-white text-[#2A1E90] font-semibold px-6 py-3 rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 flex items-center gap-2 justify-center"
+                                className="neuro-button bg-white text-[#2A1E90] font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 justify-center"
                             >
                                 <span className="w-2 h-2 bg-[#2A1E90] rounded-full"></span>
-                                Iniciar Sesión
+                                Sign In
                             </Link>
                         )}
-                        <button className="neuro-button bg-transparent border-2 border-white text-white font-semibold px-6 py-3 rounded-full shadow-md hover:bg-white/10 transition-all duration-300 flex items-center gap-2 justify-center">
-                            <span className="w-2 h-2 bg-white rounded-full"></span>
-                            Solicitar Demo
-                        </button>
+                        
+                        <Link 
+                            href="/auth/login"
+                            className="neuro-button-outline border-2 border-white text-white font-semibold px-8 py-4 rounded-full hover:bg-white hover:text-[#2A1E90] transition-all duration-300 flex items-center gap-2 justify-center"
+                        >
+                            <span className="w-2 h-2 bg-current rounded-full"></span>
+                            Free Trial
+                        </Link>
                     </div>
-                </div>
-            </section>
-
-            {/* Testimonials Section with neumorphism */}
-            <section className="bg-white py-20 text-center relative overflow-hidden">
-                {/* Partículas de fondo para testimonios */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Partículas grandes azules */}
-                    {[...Array(12)].map((_, i) => (
-                        <div
-                            key={`large-${i}`}
-                            className="absolute w-2.5 h-2.5 bg-blue-400/50 rounded-full animate-pulse shadow-lg"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                animationDuration: `${2 + Math.random() * 2}s`,
-                                boxShadow: '0 0 8px rgba(59, 130, 246, 0.35)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Partículas medianas */}
-                    {[...Array(18)].map((_, i) => (
-                        <div
-                            key={`medium-${i}`}
-                            className="absolute w-1.5 h-1.5 bg-blue-300/60 rounded-full animate-bounce shadow-md"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 4}s`,
-                                animationDuration: `${1.5 + Math.random() * 2}s`,
-                                boxShadow: '0 0 6px rgba(96, 165, 250, 0.3)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Partículas pequeñas brillantes */}
-                    {[...Array(25)].map((_, i) => (
-                        <div
-                            key={`small-${i}`}
-                            className="absolute w-1 h-1 bg-blue-200/70 rounded-full animate-ping shadow-sm"
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 5}s`,
-                                animationDuration: `${3 + Math.random() * 2}s`,
-                                boxShadow: '0 0 5px rgba(147, 197, 253, 0.5)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Líneas conectoras artísticas */}
-                    {[...Array(5)].map((_, i) => (
-                        <div
-                            key={`line-${i}`}
-                            className="absolute h-0.5 bg-gradient-to-r from-transparent via-blue-400/25 to-transparent animate-pulse rounded-full"
-                            style={{
-                                left: `${Math.random() * 65}%`,
-                                top: `${Math.random() * 65}%`,
-                                width: `${32 + Math.random() * 42}%`,
-                                transform: `rotate(${Math.random() * 360}deg)`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                boxShadow: '0 0 4px rgba(96, 165, 250, 0.25)'
-                            }}
-                        />
-                    ))}
-                    
-                    {/* Círculos de conexión */}
-                    {[...Array(3)].map((_, i) => (
-                        <div
-                            key={`circle-${i}`}
-                            className="absolute border border-blue-300/35 rounded-full animate-spin"
-                            style={{
-                                left: `${Math.random() * 75}%`,
-                                top: `${Math.random() * 75}%`,
-                                width: `${18 + Math.random() * 25}px`,
-                                height: `${18 + Math.random() * 25}px`,
-                                animationDuration: `${12 + Math.random() * 8}s`,
-                                animationDelay: `${Math.random() * 4}s`
-                            }}
-                        />
-                    ))}
-                </div>
-                <div className="neuro-container rounded-2xl p-8 mx-6 mb-10 relative z-10">
-                    <h2 className="text-[54px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[rgba(19,41,68,1)] to-[rgba(60,49,163,1)]">
-                        ¿Qué dicen nuestros clientes?
-                    </h2>
-                </div>
-
-                <div className="blur-circle-left relative z-10" />
-                <div className="blur-circle-right relative z-10" />
-                
-                <div className="neuro-inset rounded-2xl mx-6 p-6 mb-8 relative z-10">
-                    <AutoCarousel items={testimonials1} speed={0.8} />
-                </div>
-
-                <div className="neuro-inset rounded-2xl mx-6 p-6 relative z-10">
-                    <AutoCarousel items={testimonials2} speed={0.5} />
                 </div>
             </section>
         </div>

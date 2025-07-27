@@ -12,7 +12,7 @@
  * 
  * @version v2.0.0 - AWS Migration from Firebase
  * @author Sherlock AI Team
- * @lastModified 2025-07-24
+ * @lastModified 2025-01-27
  */
 
 import {
@@ -30,20 +30,18 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 
 import { CognitoIdentityClient, GetIdCommand, GetCredentialsForIdentityCommand } from '@aws-sdk/client-cognito-identity';
+import { AWS_CONFIG } from './config';
 
-// AWS Configuration
-const AWS_REGION = process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1';
-const USER_POOL_ID = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID || 'us-east-1_IntelliLearn';
-const CLIENT_ID = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID || 'intellilearn-client';
-const IDENTITY_POOL_ID = process.env.NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID || 'us-east-1:intellilearn-identity';
+// AWS Configuration from environment variables
+const AWS_REGION = AWS_CONFIG.region;
+const USER_POOL_ID = AWS_CONFIG.cognito.userPoolId;
+const CLIENT_ID = AWS_CONFIG.cognito.clientId;
+const IDENTITY_POOL_ID = AWS_CONFIG.cognito.identityPoolId;
 
 // Initialize Cognito clients
 const cognitoClient = new CognitoIdentityProviderClient({
   region: AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || 'AKIAVI3ULX4ZB3253Q6R',
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY || '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'
-  }
+  credentials: AWS_CONFIG.credentials
 });
 
 const identityClient = new CognitoIdentityClient({

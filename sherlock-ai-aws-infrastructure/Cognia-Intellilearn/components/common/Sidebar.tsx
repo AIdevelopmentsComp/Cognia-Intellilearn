@@ -114,11 +114,11 @@ export const Sidebar = () => {
    */
   const mainNavItems = [
     { path: '/dashboard', label: 'Dashboard', icon: <FiHome /> },
-    { path: '/dashboard/courses', label: 'Mis Cursos', icon: <FiBookOpen /> },
-    { path: '/dashboard/content', label: 'Contenido', icon: <FiFileText /> },
-    { path: '/dashboard/assistant', label: 'Asistente IA', icon: <FiMessageSquare /> },
+    { path: '/dashboard/courses', label: 'My Courses', icon: <FiBookOpen /> },
+    { path: '/dashboard/content', label: 'Content', icon: <FiFileText /> },
+    { path: '/dashboard/assistant', label: 'AI Assistant', icon: <FiMessageSquare /> },
     { path: '/dashboard/analytics', label: 'Analytics', icon: <FiBarChart /> },
-    { path: '/dashboard/gamification', label: 'Gamificación', icon: <FiAward /> },
+    { path: '/dashboard/gamification', label: 'Gamification', icon: <FiAward /> },
   ]
 
   /**
@@ -126,10 +126,10 @@ export const Sidebar = () => {
    * @context Additional tools and user settings
    */
   const secondaryNavItems = [
-    { path: '/dashboard/assignments', label: 'Tareas', icon: <FiFileText /> },
-    { path: '/dashboard/certificates', label: 'Certificados', icon: <FiAward /> },
-    { path: '/dashboard/profile', label: 'Perfil', icon: <FiUser /> },
-    { path: '/dashboard/settings', label: 'Configuración', icon: <FiSettings /> },
+    { path: '/dashboard/assignments', label: 'Assignments', icon: <FiFileText /> },
+    { path: '/dashboard/certificates', label: 'Certificates', icon: <FiAward /> },
+    { path: '/dashboard/profile', label: 'Profile', icon: <FiUser /> },
+    { path: '/dashboard/settings', label: 'Settings', icon: <FiSettings /> },
   ]
 
   return (
@@ -178,10 +178,10 @@ export const Sidebar = () => {
             </div>
             <div className="ml-3">
               <p className="text-gray-800 text-sm font-medium">
-                {user?.displayName || 'Usuario Demo'}
+                {user?.displayName || 'Demo User'}
               </p>
               <p className="text-xs text-gray-500">
-                {user?.email || 'usuario@ejemplo.com'}
+                {user?.email || 'user@example.com'}
               </p>
             </div>
           </div>
@@ -217,7 +217,7 @@ export const Sidebar = () => {
           {/* Tools section header */}
           <div className="mb-4">
             <p className="px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Herramientas
+              Tools
             </p>
           </div>
 
@@ -262,14 +262,14 @@ export const Sidebar = () => {
                 </div>
                 <div className="text-left">
                   <div className="font-semibold text-xs text-gray-800">
-                    {user?.email || 'Usuario Demo'}
+                    {user?.email || 'Demo User'}
                   </div>
                   <div className={`text-xs font-medium ${
                     userMode === 'admin' 
                       ? 'text-orange-600' 
                       : 'text-blue-600'
                   }`}>
-                    {userMode === 'admin' ? 'Administrador' : 'Estudiante'}
+                    {userMode === 'admin' ? 'Administrator' : 'Student'}
                   </div>
                 </div>
               </div>
@@ -295,7 +295,7 @@ export const Sidebar = () => {
                     ) : (
                       <FiToggleLeft className="text-blue-500" />
                     )}
-                    <span>Cambiar a {userMode === 'admin' ? 'Estudiante' : 'Admin'}</span>
+                                         <span>Switch to {userMode === 'admin' ? 'Student' : 'Admin'}</span>
                   </button>
 
                   {/* Profile Settings */}
@@ -304,7 +304,7 @@ export const Sidebar = () => {
                     className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                   >
                     <FiSettings className="text-gray-500" />
-                    <span>Configuración</span>
+                                         <span>Settings</span>
                   </button>
 
                   <hr className="my-2 border-gray-100" />
@@ -318,7 +318,7 @@ export const Sidebar = () => {
                     className="flex items-center gap-3 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <FiLogOut className="text-red-500" />
-                    <span>Cerrar Sesión</span>
+                                         <span>Sign Out</span>
                   </button>
                 </div>
               </div>

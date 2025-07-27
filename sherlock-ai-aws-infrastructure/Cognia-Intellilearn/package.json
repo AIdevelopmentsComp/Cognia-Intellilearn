@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/copy-assets.js",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare-assets": "node scripts/copy-assets.js"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.848.0",

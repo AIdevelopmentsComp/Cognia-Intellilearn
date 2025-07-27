@@ -1,8 +1,6 @@
 'use client'
 
 import React, { useRef, useState } from 'react'
-import { FaUniversity, FaGraduationCap, FaStar } from 'react-icons/fa'
-import { TbUserShare } from 'react-icons/tb'
 
 export default function VideoSection() {
     const videoRef = useRef<HTMLVideoElement>(null)
@@ -26,7 +24,7 @@ export default function VideoSection() {
     }
 
     return (
-        <section className="bg-white relative overflow-hidden">
+        <section className="relative overflow-hidden" style={{ background: '#ffffff' }}>
             {/* Partículas de fondo más visibles */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 {/* Partículas grandes azules */}
@@ -107,61 +105,17 @@ export default function VideoSection() {
                 ))}
             </div>
 
-            {/* Cards de estadísticas ocupando todo el ancho - inmediatamente después del hero */}
-            <div className="w-full px-6 py-12 relative z-10">
-                <div className="max-w-7xl mx-auto">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
-                        <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                            <p className="text-start text-[40px] font-bold">500+</p>
-                            <p className="w-full text-[16px] text-start mt-2">Instituciones transformando la educación en línea.</p>
-                            <div className='flex justify-end'>
-                                <div className='icon-item neuro-icon'>
-                                    <FaUniversity />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                            <p className="text-start text-[40px] font-bold">50.000+</p>
-                            <p className="w-full text-[16px] text-start mt-2">Estudiantes aprendiendo con inteligencia artificial.</p>
-                            <div className='flex justify-end'>
-                                <div className='icon-item neuro-icon'>
-                                    <FaGraduationCap />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                            <p className="text-start text-[40px] font-bold">5.000+</p>
-                            <p className="w-full text-[16px] text-start mt-2">Docentes optimizando su enseñanza.</p>
-                            <div className='flex justify-end'>
-                                <div className='icon-item neuro-icon'>
-                                    <TbUserShare />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                            <p className="text-start text-[40px] font-bold">98%</p>
-                            <p className="w-full text-[16px] text-start mt-2">Satisfacción con la experiencia de aprendizaje.</p>
-                            <div className='flex justify-end'>
-                                <div className='icon-item neuro-icon'>
-                                    <FaStar />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* Sección de dos columnas: Texto izquierda, Video derecha */}
             <div className="w-full px-6 py-16 relative z-10">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         {/* Columna izquierda - Texto */}
                         <div className="text-left lg:pr-8">
-                            <h2 className="textCognIA mb-6 text-left">
-                                Descubre CognIA en Acción
+                            <h2 className="text-[54px] font-bold mb-6 text-left text-transparent bg-clip-text bg-gradient-to-r from-[#132944] to-[#3C31A3]">
+                                Discover CognIA in Action
                             </h2>
                             <p className="text-gray-600 text-lg leading-relaxed">
-                                Mira cómo nuestra plataforma está revolucionando la educación en línea con inteligencia artificial.
+                                See how our platform is revolutionizing online education with artificial intelligence.
                             </p>
                         </div>
 
@@ -183,21 +137,25 @@ export default function VideoSection() {
                                     className="w-full h-[280px] md:h-[350px] object-cover rounded-3xl transition-all duration-500 hover:scale-[1.02]"
                                     controls
                                     muted
-                                    autoPlay
                                     playsInline
                                     loop
-                                    onLoadedData={handleVideoLoad}
                                     poster="/assets/images/video-thumbnail.jpg"
                                     style={{
                                         filter: 'brightness(1.05) contrast(1.02)',
                                         boxShadow: '0 8px 32px rgba(60, 49, 163, 0.1)'
                                     }}
                                 >
+                                    {/* Primary source: S3 URL */}
                                     <source 
-                                        src="https://intellilearn-final.s3.amazonaws.com/assets/videos/cognia-demo.mp4" 
+                                        src="https://intellilearn-final.s3.us-east-1.amazonaws.com/assets/videos/Video_Listo_CognIA_IntelliLearn+(2).mp4" 
                                         type="video/mp4" 
                                     />
-                                    Tu navegador no soporta la reproducción de videos HTML5.
+                                    {/* Fallback source: Local copy */}
+                                    <source 
+                                        src="/assets/videos/Video_Listo_CognIA_IntelliLearn+(2).mp4" 
+                                        type="video/mp4" 
+                                    />
+                                    Your browser does not support HTML5 video playback.
                                 </video>
                                 
                                 {/* Overlay gradient para efecto neumórfico */}
@@ -209,9 +167,9 @@ export default function VideoSection() {
                                 ></div>
                             </div>
                             
-                            {/* Indicador de autoplay */}
+                            {/* Indicador de video */}
                             <div className="absolute top-4 right-4 z-30 bg-[#3C31A3] text-white px-3 py-1 rounded-full text-xs font-medium opacity-90">
-                                Video en reproducción automática
+                                Demo Video
                             </div>
                         </div>
                     </div>

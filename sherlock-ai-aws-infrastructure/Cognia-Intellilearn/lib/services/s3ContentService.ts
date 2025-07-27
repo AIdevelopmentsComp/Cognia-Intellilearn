@@ -1,20 +1,18 @@
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { AWS_CONFIG } from '../config'
 
-// Configuración AWS
+// Configuración AWS desde variables de entorno
 const awsConfig = {
-  region: 'us-east-1',
-  credentials: {
-    accessKeyId: 'AKIAVI3ULX4ZB3253Q6R',
-    secretAccessKey: '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'
-  }
+  region: AWS_CONFIG.region,
+  credentials: AWS_CONFIG.credentials
 }
 
 const s3Client = new S3Client(awsConfig)
 
 // Configuración del bucket
 export const S3_CONFIG = {
-  BUCKET_NAME: 'cogniaintellilearncontent',
+  BUCKET_NAME: process.env.S3_VECTOR_BUCKET || 'cognia-intellilearn',
   FOLDERS: {
     VIDEOS: 'Videos',
     IMAGES: 'Images', 
@@ -30,7 +28,7 @@ export type ContentType = keyof typeof S3_CONFIG.FOLDERS
 export type FileCategory = 'video' | 'image' | 'audio' | 'document' | 'quiz' | 'task' | 'other'
 
 /**
- * Servicio para gestionar contenido en S3 organizizado por cursos y tipos
+ * Servicio para gestionar contenido en S3 organizado por cursos y tipos
  */
 export class S3ContentService {
   
