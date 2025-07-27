@@ -76,14 +76,9 @@ export default function CourseDetailPage() {
   // Referencias
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Verificar y corregir ID del curso
+  // Log del course ID para debugging
   useEffect(() => {
-    if (courseId === '1') {
-      // Si acceden con el ID antiguo, redirigir al correcto
-      console.log('🔄 Redirecting from old course ID to new one')
-      window.location.replace('/dashboard/courses/000000000')
-      return
-    }
+    console.log('📚 Course ID:', courseId)
   }, [courseId])
 
   // Funciones de modo de usuario

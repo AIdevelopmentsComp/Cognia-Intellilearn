@@ -143,55 +143,63 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Video Section con Ciudad 3D */}
+            {/* Video Section con Cards y Partículas */}
             <VideoSection />
 
-            {/* Stats Section with neumorphism */}
-            <section className="grid grid-cols-2 md:grid-cols-4 gap-6 px-6 py-10 bg-white text-center">
-                <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                    <p className="text-start text-[40px] font-bold">500+</p>
-                    <p className="w-[207px] text-[16px] text-start mt-2">Instituciones transformando la educación en línea.</p>
-                    <div className='flex justify-end'>
-                        <div className='icon-item neuro-icon'>
-                            <FaUniversity />
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                    <p className="text-start text-[40px] font-bold">50.000+</p>
-                    <p className="w-[207px] text-[16px] text-start mt-2">Estudiantes aprendiendo con inteligencia artificial.</p>
-                    <div className='flex justify-end'>
-                        <div className='icon-item neuro-icon'>
-                            <FaGraduationCap />
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                    <p className="text-start text-[40px] font-bold">5.000+</p>
-                    <p className="w-[207px] text-[16px] text-start mt-2">Docentes optimizando su enseñanza.</p>
-                    <div className='flex justify-end'>
-                        <div className='icon-item neuro-icon'>
-                            <TbUserShare />
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-item neuro-container rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                    <p className="text-start text-[40px] font-bold">98%</p>
-                    <p className="w-[207px] text-[16px] text-start mt-2">Satisfacción con la experiencia de aprendizaje.</p>
-                    <div className='flex justify-end'>
-                        <div className='icon-item neuro-icon'>
-                            <FaStar />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* Campus Virtual Integral Section with neumorphism */}
-            <section className="py-4 px-6 bg-white">
-                <div className="text-center mb-10">
+            <section className="py-4 px-6 bg-white relative overflow-hidden">
+                {/* Partículas de fondo */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Partículas grandes azules */}
+                    {[...Array(12)].map((_, i) => (
+                        <div
+                            key={`large-${i}`}
+                            className="absolute w-3 h-3 bg-blue-400/40 rounded-full animate-pulse shadow-lg"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                animationDuration: `${2 + Math.random() * 2}s`,
+                                boxShadow: '0 0 10px rgba(59, 130, 246, 0.3)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Partículas medianas */}
+                    {[...Array(20)].map((_, i) => (
+                        <div
+                            key={`medium-${i}`}
+                            className="absolute w-2 h-2 bg-blue-300/50 rounded-full animate-bounce shadow-md"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 4}s`,
+                                animationDuration: `${1.5 + Math.random() * 2}s`,
+                                boxShadow: '0 0 8px rgba(96, 165, 250, 0.2)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Líneas conectoras artísticas */}
+                    {[...Array(5)].map((_, i) => (
+                        <div
+                            key={`line-${i}`}
+                            className="absolute h-0.5 bg-gradient-to-r from-transparent via-blue-400/20 to-transparent animate-pulse rounded-full"
+                            style={{
+                                left: `${Math.random() * 70}%`,
+                                top: `${Math.random() * 70}%`,
+                                width: `${30 + Math.random() * 40}%`,
+                                transform: `rotate(${Math.random() * 360}deg)`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                boxShadow: '0 0 4px rgba(96, 165, 250, 0.2)'
+                            }}
+                        />
+                    ))}
+                </div>
+                <div className="text-center mb-10 relative z-10">
                     <h2 className="textCognIA">Descubre cómo ofrecer carreras en línea con CognIA</h2>
                 </div>
-                <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
                     <div className="bg-gradient-to-r from-[#132944] to-[#3C31A3] text-white text-center p-10 rounded-2xl shadow-lg neuro-container">
                         <h2 className="text-[40px] font-bold mb-4">Campus virtual integral</h2>
                         <p className="text-[16px] mx-auto font-light">
@@ -228,15 +236,96 @@ export default function LandingPage() {
             </section>
 
             {/* Benefits Section with neumorphism */}
-            <section className="text-center py-10">
-                <div className="neuro-container rounded-2xl p-8 mx-6">
+            <section className="text-center py-10 relative overflow-hidden">
+                {/* Partículas de fondo */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Partículas grandes azules */}
+                    {[...Array(8)].map((_, i) => (
+                        <div
+                            key={`large-${i}`}
+                            className="absolute w-2 h-2 bg-blue-400/35 rounded-full animate-pulse shadow-lg"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                animationDuration: `${2 + Math.random() * 2}s`,
+                                boxShadow: '0 0 8px rgba(59, 130, 246, 0.25)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Líneas conectoras artísticas */}
+                    {[...Array(3)].map((_, i) => (
+                        <div
+                            key={`line-${i}`}
+                            className="absolute h-px bg-gradient-to-r from-transparent via-blue-400/15 to-transparent animate-pulse rounded-full"
+                            style={{
+                                left: `${Math.random() * 70}%`,
+                                top: `${Math.random() * 70}%`,
+                                width: `${25 + Math.random() * 35}%`,
+                                transform: `rotate(${Math.random() * 360}deg)`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                boxShadow: '0 0 3px rgba(96, 165, 250, 0.15)'
+                            }}
+                        />
+                    ))}
+                </div>
+                <div className="neuro-container rounded-2xl p-8 mx-6 relative z-10">
                     <h2 className="textCognIA">Beneficios de nuestra plataforma</h2>
                 </div>
             </section>
 
             {/* Informative Section + Chatbot with neumorphism */}
-            <section className="py-20 px-4 md:px-6">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <section className="py-20 px-4 md:px-6 relative overflow-hidden">
+                {/* Partículas de fondo */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Partículas grandes azules */}
+                    {[...Array(10)].map((_, i) => (
+                        <div
+                            key={`large-${i}`}
+                            className="absolute w-2.5 h-2.5 bg-blue-400/45 rounded-full animate-pulse shadow-lg"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                animationDuration: `${2 + Math.random() * 2}s`,
+                                boxShadow: '0 0 8px rgba(59, 130, 246, 0.3)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Partículas medianas */}
+                    {[...Array(15)].map((_, i) => (
+                        <div
+                            key={`medium-${i}`}
+                            className="absolute w-1.5 h-1.5 bg-blue-300/55 rounded-full animate-bounce shadow-md"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 4}s`,
+                                animationDuration: `${1.5 + Math.random() * 2}s`,
+                                boxShadow: '0 0 6px rgba(96, 165, 250, 0.25)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Líneas conectoras artísticas más largas */}
+                    {[...Array(4)].map((_, i) => (
+                        <div
+                            key={`line-${i}`}
+                            className="absolute h-0.5 bg-gradient-to-r from-transparent via-blue-400/25 to-transparent animate-pulse rounded-full"
+                            style={{
+                                left: `${Math.random() * 60}%`,
+                                top: `${Math.random() * 60}%`,
+                                width: `${35 + Math.random() * 45}%`,
+                                transform: `rotate(${Math.random() * 360}deg)`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                boxShadow: '0 0 4px rgba(96, 165, 250, 0.2)'
+                            }}
+                        />
+                    ))}
+                </div>
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 relative z-10">
                     <div className="space-y-6">
                         {[
                             {
@@ -292,6 +381,54 @@ export default function LandingPage() {
 
             {/* CTA Section with neumorphism */}
             <section className="relative bg-gradient-to-r from-[#132944] to-[#3C31A3] py-20 text-white text-center rounded-2xl shadow-lg mx-4 md:mx-6 overflow-hidden neuro-container">
+                {/* Partículas de fondo para sección CTA */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Partículas grandes doradas/blancas */}
+                    {[...Array(8)].map((_, i) => (
+                        <div
+                            key={`large-${i}`}
+                            className="absolute w-2 h-2 bg-white/30 rounded-full animate-pulse shadow-lg"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                animationDuration: `${2 + Math.random() * 2}s`,
+                                boxShadow: '0 0 8px rgba(255, 255, 255, 0.4)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Partículas medianas */}
+                    {[...Array(12)].map((_, i) => (
+                        <div
+                            key={`medium-${i}`}
+                            className="absolute w-1 h-1 bg-blue-200/40 rounded-full animate-bounce shadow-md"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 4}s`,
+                                animationDuration: `${1.5 + Math.random() * 2}s`,
+                                boxShadow: '0 0 6px rgba(191, 219, 254, 0.3)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Líneas conectoras artísticas doradas */}
+                    {[...Array(3)].map((_, i) => (
+                        <div
+                            key={`line-${i}`}
+                            className="absolute h-px bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse rounded-full"
+                            style={{
+                                left: `${Math.random() * 70}%`,
+                                top: `${Math.random() * 70}%`,
+                                width: `${30 + Math.random() * 40}%`,
+                                transform: `rotate(${Math.random() * 360}deg)`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                boxShadow: '0 0 3px rgba(255, 255, 255, 0.2)'
+                            }}
+                        />
+                    ))}
+                </div>
                 {/* SVG izquierdo */}
                 <div className="absolute left-0 top-0 h-full w-1/2">
                     <img
@@ -320,7 +457,7 @@ export default function LandingPage() {
                         ¿Listo para digitalizar tu oferta académica?
                     </h2>
                     <p className="text-base sm:text-lg md:text-[20px] mb-8">
-                        Comienza ahora iniciando sesión para acceder 
+                        Comienza ahora iniciando sesión para acceder <br />
                         a todas las herramientas de aprendizaje.
                     </p>
                     <div className="flex flex-col md:flex-row gap-4 justify-center">
@@ -351,20 +488,99 @@ export default function LandingPage() {
 
             {/* Testimonials Section with neumorphism */}
             <section className="bg-white py-20 text-center relative overflow-hidden">
-                <div className="neuro-container rounded-2xl p-8 mx-6 mb-10">
+                {/* Partículas de fondo para testimonios */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Partículas grandes azules */}
+                    {[...Array(12)].map((_, i) => (
+                        <div
+                            key={`large-${i}`}
+                            className="absolute w-2.5 h-2.5 bg-blue-400/50 rounded-full animate-pulse shadow-lg"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                animationDuration: `${2 + Math.random() * 2}s`,
+                                boxShadow: '0 0 8px rgba(59, 130, 246, 0.35)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Partículas medianas */}
+                    {[...Array(18)].map((_, i) => (
+                        <div
+                            key={`medium-${i}`}
+                            className="absolute w-1.5 h-1.5 bg-blue-300/60 rounded-full animate-bounce shadow-md"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 4}s`,
+                                animationDuration: `${1.5 + Math.random() * 2}s`,
+                                boxShadow: '0 0 6px rgba(96, 165, 250, 0.3)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Partículas pequeñas brillantes */}
+                    {[...Array(25)].map((_, i) => (
+                        <div
+                            key={`small-${i}`}
+                            className="absolute w-1 h-1 bg-blue-200/70 rounded-full animate-ping shadow-sm"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                                animationDelay: `${Math.random() * 5}s`,
+                                animationDuration: `${3 + Math.random() * 2}s`,
+                                boxShadow: '0 0 5px rgba(147, 197, 253, 0.5)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Líneas conectoras artísticas */}
+                    {[...Array(5)].map((_, i) => (
+                        <div
+                            key={`line-${i}`}
+                            className="absolute h-0.5 bg-gradient-to-r from-transparent via-blue-400/25 to-transparent animate-pulse rounded-full"
+                            style={{
+                                left: `${Math.random() * 65}%`,
+                                top: `${Math.random() * 65}%`,
+                                width: `${32 + Math.random() * 42}%`,
+                                transform: `rotate(${Math.random() * 360}deg)`,
+                                animationDelay: `${Math.random() * 3}s`,
+                                boxShadow: '0 0 4px rgba(96, 165, 250, 0.25)'
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Círculos de conexión */}
+                    {[...Array(3)].map((_, i) => (
+                        <div
+                            key={`circle-${i}`}
+                            className="absolute border border-blue-300/35 rounded-full animate-spin"
+                            style={{
+                                left: `${Math.random() * 75}%`,
+                                top: `${Math.random() * 75}%`,
+                                width: `${18 + Math.random() * 25}px`,
+                                height: `${18 + Math.random() * 25}px`,
+                                animationDuration: `${12 + Math.random() * 8}s`,
+                                animationDelay: `${Math.random() * 4}s`
+                            }}
+                        />
+                    ))}
+                </div>
+                <div className="neuro-container rounded-2xl p-8 mx-6 mb-10 relative z-10">
                     <h2 className="text-[54px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[rgba(19,41,68,1)] to-[rgba(60,49,163,1)]">
                         ¿Qué dicen nuestros clientes?
                     </h2>
                 </div>
 
-                <div className="blur-circle-left" />
-                <div className="blur-circle-right" />
+                <div className="blur-circle-left relative z-10" />
+                <div className="blur-circle-right relative z-10" />
                 
-                <div className="neuro-inset rounded-2xl mx-6 p-6 mb-8">
+                <div className="neuro-inset rounded-2xl mx-6 p-6 mb-8 relative z-10">
                     <AutoCarousel items={testimonials1} speed={0.8} />
                 </div>
 
-                <div className="neuro-inset rounded-2xl mx-6 p-6">
+                <div className="neuro-inset rounded-2xl mx-6 p-6 relative z-10">
                     <AutoCarousel items={testimonials2} speed={0.5} />
                 </div>
             </section>

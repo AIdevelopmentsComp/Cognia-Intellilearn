@@ -5,6 +5,7 @@
 export async function generateStaticParams() {
   // Generate static params for sample courses
   return [
+    { id: '000000000' }, // Curso principal actual
     { id: '1' },
     { id: '2' },
     { id: '3' },

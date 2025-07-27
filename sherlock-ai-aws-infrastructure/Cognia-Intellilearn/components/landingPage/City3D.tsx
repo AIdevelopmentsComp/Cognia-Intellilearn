@@ -135,11 +135,11 @@ export default function City3D({ className = '' }: City3DProps) {
       }
 
       // Plano base
-      const pmaterial = new THREE.MeshPhongMaterial({
+      const pmaterial = new THREE.MeshStandardMaterial({
         color: 0x000000,
         side: THREE.DoubleSide,
-        roughness: 10,
-        metalness: 0.6,
+        roughness: 0.9,
+        metalness: 0.1,
         opacity: 0.9,
         transparent: true
       })
@@ -186,10 +186,10 @@ export default function City3D({ className = '' }: City3DProps) {
       }
     }
 
-    // Luces
-    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 4)
-    const lightFront = new THREE.SpotLight(0xFFFFFF, 20, 10)
-    const lightBack = new THREE.PointLight(0xFFFFFF, 0.5)
+         // Luces más brillantes para mayor visibilidad
+     const ambientLight = new THREE.AmbientLight(0xFFFFFF, 6)
+     const lightFront = new THREE.SpotLight(0xFFFFFF, 30, 15)
+     const lightBack = new THREE.PointLight(0xFFFFFF, 1.5)
 
     lightFront.rotation.x = 45 * Math.PI / 180
     lightFront.rotation.z = -45 * Math.PI / 180
@@ -221,24 +221,26 @@ export default function City3D({ className = '' }: City3DProps) {
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
     }
 
-    // Función de animación
-    const animate = () => {
-      const uSpeed = 0.001
-      
-      city.rotation.y -= ((mouse.x * 8) - camera.rotation.y) * uSpeed
-      city.rotation.x -= (-(mouse.y * 2) - camera.rotation.x) * uSpeed
-      
-      if (city.rotation.x < -0.05) city.rotation.x = -0.05
-      else if (city.rotation.x > 1) city.rotation.x = 1
+         // Función de animación
+     const animate = () => {
+       if (!sceneRef.current) return
+       
+       const uSpeed = 0.001
+       
+       city.rotation.y -= ((mouse.x * 8) - camera.rotation.y) * uSpeed
+       city.rotation.x -= (-(mouse.y * 2) - camera.rotation.x) * uSpeed
+       
+       if (city.rotation.x < -0.05) city.rotation.x = -0.05
+       else if (city.rotation.x > 1) city.rotation.x = 1
 
-      smoke.rotation.y += 0.01
-      smoke.rotation.x += 0.01
+       smoke.rotation.y += 0.01
+       smoke.rotation.x += 0.01
 
-      camera.lookAt(city.position)
-      renderer.render(scene, camera)
-      
-      sceneRef.current!.animationId = requestAnimationFrame(animate)
-    }
+       camera.lookAt(city.position)
+       renderer.render(scene, camera)
+       
+       sceneRef.current.animationId = requestAnimationFrame(animate)
+     }
 
     // Manejar redimensionamiento
     const onWindowResize = () => {
@@ -269,26 +271,31 @@ export default function City3D({ className = '' }: City3DProps) {
       animationId: 0
     }
 
-    // Cleanup
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('resize', onWindowResize)
-      
-      if (sceneRef.current) {
-        cancelAnimationFrame(sceneRef.current.animationId)
-        if (mountRef.current && sceneRef.current.renderer.domElement) {
-          mountRef.current.removeChild(sceneRef.current.renderer.domElement)
-        }
-        sceneRef.current.renderer.dispose()
-      }
-    }
+         // Cleanup
+     return () => {
+       window.removeEventListener('mousemove', onMouseMove)
+       window.removeEventListener('resize', onWindowResize)
+       
+       if (sceneRef.current) {
+         cancelAnimationFrame(sceneRef.current.animationId)
+         if (mountRef.current && sceneRef.current.renderer.domElement) {
+           try {
+             mountRef.current.removeChild(sceneRef.current.renderer.domElement)
+           } catch (error) {
+             console.log('Element already removed')
+           }
+         }
+         sceneRef.current.renderer.dispose()
+         sceneRef.current = null
+       }
+     }
   }, [])
 
-  return (
-    <div 
-      ref={mountRef} 
-      className={`absolute inset-0 ${className}`}
-      style={{ zIndex: 1 }}
-    />
-  )
+     return (
+     <div 
+       ref={mountRef} 
+       className={`absolute inset-0 w-full h-full ${className}`}
+       style={{ zIndex: 10, minHeight: '400px' }}
+     />
+   )
 } 
