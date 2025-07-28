@@ -29,6 +29,7 @@ import { useUserMode } from '@/lib/contexts/UserModeContext'
 import AddModuleModal from '@/components/course/AddModuleModal'
 import AddLessonModal from '@/components/course/AddLessonModal'
 import VoiceSessionModal from '@/components/course/VoiceSessionModal'
+import VoiceSessionViewer from '@/components/course/VoiceSessionViewer'
 
 // El modo de usuario ahora se gestiona globalmente
 
@@ -649,6 +650,7 @@ export default function CourseDetailPage() {
                                 {lesson.type === 'reading' && <FaBookOpen />}
                                 {lesson.type === 'quiz' && <FaQuestionCircle />}
                                 {lesson.type === 'assignment' && <FaClipboardList />}
+                                {lesson.type === 'voice_session' && <FaMicrophone />}
                               </div>
                               <div className="flex-1">
                                 <p className="text-[#132944] text-sm font-medium">{lesson.title}</p>
@@ -735,6 +737,7 @@ export default function CourseDetailPage() {
                                   {lesson.type === 'reading' && <FaBookOpen />}
                                   {lesson.type === 'quiz' && <FaQuestionCircle />}
                                   {lesson.type === 'assignment' && <FaClipboardList />}
+                                  {lesson.type === 'voice_session' && <FaMicrophone />}
                                 </div>
                               </div>
                               <div className="flex-1">
@@ -897,6 +900,7 @@ export default function CourseDetailPage() {
                                   {currentLesson.type === 'reading' && <FaBookOpen />}
                                   {currentLesson.type === 'quiz' && <FaQuestionCircle />}
                                   {currentLesson.type === 'assignment' && <FaClipboardList />}
+                                  {currentLesson.type === 'voice_session' && <FaMicrophone />}
                                 </div>
                               </div>
                               <div>
@@ -937,15 +941,21 @@ export default function CourseDetailPage() {
                                 </div>
                               </div>
                             )}
+
+                            {currentLesson.type === 'voice_session' && (
+                              <VoiceSessionViewer lesson={currentLesson} />
+                            )}
                             
-                            <div className="prose prose-gray max-w-none">
-                              <div 
-                                className="text-gray-700 leading-relaxed"
-                                dangerouslySetInnerHTML={{ 
-                                  __html: currentLesson.content || 'Contenido no disponible' 
-                                }}
-                              />
-                            </div>
+                            {currentLesson.type !== 'voice_session' && (
+                              <div className="prose prose-gray max-w-none">
+                                <div 
+                                  className="text-gray-700 leading-relaxed"
+                                  dangerouslySetInnerHTML={{ 
+                                    __html: currentLesson.content || 'Contenido no disponible' 
+                                  }}
+                                />
+                              </div>
+                            )}
                           </div>
 
                           {/* Navegación entre lecciones */}
