@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { FaMicrophone, FaStop, FaPlay, FaPause, FaVolumeUp } from 'react-icons/fa'
+import { FaMicrophone, FaStop, FaPlay, FaPause, FaVolumeUp, FaTimes } from 'react-icons/fa'
+import { VoiceSessionService, VoiceSession, VoiceSessionConfig, ConversationMessage } from '@/lib/services/voiceSessionService'
 
 interface VoiceSessionViewerProps {
   lesson: {
@@ -19,9 +20,20 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
   const [duration, setDuration] = useState(0)
   const [isRecording, setIsRecording] = useState(false)
   const [recordingTime, setRecordingTime] = useState(0)
+  const [isSessionActive, setIsSessionActive] = useState(false)
+  const [currentSession, setCurrentSession] = useState<VoiceSession | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [currentSegment, setCurrentSegment] = useState(0)
+  const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([])
+  const [sessionStatus, setSessionStatus] = useState<string>('Ready to start')
   
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
+
+  // Mock student ID - in real app, get from auth context
+  const studentId = 'student_123'
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -29,9 +41,152 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Parse lesson content to get voice session configuration
+  const parseVoiceConfig = (content: string): VoiceSessionConfig => {
+    try {
+      const config = JSON.parse(content)
+      return {
+        voiceSpeed: config.voiceSpeed || 'medium',
+        voiceStyle: config.voiceStyle || 'professional',
+        duration: parseInt(config.duration) || 10,
+        interactionLevel: config.interactionLevel || 'medium',
+        aiModel: config.aiModel || 'claude-3-sonnet',
+        personality: config.personality || 'friendly',
+        topic: config.topic || lesson.title,
+        level: config.level || 'intermediate'
+      }
+    } catch (error) {
+      // Fallback configuration
+      return {
+        voiceSpeed: 'medium',
+        voiceStyle: 'professional',
+        duration: 10,
+        interactionLevel: 'medium',
+        aiModel: 'claude-3-sonnet',
+        personality: 'friendly',
+        topic: lesson.title,
+        level: 'intermediate'
+      }
+    }
+  }
+
+  const startVoiceSession = async () => {
+    try {
+      setIsLoading(true)
+      setSessionStatus('Starting voice session...')
+      
+      const config = parseVoiceConfig(lesson.content)
+      
+      // Check for existing active session
+      let session = await VoiceSessionService.getActiveSession(studentId, lesson.id)
+      
+      if (!session) {
+        // Create new session
+        session = await VoiceSessionService.createVoiceSession(
+          studentId,
+          lesson.id,
+          'course_id', // You might want to pass this as prop
+          config
+        )
+      }
+      
+      setCurrentSession(session)
+      setIsSessionActive(true)
+      setSessionStatus('Voice session active')
+      
+      // Load conversation history
+      const history = await VoiceSessionService.getConversationHistory(session.sessionId)
+      setConversationHistory(history)
+      
+      // Start playing first audio segment if available
+      if (session.audioSegments && session.audioSegments.length > 0) {
+        await playAudioSegment(session.audioSegments[0])
+      }
+      
+    } catch (error) {
+      console.error('Error starting voice session:', error)
+      setSessionStatus('Error starting session')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const stopVoiceSession = async () => {
+    try {
+      if (currentSession) {
+        await VoiceSessionService.updateSessionStatus(currentSession.sessionId, 'cancelled')
+        
+        // Save system message
+        await VoiceSessionService.saveConversationMessage(
+          currentSession.sessionId,
+          studentId,
+          'system',
+          'Voice session ended by student'
+        )
+      }
+      
+      setIsSessionActive(false)
+      setCurrentSession(null)
+      setIsRecording(false)
+      setIsPlaying(false)
+      setSessionStatus('Session ended')
+      
+      // Stop any ongoing recording
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop()
+      }
+      
+      // Stop audio playback
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+      }
+      
+    } catch (error) {
+      console.error('Error stopping voice session:', error)
+    }
+  }
+
+  const playAudioSegment = async (segment: any) => {
+    try {
+      if (segment.audioUrl && audioRef.current) {
+        audioRef.current.src = segment.audioUrl
+        audioRef.current.load()
+        await audioRef.current.play()
+        setIsPlaying(true)
+      }
+    } catch (error) {
+      console.error('Error playing audio segment:', error)
+    }
+  }
+
   const startRecording = async () => {
     try {
-      await navigator.mediaDevices.getUserMedia({ audio: true })
+      if (!isSessionActive || !currentSession) {
+        await startVoiceSession()
+        return
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      
+      mediaRecorderRef.current = new MediaRecorder(stream)
+      audioChunksRef.current = []
+      
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data)
+        }
+      }
+      
+      mediaRecorderRef.current.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' })
+        await handleRecordingComplete(audioBlob)
+        
+        // Stop all tracks to release microphone
+        stream.getTracks().forEach(track => track.stop())
+      }
+      
+      mediaRecorderRef.current.start()
       setIsRecording(true)
       setRecordingTime(0)
       
@@ -42,15 +197,50 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
       
     } catch (error) {
       console.error('Error accessing microphone:', error)
-      alert('Error al acceder al micrófono. Verifica los permisos.')
+      setSessionStatus('Microphone access denied')
     }
   }
 
   const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop()
+    }
+    
     setIsRecording(false)
+    
     if (timerRef.current) {
       clearInterval(timerRef.current)
       timerRef.current = null
+    }
+  }
+
+  const handleRecordingComplete = async (audioBlob: Blob) => {
+    try {
+      if (!currentSession) return
+      
+      // Convert audio blob to base64 or handle upload to S3
+      const audioUrl = URL.createObjectURL(audioBlob)
+      
+      // Save student audio message
+      await VoiceSessionService.saveConversationMessage(
+        currentSession.sessionId,
+        studentId,
+        'student_audio',
+        'Student voice input',
+        audioUrl,
+        { duration: recordingTime, size: audioBlob.size }
+      )
+      
+      // Here you could implement speech-to-text and AI response
+      // For now, just update the conversation history
+      const updatedHistory = await VoiceSessionService.getConversationHistory(currentSession.sessionId)
+      setConversationHistory(updatedHistory)
+      
+      setSessionStatus('Recording processed')
+      
+    } catch (error) {
+      console.error('Error handling recording:', error)
+      setSessionStatus('Error processing recording')
     }
   }
 
@@ -69,6 +259,11 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current)
+      }
+      
+      // Cleanup media recorder
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stream?.getTracks().forEach(track => track.stop())
       }
     }
   }, [])
@@ -103,8 +298,13 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
             {isRecording ? formatTime(recordingTime) : '00:00'}
           </div>
           <div className="text-sm text-gray-600">
-            {isRecording ? 'Grabando tu respuesta...' : 'Sesión de Voz Interactiva'}
+            {isLoading ? 'Loading...' : sessionStatus}
           </div>
+          {currentSession && (
+            <div className="text-xs text-gray-500">
+              Session: {currentSession.sessionId.slice(-8)}
+            </div>
+          )}
         </div>
 
         {/* Control Buttons */}
@@ -112,18 +312,32 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
           {/* Listen Button */}
           <button
             onClick={playPause}
-            className="neuro-button-enhanced bg-white text-[#6366f1] p-4 rounded-full hover:shadow-lg transition-all duration-300"
-            title="Escuchar Contenido"
+            disabled={!isSessionActive}
+            className="neuro-button-enhanced bg-white text-[#6366f1] p-4 rounded-full hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+            title="Listen to Content"
           >
             <FaVolumeUp className="text-xl" />
           </button>
 
-          {/* Record Button */}
-          {!isRecording ? (
+          {/* Main Action Button - Start Session or Record */}
+          {!isSessionActive ? (
+            <button
+              onClick={startVoiceSession}
+              disabled={isLoading}
+              className="neuro-button-enhanced bg-white text-[#8b5cf6] p-6 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+              title="Start Voice Session"
+            >
+              {isLoading ? (
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8b5cf6]"></div>
+              ) : (
+                <FaMicrophone className="text-3xl" />
+              )}
+            </button>
+          ) : !isRecording ? (
             <button
               onClick={startRecording}
               className="neuro-button-enhanced bg-white text-[#8b5cf6] p-6 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-              title="Iniciar Grabación"
+              title="Start Recording"
             >
               <FaMicrophone className="text-3xl" />
             </button>
@@ -131,17 +345,29 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
             <button
               onClick={stopRecording}
               className="neuro-button-enhanced bg-red-500 text-white p-6 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-              title="Detener Grabación"
+              title="Stop Recording"
             >
               <FaStop className="text-3xl" />
+            </button>
+          )}
+
+          {/* End Session Button */}
+          {isSessionActive && (
+            <button
+              onClick={stopVoiceSession}
+              className="neuro-button-enhanced bg-white text-red-500 p-4 rounded-full hover:shadow-lg transition-all duration-300"
+              title="End Session"
+            >
+              <FaTimes className="text-xl" />
             </button>
           )}
 
           {/* Play Button */}
           <button
             onClick={playPause}
-            className="neuro-button-enhanced bg-white text-[#10b981] p-4 rounded-full hover:shadow-lg transition-all duration-300"
-            title={isPlaying ? "Pausar" : "Reproducir"}
+            disabled={!isSessionActive}
+            className="neuro-button-enhanced bg-white text-[#10b981] p-4 rounded-full hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+            title={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? <FaPause className="text-xl" /> : <FaPlay className="text-xl" />}
           </button>
@@ -149,16 +375,36 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
 
         {/* Instructions */}
         <div className="neuro-card p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white">
-          <h4 className="font-semibold text-[#132944] mb-2">Instrucciones:</h4>
+          <h4 className="font-semibold text-[#132944] mb-2">Instructions:</h4>
           <div className="text-sm text-gray-600 space-y-1">
-            <p>🎧 <strong>Escuchar:</strong> Reproduce el contenido de la sesión</p>
-            <p>🎤 <strong>Hablar:</strong> Graba tu respuesta o participación</p>
-            <p>▶️ <strong>Reproducir:</strong> Escucha tu grabación</p>
+            {!isSessionActive ? (
+              <p>🎤 <strong>Start:</strong> Click the microphone to begin your voice session</p>
+            ) : (
+              <>
+                <p>🎧 <strong>Listen:</strong> AI-generated content will play automatically</p>
+                <p>🎤 <strong>Speak:</strong> Record your questions and responses</p>
+                <p>❌ <strong>End:</strong> Click the X to finish the session</p>
+              </>
+            )}
           </div>
         </div>
+
+        {/* Conversation History (Optional - for debugging) */}
+        {conversationHistory.length > 0 && (
+          <div className="neuro-card p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white max-h-32 overflow-y-auto">
+            <h4 className="font-semibold text-[#132944] mb-2 text-xs">Session Activity:</h4>
+            <div className="space-y-1">
+              {conversationHistory.slice(-3).map((message, index) => (
+                <div key={message.messageId} className="text-xs text-gray-500">
+                  <span className="font-medium">{message.type}:</span> {message.content.slice(0, 50)}...
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Hidden audio element for future audio playback */}
+      {/* Hidden audio element for AI-generated content playback */}
       <audio
         ref={audioRef}
         onLoadedMetadata={() => {
@@ -171,7 +417,17 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
             setCurrentTime(audioRef.current.currentTime)
           }
         }}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => {
+          setIsPlaying(false)
+          // Auto-play next segment if available
+          if (currentSession && currentSession.audioSegments) {
+            const nextSegment = currentSession.audioSegments[currentSegment + 1]
+            if (nextSegment) {
+              setCurrentSegment(prev => prev + 1)
+              playAudioSegment(nextSegment)
+            }
+          }
+        }}
       />
     </div>
   )
