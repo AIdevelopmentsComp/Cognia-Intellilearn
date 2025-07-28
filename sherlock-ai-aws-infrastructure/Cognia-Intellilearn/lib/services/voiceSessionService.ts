@@ -383,8 +383,8 @@ Begin the lesson now:`
   /**
    * Get appropriate Polly voice ID based on style
    */
-  private static getPollyVoiceId(voiceStyle: string): string {
-    const voiceMap: Record<string, string> = {
+  private static getPollyVoiceId(voiceStyle: string): 'Matthew' | 'Joanna' | 'Justin' | 'Amy' | 'Brian' {
+    const voiceMap: Record<string, 'Matthew' | 'Joanna' | 'Justin' | 'Amy' | 'Brian'> = {
       'formal': 'Matthew',
       'casual': 'Joanna',
       'energetic': 'Justin',
@@ -398,14 +398,26 @@ Begin the lesson now:`
   /**
    * Convert stream to buffer
    */
-  private static async streamToBuffer(stream: any): Promise<Buffer> {
+  private static async streamToBuffer(stream: any): Promise<Uint8Array> {
     const chunks: Uint8Array[] = []
     
     for await (const chunk of stream) {
-      chunks.push(chunk)
+      chunks.push(new Uint8Array(chunk))
     }
     
-    return Buffer.concat(chunks)
+    // Calculate total length
+    const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0)
+    
+    // Create a new Uint8Array and copy all chunks into it
+    const result = new Uint8Array(totalLength)
+    let offset = 0
+    
+    for (const chunk of chunks) {
+      result.set(chunk, offset)
+      offset += chunk.length
+    }
+    
+    return result
   }
 
   /**
@@ -525,7 +537,7 @@ Begin the lesson now:`
     currentSegment?: number
   ): Promise<void> {
     try {
-      const updateExpression = 'SET #status = :status, updatedAt = :updatedAt'
+      let updateExpression = 'SET #status = :status, updatedAt = :updatedAt'
       const expressionAttributeNames: Record<string, string> = {
         '#status': 'status'
       }

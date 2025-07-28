@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { FaMicrophone, FaStop, FaPlay, FaPause, FaVolumeUp, FaTimes } from 'react-icons/fa'
-import { VoiceSessionService, VoiceSession, VoiceSessionConfig, ConversationMessage } from '@/lib/services/voiceSessionService'
+import { VoiceSessionClient, VoiceSession, VoiceSessionConfig, ConversationMessage } from '@/lib/services/voiceSessionClient'
 
 interface VoiceSessionViewerProps {
   lesson: {
@@ -78,11 +78,11 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
       const config = parseVoiceConfig(lesson.content)
       
       // Check for existing active session
-      let session = await VoiceSessionService.getActiveSession(studentId, lesson.id)
+      let session = await VoiceSessionClient.getActiveSession(studentId, lesson.id)
       
       if (!session) {
         // Create new session
-        session = await VoiceSessionService.createVoiceSession(
+        session = await VoiceSessionClient.createVoiceSession(
           studentId,
           lesson.id,
           'course_id', // You might want to pass this as prop
@@ -95,7 +95,7 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
       setSessionStatus('Voice session active')
       
       // Load conversation history
-      const history = await VoiceSessionService.getConversationHistory(session.sessionId)
+      const history = await VoiceSessionClient.getConversationHistory(session.sessionId)
       setConversationHistory(history)
       
       // Start playing first audio segment if available
@@ -114,10 +114,10 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
   const stopVoiceSession = async () => {
     try {
       if (currentSession) {
-        await VoiceSessionService.updateSessionStatus(currentSession.sessionId, 'cancelled')
+        await VoiceSessionClient.updateSessionStatus(currentSession.sessionId, 'cancelled')
         
         // Save system message
-        await VoiceSessionService.saveConversationMessage(
+        await VoiceSessionClient.saveConversationMessage(
           currentSession.sessionId,
           studentId,
           'system',
@@ -218,11 +218,13 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
     try {
       if (!currentSession) return
       
+      setSessionStatus('Processing your voice...')
+      
       // Convert audio blob to base64 or handle upload to S3
       const audioUrl = URL.createObjectURL(audioBlob)
       
       // Save student audio message
-      await VoiceSessionService.saveConversationMessage(
+      await VoiceSessionClient.saveConversationMessage(
         currentSession.sessionId,
         studentId,
         'student_audio',
@@ -231,16 +233,82 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
         { duration: recordingTime, size: audioBlob.size }
       )
       
-      // Here you could implement speech-to-text and AI response
-      // For now, just update the conversation history
-      const updatedHistory = await VoiceSessionService.getConversationHistory(currentSession.sessionId)
+      // TODO: Implement speech-to-text conversion
+      // For now, we'll simulate the student asking a question about the lesson
+      const simulatedQuestion = `I have a question about ${currentSession.config.topic}. Can you explain more about the key concepts?`
+      
+      setSessionStatus('AI is responding...')
+      
+      // Generate AI response using Bedrock
+      const aiResponse = await generateAIResponse(simulatedQuestion, currentSession)
+      
+      // Save AI response
+      await VoiceSessionClient.saveConversationMessage(
+        currentSession.sessionId,
+        studentId,
+        'ai_response',
+        aiResponse,
+        undefined,
+        { responseType: 'contextual_help' }
+      )
+      
+      // Convert AI response to speech and play it
+      await playAIResponse(aiResponse, currentSession.config)
+      
+      // Update conversation history
+      const updatedHistory = await VoiceSessionClient.getConversationHistory(currentSession.sessionId)
       setConversationHistory(updatedHistory)
       
-      setSessionStatus('Recording processed')
+      setSessionStatus('Voice session active')
       
     } catch (error) {
       console.error('Error handling recording:', error)
       setSessionStatus('Error processing recording')
+    }
+  }
+
+  const generateAIResponse = async (question: string, session: VoiceSession): Promise<string> => {
+    try {
+      // Import the chatWithAI function
+      const { chatWithAI } = await import('@/lib/firebase')
+      
+      // Build contextual system prompt
+      const systemPrompt = `You are an expert ${session.config.personality} professor teaching about ${session.config.topic} to ${session.config.level} level students.
+
+Current lesson context: The student is in an interactive voice session learning about ${session.config.topic}.
+
+Respond in a ${session.config.voiceStyle} teaching style with ${session.config.interactionLevel} level of interaction.
+
+Keep your response concise (1-2 minutes of speaking) and educational. Provide practical examples and encourage further questions.`
+
+      const response = await chatWithAI(question, systemPrompt)
+      return response
+
+    } catch (error) {
+      console.error('Error generating AI response:', error)
+      return `I understand you have a question about ${currentSession?.config.topic}. Let me help you with that. This topic involves several key concepts that build upon each other. Would you like me to explain any specific aspect in more detail?`
+    }
+  }
+
+  const playAIResponse = async (responseText: string, config: VoiceSessionConfig) => {
+    try {
+      setSessionStatus('Converting response to speech...')
+      
+      // Convert text to speech using API
+      const audioUrl = await VoiceSessionClient.synthesizeSpeech(responseText, config.voiceStyle)
+      
+      // Play the audio response
+      if (audioRef.current && audioUrl) {
+        audioRef.current.src = audioUrl
+        audioRef.current.load()
+        await audioRef.current.play()
+        setIsPlaying(true)
+        setSessionStatus('AI is speaking...')
+      }
+      
+    } catch (error) {
+      console.error('Error playing AI response:', error)
+      setSessionStatus('Error playing response')
     }
   }
 
