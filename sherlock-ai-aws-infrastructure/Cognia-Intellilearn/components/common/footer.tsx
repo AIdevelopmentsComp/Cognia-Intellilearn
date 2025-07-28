@@ -21,28 +21,28 @@ export const FooterComponet = () => {
                                         />
                                     </div>
             <p className=" text-white/90 font-extralight text-[16px] leading-relaxed">
-              Transformando la educación con la potencia de la inteligencia artificial. Solicita una demo y descubre cómo podemos ayudarte.
+              Transforming education with the power of artificial intelligence. Request a demo and discover how we can help you.
             </p>
           </div>
   
           {/* Enlaces rápidos */}
           <div>
-            <h3 className="text-[20px] font-semibold mb-3">Enlaces Rápidos</h3>
+            <h3 className="text-[20px] font-semibold mb-3">Quick Links</h3>
             <ul className="space-y-2 text-white/90 text-[16px]">
-              <li><a href="#funciona" className="hover:underline">¿Cómo Funciona?</a></li>
-              <li><a href="#beneficios" className="hover:underline">Beneficios</a></li>
-              <li><a href="#testimonios" className="hover:underline">Testimonios</a></li>
-              <li><a href="#demo" className="hover:underline">Solicitar Demo</a></li>
+              <li><a href="#how-it-works" className="hover:underline">How It Works?</a></li>
+              <li><a href="#benefits" className="hover:underline">Benefits</a></li>
+              <li><a href="#testimonials" className="hover:underline">Testimonials</a></li>
+              <li><a href="#demo" className="hover:underline">Request Demo</a></li>
             </ul>
           </div>
   
           {/* Contacto */}
           <div>
-            <h3 className="text-[20px] font-semibold mb-3">Contáctanos</h3>
+            <h3 className="text-[20px] font-semibold mb-3">Contact Us</h3>
             <ul className="space-y-2 text-white/90 text-[16px]">
               <li className='flex items-center gap-2.5'><AiOutlineMail className='text-[22px]'/> info@cognia.edu</li>
-              <li className='flex items-center gap-2.5'><BsTelephone className='text-[22px]'/> +52 (55) 1234-5678</li>
-              <li className='flex items-center gap-2.5'><SlLocationPin className='text-[22px]'/> Ciudad de México, México</li>
+              <li className='flex items-center gap-2.5'><BsTelephone className='text-[22px]'/> +1 (555) 123-4567</li>
+              <li className='flex items-center gap-2.5'><SlLocationPin className='text-[22px]'/> New York, USA</li>
             </ul>
           </div>
         </div>
@@ -53,9 +53,9 @@ export const FooterComponet = () => {
         {/* Parte inferior */}
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-white/70 gap-4">
           <div className="flex gap-4 text-[12px]">
-            <a href="#" className="hover:underline">Tratamiento de datos y Política de privacidad</a>
+            <a href="#" className="hover:underline">Data Processing and Privacy Policy</a>
           </div>
-          <p className='text-[12px]'>© 2025 CognIA. Todos los derechos reservados.</p>
+          <p className='text-[12px]'>© 2025 CognIA. All rights reserved.</p>
           <div className='flex gap-4'>
             <a href="" className='text-[24px]'><BsTwitterX/></a>
             <a href="" className='text-[24px]'><FaFacebook/></a>

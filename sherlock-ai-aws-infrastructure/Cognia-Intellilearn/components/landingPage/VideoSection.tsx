@@ -14,11 +14,21 @@ export default function VideoSection() {
         setIsHovered(false)
     }
 
-    // Auto-play video when component loads
+    // Auto-play video when component loads and ensure continuous loop
     const handleVideoLoad = () => {
         if (videoRef.current) {
             videoRef.current.play().catch((error) => {
                 console.log('Auto-play blocked by browser:', error.name)
+            })
+        }
+    }
+
+    // Ensure video restarts when it ends
+    const handleVideoEnd = () => {
+        if (videoRef.current) {
+            videoRef.current.currentTime = 0
+            videoRef.current.play().catch((error) => {
+                console.log('Auto-restart blocked by browser:', error.name)
             })
         }
     }
@@ -112,10 +122,10 @@ export default function VideoSection() {
                         {/* Columna izquierda - Texto */}
                         <div className="text-left lg:pr-8">
                             <h2 className="text-[54px] font-bold mb-6 text-left text-transparent bg-clip-text bg-gradient-to-r from-[#132944] to-[#3C31A3]">
-                                Discover CognIA in Action
+                                Discover CognIA IntelliLearn in Action
                             </h2>
                             <p className="text-gray-600 text-lg leading-relaxed">
-                                See how our platform is revolutionizing online education with artificial intelligence.
+                                Experience revolutionary voice-powered learning. Watch how conversational AI transforms understanding from weeks to minutes through natural dialogue and intelligent interaction.
                             </p>
                         </div>
 
@@ -136,9 +146,12 @@ export default function VideoSection() {
                                     ref={videoRef}
                                     className="w-full h-[280px] md:h-[350px] object-cover rounded-3xl transition-all duration-500 hover:scale-[1.02]"
                                     controls
+                                    autoPlay
                                     muted
                                     playsInline
                                     loop
+                                    onLoadedData={handleVideoLoad}
+                                    onEnded={handleVideoEnd}
                                     poster="/assets/images/video-thumbnail.jpg"
                                     style={{
                                         filter: 'brightness(1.05) contrast(1.02)',

@@ -56,16 +56,16 @@ export const HeaderComponent = () => {
       </Link>
 
       <nav className="hidden md:flex items-center gap-4 text-sm relative z-10">
-        <a href="#funciona" className="neuro-button text-gray-700 hover:text-[#2A1E90] px-4 py-2 rounded-full transition-all duration-300 font-medium">
+        <a href="#funciona" className="neuro-button-enhanced">
           How It Works?
         </a>
-        <a href="#beneficios" className="neuro-button text-gray-700 hover:text-[#2A1E90] px-4 py-2 rounded-full transition-all duration-300 font-medium">
+        <a href="#beneficios" className="neuro-button-enhanced">
           Benefits
         </a>
-        <a href="#testimonios" className="neuro-button text-gray-700 hover:text-[#2A1E90] px-4 py-2 rounded-full transition-all duration-300 font-medium">
+        <a href="#testimonios" className="neuro-button-enhanced">
           Testimonials
         </a>
-        <button className="neuro-button bg-gradient-to-r from-[#2A1E90] to-[#4A3B9A] text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all duration-300">
+        <button className="btn-proof">
           Request Demo
         </button>
       </nav>

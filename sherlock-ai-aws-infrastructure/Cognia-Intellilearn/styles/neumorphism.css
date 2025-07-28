@@ -42,12 +42,12 @@
     2px 2px 4px var(--neuro-shadow-dark-soft);
 }
 
-/* Advanced neumorphic button */
+/* Advanced neumorphic button - White background */
 .neuro-button {
   padding: 1.5em 3em;
   background: var(--neuro-bg-primary);
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   color: #444;
   font-size: 1rem;
   font-weight: 700;
@@ -64,14 +64,16 @@
 }
 
 .neuro-button:hover {
+  transform: translateY(-1px);
   box-shadow: 
-    -2px -2px 6px rgba(255, 255, 255, 0.6),
-    -2px -2px 4px rgba(255, 255, 255, 0.4),
-    2px 2px 2px var(--neuro-shadow-dark-subtle),
-    2px 2px 4px var(--neuro-shadow-dark-soft);
+    -3px -3px 8px var(--neuro-shadow-highlight),
+    -3px -3px 6px var(--neuro-shadow-highlight-soft),
+    3px 3px 4px var(--neuro-shadow-highlight-subtle),
+    3px 3px 6px var(--neuro-shadow-dark);
 }
 
 .neuro-button:active {
+  transform: translateY(0px);
   box-shadow: 
     inset -2px -2px 6px var(--neuro-shadow-highlight),
     inset -2px -2px 4px var(--neuro-shadow-highlight-soft),
@@ -79,57 +81,68 @@
     inset 2px 2px 4px var(--neuro-shadow-dark);
 }
 
-/* Neumorphic card with advanced shadows */
+/* Enhanced neumorphic card with improved shadows */
 .neuro-card {
   background: var(--neuro-bg-primary);
   border: none;
-  border-radius: 1rem;
-  transition: all 0.2s ease-in-out;
+  border-radius: 1.5rem;
+  transition: all 250ms ease-in-out;
   box-shadow: 
-    -8px -8px 16px var(--neuro-shadow-highlight),
-    -8px -8px 12px var(--neuro-shadow-highlight-soft),
-    8px 8px 10px var(--neuro-shadow-highlight-subtle),
-    8px 8px 12px var(--neuro-shadow-dark);
+    9px 9px 16px rgba(163, 177, 198, 0.6), 
+    -9px -9px 16px rgba(255, 255, 255, 0.5);
 }
 
 .neuro-card:hover {
   box-shadow: 
-    -4px -4px 8px rgba(255, 255, 255, 0.6),
-    -4px -4px 6px rgba(255, 255, 255, 0.4),
-    4px 4px 4px var(--neuro-shadow-dark-subtle),
-    4px 4px 6px var(--neuro-shadow-dark-soft);
+    9px 9px 16px rgba(163, 177, 198, 0.6), 
+    -9px -9px 16px rgba(255, 255, 255, 0.5), 
+    inset 3px 3px 7px rgba(136, 165, 191, 0.48), 
+    inset -3px -3px 7px #ffffff;
   transform: translateY(-2px);
 }
 
-/* Purple gradient cards with neumorphic effect adapted to purple color */
-.neuro-card-purple {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  border: none;
-  border-radius: 1rem;
-  transition: all 0.2s ease-in-out;
+.neuro-card:active {
   box-shadow: 
-    -6px -6px 14px rgba(139, 92, 246, 0.3),
-    -6px -6px 10px rgba(139, 92, 246, 0.2),
-    6px 6px 8px rgba(99, 102, 241, 0.1),
-    6px 6px 10px rgba(0, 0, 0, 0.15);
+    inset 3px 3px 7px rgba(136, 165, 191, 0.48),
+    inset -3px -3px 7px #ffffff;
+}
+
+/* Neumorphic cards with active state - 10% smaller, full width design */
+.neuro-card-purple {
+  background: linear-gradient(318.32deg, rgba(163, 177, 198, 0.1) 0%, rgba(163, 177, 198, 0.1) 55%, rgba(163, 177, 198, 0.25) 100%);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 1.125rem;
+  transition: all 250ms ease-in-out;
+  position: relative;
+  padding: 2.7rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: scale(0.9);
+  box-shadow: 
+    8px 8px 14px rgba(163, 177, 198, 0.6),
+    -8px -8px 14px rgba(255, 255, 255, 0.5),
+    inset 3px 3px 6px rgba(136, 165, 191, 0.48), 
+    inset -3px -3px 6px #ffffff;
 }
 
 .neuro-card-purple:hover {
   box-shadow: 
-    -2px -2px 6px rgba(139, 92, 246, 0.4),
-    -2px -2px 4px rgba(139, 92, 246, 0.3),
-    2px 2px 2px rgba(99, 102, 241, 0.1),
-    2px 2px 4px rgba(0, 0, 0, 0.1);
+    9px 9px 16px rgba(163, 177, 198, 0.6),
+    -9px -9px 16px rgba(255, 255, 255, 0.5),
+    inset 3px 3px 7px rgba(136, 165, 191, 0.48), 
+    inset -3px -3px 7px #ffffff;
   transform: translateY(-2px);
 }
 
 .neuro-card-purple:active {
   box-shadow: 
-    inset -2px -2px 6px rgba(139, 92, 246, 0.3),
-    inset -2px -2px 4px rgba(139, 92, 246, 0.2),
-    inset 2px 2px 2px rgba(99, 102, 241, 0.1),
-    inset 2px 2px 4px rgba(0, 0, 0, 0.15);
-  transform: translateY(0);
+    9px 9px 16px rgba(163, 177, 198, 0.6),
+    -9px -9px 16px rgba(255, 255, 255, 0.5),
+    inset 3px 3px 7px rgba(136, 165, 191, 0.48), 
+    inset -3px -3px 7px #ffffff;
+  transform: translateY(0px);
 }
 
 /* Primary button with CognIA colors and neumorphic effect */
@@ -211,7 +224,7 @@
 .neuro-icon-container-purple {
   background: rgba(139, 92, 246, 0.2);
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   box-shadow: 
     -3px -3px 6px rgba(139, 92, 246, 0.15),
     -3px -3px 4px rgba(139, 92, 246, 0.1),
@@ -221,11 +234,34 @@
 }
 
 .neuro-icon-container-purple:hover {
+  transform: translateY(-1px);
   box-shadow: 
-    -1px -1px 3px rgba(139, 92, 246, 0.2),
-    -1px -1px 2px rgba(139, 92, 246, 0.15),
-    1px 1px 1px rgba(99, 102, 241, 0.1),
-    1px 1px 2px rgba(0, 0, 0, 0.08);
+    -2px -2px 4px rgba(139, 92, 246, 0.2),
+    -2px -2px 3px rgba(139, 92, 246, 0.15),
+    2px 2px 2px rgba(99, 102, 241, 0.1),
+    2px 2px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Blue tone neumorphic elements */
+.neuro-blue {
+  background: rgba(59, 130, 246, 0.1);
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 
+    -3px -3px 6px rgba(59, 130, 246, 0.15),
+    -3px -3px 4px rgba(59, 130, 246, 0.1),
+    3px 3px 3px rgba(37, 99, 235, 0.08),
+    3px 3px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.neuro-blue:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    -2px -2px 4px rgba(59, 130, 246, 0.2),
+    -2px -2px 3px rgba(59, 130, 246, 0.15),
+    2px 2px 2px rgba(37, 99, 235, 0.1),
+    2px 2px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* Testimonial card specific styling */
@@ -351,37 +387,234 @@
     inset 2px 2px 3px var(--neuro-shadow-dark);
 }
 
-/* Proof button (Try our assistant) - Neumorphic without glow */
+/* Try our assistant button - Custom neumorphic style */
 .btn-proof {
-  background: linear-gradient(135deg, var(--cognia-blue-purple), #8b5cf6);
-  border: none;
-  border-radius: 0.75rem;
-  padding: 1rem 2rem;
-  color: white;
+  color: #090909;
+  padding: 0.7em 1.7em;
+  font-size: 18px;
+  border-radius: 0.5em;
+  background: #e8e8e8;
+  cursor: pointer;
+  border: 1px solid #e8e8e8;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   font-weight: 600;
-  letter-spacing: 0.05rem;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 
-    -4px -4px 8px rgba(139, 92, 246, 0.15),
-    -4px -4px 6px rgba(139, 92, 246, 0.1),
-    4px 4px 6px rgba(60, 49, 163, 0.08),
-    4px 4px 8px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-proof:hover {
   transform: translateY(-1px);
-  box-shadow: 
-    -2px -2px 4px rgba(139, 92, 246, 0.2),
-    -2px -2px 3px rgba(139, 92, 246, 0.15),
-    2px 2px 3px rgba(60, 49, 163, 0.1),
-    2px 2px 5px rgba(0, 0, 0, 0.08);
 }
 
 .btn-proof:active {
+  color: #666;
+  box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
   transform: translateY(0px);
+}
+
+/* Star rating component - purple stars for white cards */
+.star-rating-wrapper {
+  display: inline-flex;
+  direction: ltr;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  align-self: center;
+  background: #ffffff;
   box-shadow: 
-    inset -2px -2px 4px rgba(139, 92, 246, 0.2),
-    inset -2px -2px 3px rgba(139, 92, 246, 0.15),
-    inset 2px 2px 3px rgba(60, 49, 163, 0.1),
-    inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+    7px 7px 25px rgba(198, 206, 237, 0.7),
+    -7px -7px 35px rgba(255, 255, 255, 0.7),
+    inset 0px 0px 4px rgba(255, 255, 255, 0.9),
+    inset 7px 7px 15px rgba(198, 206, 237, 0.8);
+  border-radius: 2.5rem;
+  padding: 0.75rem 1.25rem;
+}
+
+.star-rating {
+  color: #E1E6F6;
+  font-size: 1rem;
+  transition: color 0.5s ease;
+  filter: drop-shadow(5px 1px 3px rgba(198, 206, 237, 1));
+}
+
+.star-rating.filled {
+  color: #8b5cf6;
+  filter: drop-shadow(3px 1px 3px rgba(139, 92, 246, 0.6));
+}
+
+/* Enhanced neumorphic buttons for header */
+.neuro-button-enhanced {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #ffffff;
+  min-width: 80px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  color: #8b5cf6;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0 1rem;
+  text-decoration: none;
+  box-shadow: 
+    -7px -7px 20px 0px rgba(255, 255, 255, 0.9),
+    -4px -4px 5px 0px rgba(255, 255, 255, 0.9),
+    7px 7px 20px 0px rgba(0, 0, 0, 0.2),
+    4px 4px 5px 0px rgba(0, 0, 0, 0.1),
+    inset 0px 0px 0px 0px rgba(255, 255, 255, 0.9),
+    inset 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.6s cubic-bezier(.79,.21,.06,.81), transform 0.2s ease;
+}
+
+.neuro-button-enhanced:hover,
+.neuro-button-enhanced:focus-visible {
+  color: #6366f1;
+  transform: translateY(-1px);
+}
+
+.neuro-button-enhanced:active {
+  box-shadow: 
+    0px 0px 0px 0px rgba(255, 255, 255, 0.9),
+    0px 0px 0px 0px rgba(255, 255, 255, 0.9),
+    0px 0px 0px 0px rgba(0, 0, 0, 0.1),
+    0px 0px 0px 0px rgba(0, 0, 0, 0.1),
+    inset -7px -7px 20px 0px rgba(255, 255, 255, 0.9),
+    inset -4px -4px 5px 0px rgba(255, 255, 255, 0.9),
+    inset 7px 7px 20px 0px rgba(0, 0, 0, 0.3),
+    inset 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+  transform: translateY(0px);
+}
+
+/* Sign In button - Neumorphic purple style without glow */
+.btn-signin {
+  color: #ffffff;
+  padding: 0.75rem 2rem;
+  font-size: 16px;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  cursor: pointer;
+  border: 1px solid #8b5cf6;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 12px rgba(139, 92, 246, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  outline: none;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-signin:hover {
+  transform: translateY(-1px);
+}
+
+.btn-signin:active {
+  box-shadow: inset 4px 4px 12px rgba(99, 102, 241, 0.4), inset -4px -4px 12px rgba(139, 92, 246, 0.2);
+  transform: translateY(0px);
+}
+
+.btn-signin:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Enhanced testimonial cards - wider, no shadow, with stars */
+.neuro-testimonial {
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  transition: all 250ms ease-in-out;
+  width: 100%;
+  max-width: none;
+  box-shadow: none;
+  border: 1px solid rgba(163, 177, 198, 0.2);
+}
+
+.neuro-testimonial:hover {
+  transform: translateY(-2px);
+  border: 1px solid rgba(163, 177, 198, 0.3);
+}
+
+/* Neumorphic input fields for login */
+.neuro-input {
+  background: #ffffff;
+  border: none;
+  border-radius: 0.75rem;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 177, 198, 0.4),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.neuro-input:focus {
+  box-shadow:
+    inset 6px 6px 12px rgba(163, 177, 198, 0.5),
+    inset -6px -6px 12px rgba(255, 255, 255, 0.9);
+  outline: none;
+}
+
+.neuro-input::placeholder {
+  color: rgba(139, 92, 246, 0.5);
+}
+
+/* Testimonial star rating */
+.testimonial-stars {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.testimonial-stars .star-rating {
+  color: #E1E6F6;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.testimonial-stars .star-rating.filled {
+  color: #8b5cf6;
+}
+
+/* Progress bar animation */
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--target-width, 100%);
+  }
+}
+
+/* Enhanced progress bars for stats */
+.progress-bar-container {
+  background: rgba(163, 177, 198, 0.2);
+  border-radius: 1rem;
+  height: 0.5rem;
+  overflow: hidden;
+  box-shadow: inset 2px 2px 4px rgba(136, 165, 191, 0.3);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+  box-shadow: 
+    0 2px 4px rgba(139, 92, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: width 3s cubic-bezier(0.4, 0, 0.2, 1);
 } 

@@ -24,6 +24,8 @@
 import React from 'react'
 import { FaUniversity, FaGraduationCap, FaStar } from 'react-icons/fa';
 import { TbUserShare } from 'react-icons/tb';
+import { StarRating } from '../common/StarRating';
+import { AnimatedCounter } from '../common/AnimatedCounter';
 import { useAuth } from '@/lib/AuthContext';
 import AutoCarousel from '../autoCarrousel/autoCarrousel';
 import Link from 'next/link';
@@ -207,8 +209,8 @@ export default function LandingPage() {
                 <SectionParticles density="medium" color="#3C31A3" />
                 
                 <div className="max-w-xl mx-auto md:mx-0 relative z-10">
-                    <h1 className="text-[65px] font-bold mb-4 leading-tight text-gray-900">
-                        Your Virtual Campus with <span className="textCognIa z-10 relative">CognIA
+                    <h1 className="text-[65px] font-bold mb-4 leading-tight">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8b5cf6] to-[#3C31A3]">Your Virtual Campus with</span> <span className="textCognIa z-10 relative">CognIA
                             <img
                                 className='absolute left-0 top-1/2 -translate-y-1/2 z-20 w-[511px] text-[20px]'
                                 src={'/assets/images/Subrayado.svg'}
@@ -218,8 +220,8 @@ export default function LandingPage() {
                             />
                         </span>
                     </h1>
-                    <p className="mb-6 text-base">Transform your institution with our platform to offer high-quality online careers, powered by artificial intelligence.</p>
-                    <button className="btn-proof flex items-center gap-2 neuro-button-primary transition-all duration-300">
+                    <p className="mb-6 text-base">Revolutionary Voice and AI Learning Platform. Experience conversational AI that accelerates understanding and transforms how students and teachers interact with knowledge.</p>
+                    <button className="btn-proof">
                         <span className="w-2 h-2 bg-white rounded-full"></span>
                         Try our assistant
                     </button>
@@ -238,35 +240,82 @@ export default function LandingPage() {
             </section>
 
             {/* Stats Section with Neumorphic Design - Numbers that speak for themselves */}
-            <section className="py-16 px-6 w-full relative z-10 overflow-hidden" style={{ background: '#ffffff' }}>
+            <section className="py-16 px-4 w-full relative z-10 overflow-hidden" style={{ background: '#ffffff' }}>
                 <SectionParticles density="light" color="#6366f1" />
                 
-                <div className="max-w-7xl mx-auto text-center relative z-10">
+                <div className="w-full text-center relative z-10">
                     <h2 className="text-[54px] font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#132944] to-[#3C31A3]">
                         Numbers that speak for themselves
                     </h2>
                     <p className="text-xl text-gray-600 mb-12 max-w-4xl mx-auto">
-                        Join thousands of institutions that have already transformed their education with CognIA
+                        Join thousands of institutions experiencing revolutionary voice-powered learning with CognIA IntelliLearn
                     </p>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
                         {[
-                            { number: '500+', label: 'Institutions transforming online education', icon: <FaUniversity className="text-white" /> },
-                            { number: '50K+', label: 'Students learning with artificial intelligence', icon: <FaGraduationCap className="text-white" /> },
-                            { number: '5K+', label: 'Teachers optimizing their teaching', icon: <TbUserShare className="text-white" /> },
-                            { number: '98%', label: 'Satisfaction with the learning experience', icon: <FaStar className="text-white" /> }
+                            { 
+                                title: 'Voice Learning Speed',
+                                number: 10, 
+                                suffix: 'x',
+                                percentage: 1000,
+                                label: 'Faster comprehension through natural conversation with AI',
+                                description: 'Students understand complex topics in minutes instead of hours through voice-powered dialogue',
+                                icon: <FaUniversity className="text-gray-600" /> 
+                            },
+                            { 
+                                title: 'Real Understanding Rate',
+                                number: 100, 
+                                suffix: '%',
+                                percentage: 100,
+                                label: 'Authentic comprehension in minutes, not weeks',
+                                description: 'Verified learning through conversational AI that ensures true knowledge retention',
+                                icon: <FaGraduationCap className="text-gray-600" /> 
+                            },
+                            { 
+                                title: 'Empowered Educators',
+                                number: 5000, 
+                                suffix: '+',
+                                percentage: 95,
+                                label: 'Teachers transformed into digital learning leaders',
+                                description: 'Educators using voice validation to create and verify educational content with AI',
+                                icon: <TbUserShare className="text-gray-600" /> 
+                            },
+                            { 
+                                title: 'Dialogue Evaluation',
+                                number: 98, 
+                                suffix: '%',
+                                percentage: 98,
+                                label: 'Authentic assessment through natural conversation',
+                                description: 'Revolutionary evaluation system that measures understanding through AI dialogue',
+                                icon: <FaStar className="text-gray-600" /> 
+                            }
                         ].map((stat, index) => (
-                            <div key={index} className="bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white p-8 neuro-card-purple w-full">
-                                <div className="text-start">
-                                    <p className="text-[40px] font-bold text-white mb-2">{stat.number}</p>
-                                    <p className="text-[16px] text-white/90 text-start mb-4">{stat.label}</p>
-                </div>
-                                                                 <div className="flex justify-end">
-                                     <div className="neuro-icon-container-purple w-12 h-12 rounded-2xl flex items-center justify-center">
-                                         {stat.icon}
-                </div>
-                        </div>
-                    </div>
+                            <div key={index} className="neuro-card-purple w-full">
+                                <div className="flex-1">
+                                    <h3 className="text-[18px] font-semibold text-[#8b5cf6] mb-3">{stat.title}</h3>
+                                    <p className="text-[36px] font-bold text-gray-800 mb-2">
+                                        <AnimatedCounter end={stat.number} suffix={stat.suffix} duration={2500} />
+                                    </p>
+                                    <p className="text-[14px] font-medium text-gray-700 mb-2">{stat.label}</p>
+                                    <p className="text-[12px] text-gray-500 leading-relaxed mb-4">{stat.description}</p>
+                                    
+                                    {/* Progress bar */}
+                                    <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                                        <div 
+                                            className="bg-gradient-to-r from-[#8b5cf6] to-[#6366f1] h-2 rounded-full transition-all duration-3000 ease-out"
+                                style={{
+                                                width: `${stat.percentage > 100 ? 100 : stat.percentage}%`,
+                                                animation: 'progressFill 3s ease-out forwards'
+                                            }}
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div className="mt-auto">
+                                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center mx-auto">
+                                        <span className="text-lg">{stat.icon}</span>
+                                    </div>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -276,32 +325,29 @@ export default function LandingPage() {
             <VideoSection />
 
             {/* Features Section */}
-            <section className="py-16 px-6 w-full relative overflow-hidden z-10" style={{ background: '#ffffff' }}>
+            <section className="py-16 px-4 w-full relative overflow-hidden z-10" style={{ background: '#ffffff' }}>
                 <SectionParticles density="medium" color="#3C31A3" />
                 
-                <div className="max-w-7xl mx-auto relative z-10">
+                <div className="w-full relative z-10">
                     <div className="flex flex-col lg:flex-row items-center justify-between gap-12 w-full">
-                        <div className="lg:w-1/2 space-y-6">
+                        <div className="lg:w-1/2 space-y-6 px-2">
                             {[
                                 {
-                                    title: 'Complete Academic Management Infrastructure',
-                                    text: 'Manage study plans, subjects, evaluations and certification in one place. Compatible with international educational standards.'
+                                    title: 'Voice-Powered Learning Revolution',
+                                    text: 'Natural conversation with AI that transforms complex topics into understandable knowledge in minutes. Experience real comprehension through fluid, intelligent dialogue.'
                                 },
                                 {
-                                    title: 'Learning Community Platform',
-                                    text: 'Forums, collaborative work, live sessions and professional networking integrated into the platform for a complete university experience.'
+                                    title: 'AI-Generated Educational Podcasts',
+                                    text: 'Dynamic, entertaining podcasts created by AI featuring conversations between characters discussing each topic for realistic and engaging learning experiences.'
                                 },
                                 {
-                                    title: 'Advanced Educational Analytics',
-                                    text: 'Academic progression metrics, early dropout detection and program effectiveness analysis to optimize your educational offering.'
+                                    title: 'Conversational Teacher Validation',
+                                    text: 'Unique voice validation system where teachers engage in natural conversations with AI to verify content understanding before publication, empowering educators as digital leaders.'
                             }
                         ].map(({ title, text }, i) => (
-                            <div
-                                key={i}
-                                    className="bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] text-white p-6 w-full neuro-card-purple"
-                                >
-                                    <h3 className="font-semibold text-white mb-3 text-[20px]">{title}</h3>
-                                    <p className="text-white/90 text-[16px] leading-relaxed">{text}</p>
+                            <div key={i} className="neuro-card-purple w-full">
+                                <h3 className="font-semibold text-[#8b5cf6] mb-3 text-[20px]">{title}</h3>
+                                <p className="text-gray-600 text-[16px] leading-relaxed">{text}</p>
                             </div>
                         ))}
                     </div>
@@ -309,10 +355,10 @@ export default function LandingPage() {
                         <div className="lg:w-1/2 w-full">
                             <div className="neuro-container bg-gradient-to-br from-[#132944] to-[#3C31A3] text-white p-8 rounded-2xl shadow-xl">
                                 <h3 className="text-2xl font-bold mb-6 text-center">
-                                    Complete Virtual Campus Platform
+                                    CognIA IntelliLearn Platform
                         </h3>
                                 <p className="text-center mb-6 opacity-90">
-                                    Everything you need to offer comprehensive online educational services
+                                    Voice + AI = Real Understanding. Dialogue = Authentic Evaluation. Validated Teacher = Empowered Teacher.
                                 </p>
                                 <div className="neuro-inset rounded-2xl p-4">
                                     <img
@@ -387,11 +433,11 @@ export default function LandingPage() {
                 {/* Content */}
                 <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 text-center">
                     <h2 className="text-2xl sm:text-3xl md:text-[54px] font-bold mb-4 text-white">
-                        Ready to digitize your academic offering?
+                        Ready to experience voice-powered learning?
                     </h2>
                     <p className="text-base sm:text-lg md:text-[20px] mb-8 text-white">
-                        Start now by logging in to access <br />
-                        all learning tools.
+                        Join the learning revolution where students understand complex topics in minutes <br />
+                        through natural conversation with AI.
                     </p>
                     <div className="flex flex-col md:flex-row gap-4 justify-center">
                         {user ? (
