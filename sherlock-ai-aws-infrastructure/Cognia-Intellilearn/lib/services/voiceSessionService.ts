@@ -3,6 +3,7 @@ import { DynamoDBDocumentClient, PutCommand, GetCommand, UpdateCommand, QueryCom
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { PollyClient, StartSpeechSynthesisTaskCommand, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3VectorsService } from './s3VectorsService'
 
 // AWS Configuration
 const awsConfig = {
@@ -132,7 +133,7 @@ export class VoiceSessionService {
   }
 
   /**
-   * Generate voice content using Bedrock
+   * Generate voice content using Bedrock with S3 Vectors context
    */
   static async generateVoiceContent(
     lessonId: string,
@@ -145,8 +146,26 @@ export class VoiceSessionService {
         return existingContent
       }
 
-      // Generate content with Bedrock
-      const prompt = this.buildContentPrompt(config)
+      // NEW: Step 1 - Search for relevant educational context using S3 Vectors
+      console.log(`🔍 Searching for educational context: ${config.topic} (${config.level})`)
+      const contextFragments = await S3VectorsService.getEducationalContext(
+        config.topic,
+        config.level,
+        'en' // Default to English for now
+      )
+
+      // NEW: Step 2 - Build enhanced prompt with contextual information
+      const prompt = S3VectorsService.buildPromptWithContext(
+        config.topic,
+        config.level,
+        contextFragments,
+        config
+      )
+
+      console.log(`📚 Found ${contextFragments.length} relevant context fragments`)
+      console.log(`🤖 Generating content with enhanced prompt...`)
+
+      // Step 3 - Generate personalized content using Bedrock
       const generatedText = await this.callBedrock(prompt)
       
       // Split content into segments (1 minute each)
@@ -183,7 +202,8 @@ export class VoiceSessionService {
   }
 
   /**
-   * Build prompt for Bedrock content generation
+   * Build prompt for Bedrock content generation (Legacy - now using S3VectorsService.buildPromptWithContext)
+   * @deprecated Use S3VectorsService.buildPromptWithContext for enhanced context-aware prompts
    */
   private static buildContentPrompt(config: VoiceSessionConfig): string {
     return `You are an expert ${config.personality} professor teaching about ${config.topic}.
@@ -249,7 +269,7 @@ Begin the lesson now:`
    */
   private static splitIntoSegments(text: string, totalMinutes: number): AudioSegment[] {
     const segments: AudioSegment[] = []
-    const segmentRegex = /\[SEGMENT (\d+)\](.*?)(?=\[SEGMENT \d+\]|$)/gs
+    const segmentRegex = /\[SEGMENT (\d+)\](.*?)(?=\[SEGMENT \d+\]|$)/g
     
     let match
     let sequenceNumber = 1
