@@ -111,32 +111,32 @@ const Courses = () => {
 
   if (loading) {
     return (
-      <div className="p-6 min-h-screen flex items-center justify-center" style={{ background: 'var(--neuro-bg-light)' }}>
-        <div className="neuro-container p-8 rounded-2xl">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3C31A3] mx-auto"></div>
-          <p className="text-center mt-4 text-gray-600">Cargando cursos...</p>
+      <div className="p-6 min-h-screen flex items-center justify-center bg-white">
+        <div className="neuro-card p-8 rounded-2xl">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8b5cf6] mx-auto"></div>
+          <p className="text-center mt-4 text-gray-600">Loading courses...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="p-6 min-h-screen" style={{ background: 'var(--neuro-bg-light)' }}>
+    <div className="p-6 min-h-screen bg-white">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Mis Cursos</h1>
-        <p className="text-gray-600">Explora y continúa con tu aprendizaje en los siguientes cursos</p>
+        <h1 className="text-3xl font-bold text-[#132944] mb-2">My Courses</h1>
+        <p className="text-gray-600">Explore and continue with your learning journey</p>
       </div>
 
       {/* Filtros y búsqueda con neumorfismo */}
-      <div className="neuro-container p-6 mb-6">
+      <div className="neuro-card p-6 mb-6 rounded-2xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Búsqueda */}
           <div className="relative">
             <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Buscar cursos..."
-              className="neuro-search pl-12 pr-4 py-3 w-full text-sm"
+              placeholder="Search courses..."
+              className="neuro-input pl-12 pr-4 py-3 w-full text-sm rounded-xl"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -146,7 +146,7 @@ const Courses = () => {
           <div className="relative">
             <FaFilter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
             <select
-              className="neuro-input pl-12 pr-4 py-3 w-full appearance-none cursor-pointer"
+              className="neuro-input pl-12 pr-4 py-3 w-full appearance-none cursor-pointer rounded-xl"
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
@@ -160,7 +160,7 @@ const Courses = () => {
           <div className="relative">
             <FaFilter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
             <select
-              className="neuro-input pl-12 pr-4 py-3 w-full appearance-none cursor-pointer"
+              className="neuro-input pl-12 pr-4 py-3 w-full appearance-none cursor-pointer rounded-xl"
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
             >
@@ -174,13 +174,13 @@ const Courses = () => {
           <div className="relative">
             <FaSort className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
             <select
-              className="neuro-input pl-12 pr-4 py-3 w-full appearance-none cursor-pointer"
+              className="neuro-input pl-12 pr-4 py-3 w-full appearance-none cursor-pointer rounded-xl"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
-              <option value="progress">Mayor progreso</option>
-              <option value="title">Alfabético</option>
-              <option value="recent">Más reciente</option>
+              <option value="progress">Highest progress</option>
+              <option value="title">Alphabetical</option>
+              <option value="recent">Most recent</option>
             </select>
           </div>
         </div>
@@ -188,79 +188,85 @@ const Courses = () => {
 
       {/* Lista de cursos */}
       {filteredCourses.length === 0 ? (
-        <div className="neuro-container p-8 text-center">
-          <p className="text-gray-600 text-lg">No se encontraron cursos que coincidan con tus criterios de búsqueda.</p>
+        <div className="neuro-card p-8 text-center rounded-2xl">
+          <p className="text-gray-600 text-lg">No courses found matching your search criteria.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map(course => (
-            <div key={course.id} className="neuro-card neuro-fade-in flex flex-col">
-              <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
+            <div key={course.id} className="neuro-card p-6 rounded-2xl flex flex-col hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+              <div className="relative h-48 mb-4 rounded-xl overflow-hidden neuro-inset">
                 <Image 
                   src={course.image} 
                   alt={course.title}
                   fill
                   style={{ objectFit: 'cover' }}
-                  className="rounded-lg"
+                  className="rounded-xl"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#132944]/70 to-transparent rounded-lg"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#132944]/70 to-transparent rounded-xl"></div>
                 <div className="absolute bottom-0 left-0 p-4 w-full">
-                  <span className="neuro-badge mr-2">{course.category}</span>
-                  <span className="neuro-badge bg-[#3C31A3] text-white">{course.level}</span>
+                  <span className="neuro-badge bg-white/90 text-[#132944] px-3 py-1 rounded-full text-xs font-medium mr-2">
+                    {course.category}
+                  </span>
+                  <span className="neuro-badge bg-[#8b5cf6] text-white px-3 py-1 rounded-full text-xs font-medium">
+                    {course.level}
+                  </span>
                 </div>
               </div>
               
               <div className="flex-1 flex flex-col">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">{course.title}</h3>
+                <h3 className="text-xl font-semibold text-[#132944] mb-2">{course.title}</h3>
                 <p className="text-sm text-gray-600 mb-2 flex items-center">
-                  <FaUser className="mr-2" />
+                  <FaUser className="mr-2 text-[#8b5cf6]" />
                   Instructor: {course.instructor}
                 </p>
-                <p className="text-sm text-gray-500 mb-4 flex-1">{course.description}</p>
+                <p className="text-sm text-gray-500 mb-4 flex-1 line-clamp-2">{course.description}</p>
                 
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
-                    <FaRegClock className="text-gray-500 mr-2" />
-                    <span className="text-sm text-gray-500">{course.duration}</span>
+                  <div className="flex items-center neuro-inset px-3 py-1 rounded-lg">
+                    <FaRegClock className="text-[#8b5cf6] mr-2" />
+                    <span className="text-sm text-gray-600">{course.duration}</span>
                   </div>
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-500">{course.lessons} lecciones</span>
+                  <div className="flex items-center neuro-inset px-3 py-1 rounded-lg">
+                    <span className="text-sm text-gray-600">{course.lessons} lessons</span>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
+                  <div className="flex items-center neuro-inset px-3 py-1 rounded-lg">
                     <FaStar className="text-yellow-500 mr-1" />
                     <span className="text-sm text-gray-600">{course.rating}</span>
                   </div>
                   <div className="text-sm text-gray-500">
-                    {course.totalStudents.toLocaleString()} estudiantes
+                    {course.totalStudents.toLocaleString()} students
                   </div>
                 </div>
                 
                 <div className="mt-3">
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm text-gray-600 font-medium">Progreso: {course.progress}%</span>
+                    <span className="text-sm text-gray-600 font-medium">Progress: {course.progress}%</span>
                     {course.lastAccessed && (
-                      <span className="text-xs text-gray-500">{course.lastAccessed}</span>
+                      <span className="text-xs text-gray-500 neuro-badge bg-green-50 text-green-600 px-2 py-1 rounded-full">
+                        {course.lastAccessed}
+                      </span>
                     )}
                   </div>
-                  <div className="neuro-progress">
+                  <div className="neuro-progress rounded-full overflow-hidden">
                     <div 
-                      className="neuro-progress-fill" 
+                      className="neuro-progress-fill h-2 rounded-full transition-all duration-300" 
                       style={{ width: `${course.progress}%` }}
                     ></div>
                   </div>
                 </div>
               </div>
               
-              <div className="pt-4 mt-4 border-t border-gray-100">
+              <div className="pt-4 mt-4">
                 <Link 
                   href={`/dashboard/courses/${course.id}`}
-                  className="neuro-button-primary w-full flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-300 text-white font-semibold"
+                  className="neuro-button-enhanced bg-gradient-to-r from-[#8b5cf6] to-[#6366f1] text-white w-full flex items-center justify-center py-3 px-4 rounded-xl transition-all duration-300 font-semibold hover:shadow-lg transform hover:scale-105"
                 >
                   <FaEye className="mr-2" />
-                  {course.progress > 0 ? 'Continuar aprendiendo' : 'Comenzar curso'}
+                  {course.progress > 0 ? 'Continue Learning' : 'Start Course'}
                 </Link>
               </div>
             </div>
