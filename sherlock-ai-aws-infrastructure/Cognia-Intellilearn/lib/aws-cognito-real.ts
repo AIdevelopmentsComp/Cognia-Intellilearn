@@ -73,6 +73,12 @@ export async function signIn(email: string, password: string): Promise<CognitoUs
         refreshToken: response.AuthenticationResult.RefreshToken,
       };
       
+      // Guardar usuario en localStorage para persistencia
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cognia_user_data', JSON.stringify(user));
+        console.log('💾 User saved to localStorage');
+      }
+      
       console.log('✅ Sign in successful for:', email);
       return user;
     } else {
@@ -150,8 +156,9 @@ export async function signOut(): Promise<void> {
   console.log('🚪 Signing out...');
   // Clear local storage or session storage if needed
   if (typeof window !== 'undefined') {
-    localStorage.removeItem('cognia_user');
-    sessionStorage.removeItem('cognia_user');
+    localStorage.removeItem('cognia_user_data');
+    localStorage.removeItem('cognia_auth_token');
+    sessionStorage.clear();
   }
   console.log('✅ Sign out completed');
 }
@@ -162,7 +169,7 @@ export async function getCurrentUser(): Promise<CognitoUser | null> {
   try {
     // Try to get user from local storage first
     if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('cognia_user');
+      const storedUser = localStorage.getItem('cognia_user_data');
       if (storedUser) {
         const user = JSON.parse(storedUser);
         console.log('✅ User found in storage:', user.email);
