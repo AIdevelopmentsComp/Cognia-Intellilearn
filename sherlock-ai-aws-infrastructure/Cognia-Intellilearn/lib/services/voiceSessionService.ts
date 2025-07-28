@@ -1,7 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, PutCommand, GetCommand, UpdateCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
-import { PollyClient, StartSpeechSynthesisTaskCommand, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { AWS_CONFIG } from '../config'
 
@@ -15,7 +14,6 @@ const awsConfig = {
 const dynamoClient = new DynamoDBClient(awsConfig)
 const docClient = DynamoDBDocumentClient.from(dynamoClient)
 const bedrockClient = new BedrockRuntimeClient(awsConfig)
-const pollyClient = new PollyClient(awsConfig)
 const s3Client = new S3Client(awsConfig)
 
 // DynamoDB Tables
@@ -350,19 +348,50 @@ Begin the lesson now:`
         const audioKey = `${AUDIO_PREFIX}/${contentId}/${segment.segmentId}.mp3`
         
         // Synthesize speech with Polly
-        const command = new SynthesizeSpeechCommand({
-          Text: segment.text,
-          OutputFormat: 'mp3',
-          VoiceId: this.getPollyVoiceId(config.voiceStyle),
-          Engine: 'neural',
-          SampleRate: '22050'
+        const command = new InvokeModelCommand({
+          modelId: 'anthropic.claude-3-sonnet-20240229-v1:0',
+          contentType: 'application/json',
+          accept: 'application/json',
+          body: JSON.stringify({
+            anthropic_version: 'bedrock-2023-05-31',
+            max_tokens: 4000,
+            messages: [
+              {
+                role: 'user',
+                content: `You are an expert ${config.personality} professor teaching about ${config.topic}.
+
+Create a ${config.duration}-minute educational lesson for ${config.level} level students.
+
+Requirements:
+- Speak in a ${config.voiceStyle} teaching style
+- Divide the content into ${config.duration} segments of approximately 1 minute each
+- Each segment should be clearly marked with [SEGMENT X] headers
+- Use ${config.interactionLevel} level of student interaction prompts
+- Make it engaging and educational
+- Include practical examples and real-world applications
+
+Format your response as:
+[SEGMENT 1]
+Content for first minute...
+
+[SEGMENT 2]
+Content for second minute...
+
+And so on for ${config.duration} segments.
+
+Begin the lesson now:`
+            }
+          ],
+            temperature: 0.7,
+            top_p: 0.9
+          })
         })
 
-        const pollyResponse = await pollyClient.send(command)
+        const pollyResponse = await bedrockClient.send(command)
         
-        if (pollyResponse.AudioStream) {
+        if (pollyResponse.body) {
           // Upload to S3
-          const audioBuffer = await this.streamToBuffer(pollyResponse.AudioStream)
+          const audioBuffer = await this.streamToBuffer(pollyResponse.body)
           
           await s3Client.send(new PutObjectCommand({
             Bucket: AUDIO_BUCKET,
@@ -400,21 +429,6 @@ Begin the lesson now:`
       console.error('Error processing audio segments:', error)
       throw new Error(`Failed to process audio segments: ${error}`)
     }
-  }
-
-  /**
-   * Get appropriate Polly voice ID based on style
-   */
-  private static getPollyVoiceId(voiceStyle: string): 'Matthew' | 'Joanna' | 'Justin' | 'Amy' | 'Brian' {
-    const voiceMap: Record<string, 'Matthew' | 'Joanna' | 'Justin' | 'Amy' | 'Brian'> = {
-      'formal': 'Matthew',
-      'casual': 'Joanna',
-      'energetic': 'Justin',
-      'calm': 'Amy',
-      'professional': 'Brian'
-    }
-    
-    return voiceMap[voiceStyle] || 'Matthew'
   }
 
   /**

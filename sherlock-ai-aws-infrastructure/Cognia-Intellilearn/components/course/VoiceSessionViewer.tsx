@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { FaMicrophone, FaStop, FaPlay, FaPause, FaVolumeUp } from 'react-icons/fa'
+import { FaMicrophone, FaTimes } from 'react-icons/fa'
+import { voiceStreamingService } from '../../lib/services/voiceStreamingService'
 
 interface VoiceSessionViewerProps {
   lesson: {
@@ -14,14 +15,12 @@ interface VoiceSessionViewerProps {
 }
 
 export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
-  const [isRecording, setIsRecording] = useState(false)
-  const [recordingTime, setRecordingTime] = useState(0)
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [streamingTime, setStreamingTime] = useState(0)
+  const [responseText, setResponseText] = useState('')
   
-  const audioRef = useRef<HTMLAudioElement | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const sessionId = useRef(`voice_${lesson.id}_${Date.now()}`)
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -29,49 +28,68 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
-  const startRecording = async () => {
+  const startVoiceStreaming = async () => {
     try {
-      await navigator.mediaDevices.getUserMedia({ audio: true })
-      setIsRecording(true)
-      setRecordingTime(0)
+      setIsStreaming(true)
+      setStreamingTime(0)
+      setResponseText('')
+      
+      // Start streaming session with Bedrock
+      await voiceStreamingService.startVoiceSession(sessionId.current)
       
       // Start timer
       timerRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1)
+        setStreamingTime(prev => prev + 1)
       }, 1000)
       
     } catch (error) {
-      console.error('Error accessing microphone:', error)
-      alert('Error al acceder al micrófono. Verifica los permisos.')
+      console.error('Error starting voice streaming:', error)
+      alert('Error al iniciar la sesión de voz. Verifica los permisos del micrófono.')
+      setIsStreaming(false)
     }
   }
 
-  const stopRecording = () => {
-    setIsRecording(false)
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-      timerRef.current = null
-    }
-  }
-
-  const playPause = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-      } else {
-        audioRef.current.play()
+  const stopVoiceStreaming = async () => {
+    try {
+      setIsStreaming(false)
+      
+      // Stop streaming session
+      await voiceStreamingService.stopVoiceSession(sessionId.current)
+      
+      // Clear timer
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+        timerRef.current = null
       }
-      setIsPlaying(!isPlaying)
+      
+    } catch (error) {
+      console.error('Error stopping voice streaming:', error)
     }
   }
 
+  // Listen for streaming events
   useEffect(() => {
+    const handleStreamingEvent = (event: CustomEvent) => {
+      const { type, data } = event.detail
+      
+      if (type === 'response' && data.sessionId === sessionId.current) {
+        setResponseText(prev => prev + data.text)
+      }
+    }
+
+    window.addEventListener('voiceStreaming', handleStreamingEvent as EventListener)
+    
     return () => {
+      window.removeEventListener('voiceStreaming', handleStreamingEvent as EventListener)
       if (timerRef.current) {
         clearInterval(timerRef.current)
       }
+      // Cleanup session on unmount
+      if (isStreaming) {
+        voiceStreamingService.stopVoiceSession(sessionId.current)
+      }
     }
-  }, [])
+  }, [isStreaming])
 
   return (
     <div className="neuro-card p-8 rounded-2xl bg-white">
@@ -79,7 +97,7 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
         {/* Voice Visualizer */}
         <div className="relative">
           <div className="voice-visualizer-container">
-            <div className={`voice-logo ${isRecording ? 'recording' : ''}`}>
+            <div className={`voice-logo ${isStreaming ? 'recording' : ''}`}>
               <svg viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                 <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
@@ -100,79 +118,55 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
         {/* Session Info */}
         <div className="space-y-2">
           <div className="text-2xl font-mono text-[#8b5cf6]">
-            {isRecording ? formatTime(recordingTime) : '00:00'}
+            {isStreaming ? formatTime(streamingTime) : '00:00'}
           </div>
           <div className="text-sm text-gray-600">
-            {isRecording ? 'Grabando tu respuesta...' : 'Sesión de Voz Interactiva'}
+            {isStreaming ? 'Conversando con IA...' : 'Sesión de Voz Interactiva'}
           </div>
         </div>
 
-        {/* Control Buttons */}
+        {/* Control Buttons - Only Microphone and X */}
         <div className="flex justify-center items-center space-x-6">
-          {/* Listen Button */}
-          <button
-            onClick={playPause}
-            className="neuro-button-enhanced bg-white text-[#6366f1] p-4 rounded-full hover:shadow-lg transition-all duration-300"
-            title="Escuchar Contenido"
-          >
-            <FaVolumeUp className="text-xl" />
-          </button>
-
-          {/* Record Button */}
-          {!isRecording ? (
+          {/* Microphone/Stop Button */}
+          {!isStreaming ? (
             <button
-              onClick={startRecording}
+              onClick={startVoiceStreaming}
               className="neuro-button-enhanced bg-white text-[#8b5cf6] p-6 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-              title="Iniciar Grabación"
+              title="Iniciar Conversación de Voz"
             >
               <FaMicrophone className="text-3xl" />
             </button>
           ) : (
             <button
-              onClick={stopRecording}
+              onClick={stopVoiceStreaming}
               className="neuro-button-enhanced bg-red-500 text-white p-6 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-              title="Detener Grabación"
+              title="Detener Conversación"
             >
-              <FaStop className="text-3xl" />
+              <FaTimes className="text-3xl" />
             </button>
           )}
-
-          {/* Play Button */}
-          <button
-            onClick={playPause}
-            className="neuro-button-enhanced bg-white text-[#10b981] p-4 rounded-full hover:shadow-lg transition-all duration-300"
-            title={isPlaying ? "Pausar" : "Reproducir"}
-          >
-            {isPlaying ? <FaPause className="text-xl" /> : <FaPlay className="text-xl" />}
-          </button>
         </div>
+
+        {/* Response Display */}
+        {responseText && (
+          <div className="neuro-card p-4 rounded-xl bg-gradient-to-br from-purple-50 to-blue-50 mt-4">
+            <h4 className="font-semibold text-[#132944] mb-2">Respuesta de IA:</h4>
+            <div className="text-sm text-gray-700 text-left">
+              {responseText}
+            </div>
+          </div>
+        )}
 
         {/* Instructions */}
         <div className="neuro-card p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white">
           <h4 className="font-semibold text-[#132944] mb-2">Instrucciones:</h4>
           <div className="text-sm text-gray-600 space-y-1">
-            <p>🎧 <strong>Escuchar:</strong> Reproduce el contenido de la sesión</p>
-            <p>🎤 <strong>Hablar:</strong> Graba tu respuesta o participación</p>
-            <p>▶️ <strong>Reproducir:</strong> Escucha tu grabación</p>
+            <p>🎤 <strong>Hablar:</strong> Presiona el micrófono para iniciar una conversación con IA</p>
+            <p>❌ <strong>Detener:</strong> Presiona X para terminar la conversación</p>
+            <p>🤖 <strong>IA:</strong> La IA responderá por voz automáticamente</p>
           </div>
         </div>
       </div>
-
-      {/* Hidden audio element for future audio playback */}
-      <audio
-        ref={audioRef}
-        onLoadedMetadata={() => {
-          if (audioRef.current) {
-            setDuration(audioRef.current.duration)
-          }
-        }}
-        onTimeUpdate={() => {
-          if (audioRef.current) {
-            setCurrentTime(audioRef.current.currentTime)
-          }
-        }}
-        onEnded={() => setIsPlaying(false)}
-      />
     </div>
   )
 } 
