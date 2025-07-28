@@ -20,13 +20,15 @@ import {
   FaLightbulb,
   FaBook,
   FaArrowRight,
-  FaArrowLeft
+  FaArrowLeft,
+  FaMicrophone
 } from 'react-icons/fa'
 import { useCourse, useSemanticSearch } from '@/hooks/useCourse'
 import { Course, Module, Lesson } from '@/lib/services/courseService'
 import { useUserMode } from '@/lib/contexts/UserModeContext'
 import AddModuleModal from '@/components/course/AddModuleModal'
 import AddLessonModal from '@/components/course/AddLessonModal'
+import VoiceSessionModal from '@/components/course/VoiceSessionModal'
 
 // El modo de usuario ahora se gestiona globalmente
 
@@ -67,6 +69,7 @@ export default function CourseDetailPage() {
   // Estados para modales
   const [showAddModuleModal, setShowAddModuleModal] = useState(false)
   const [showAddLessonModal, setShowAddLessonModal] = useState(false)
+  const [showAddVoiceSessionModal, setShowAddVoiceSessionModal] = useState(false)
   const [selectedModuleForLesson, setSelectedModuleForLesson] = useState<string | null>(null)
   
   // Estados para navegación de estudiante
@@ -234,6 +237,11 @@ export default function CourseDetailPage() {
     setShowAddLessonModal(true)
   }
 
+  const handleAddVoiceSession = (moduleId: string) => {
+    setSelectedModuleForLesson(moduleId)
+    setShowAddVoiceSessionModal(true)
+  }
+
   const handleSaveLesson = async (lessonData: { 
     title: string; 
     description: string; 
@@ -252,6 +260,26 @@ export default function CourseDetailPage() {
     } catch (error) {
       console.error('Error creating lesson:', error)
       // El error se maneja en el modal
+    }
+  }
+
+  const handleSaveVoiceSession = async (sessionData: { 
+    title: string; 
+    description: string; 
+    type: 'voice_session'; 
+    content: string; 
+    duration: string; 
+    order: number 
+  }) => {
+    try {
+      if (!selectedModuleForLesson) return
+      
+      await createLesson(selectedModuleForLesson, sessionData)
+      setShowAddVoiceSessionModal(false)
+      setSelectedModuleForLesson(null)
+    } catch (error) {
+      console.error('Error creating voice session:', error)
+      alert('Error al crear la sesión de voz')
     }
   }
 
@@ -643,13 +671,22 @@ export default function CourseDetailPage() {
                             </div>
                           </div>
                         ))}
-                        <button
-                          onClick={() => handleAddLesson(moduleItem.id)}
-                          className="flex items-center space-x-2 text-[#3C31A3] hover:text-[#132944] text-sm ml-6 transition-colors neuro-button p-2 rounded-lg hover:bg-gray-50"
-                        >
-                          <FaPlus />
-                          <span>Agregar Lección</span>
-                        </button>
+                        <div className="flex items-center space-x-2 ml-6">
+                          <button
+                            onClick={() => handleAddLesson(moduleItem.id)}
+                            className="flex items-center space-x-2 text-[#3C31A3] hover:text-[#132944] text-sm transition-colors neuro-button p-2 rounded-lg hover:bg-gray-50"
+                          >
+                            <FaPlus />
+                            <span>Agregar Lección</span>
+                          </button>
+                          <button
+                            onClick={() => handleAddVoiceSession(moduleItem.id)}
+                            className="flex items-center space-x-2 text-[#8b5cf6] hover:text-[#6366f1] text-sm transition-colors neuro-button p-2 rounded-lg hover:bg-gray-50"
+                          >
+                            <FaMicrophone />
+                            <span>Generar Sesión de Voz</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -1076,6 +1113,16 @@ export default function CourseDetailPage() {
         onUploadFile={uploadFile}
         moduleId={selectedModuleForLesson || ''}
         lessonCount={selectedModuleForLesson ? course?.modules.find(m => m.id === selectedModuleForLesson)?.lessons.length || 0 : 0}
+      />
+
+      <VoiceSessionModal
+        isOpen={showAddVoiceSessionModal}
+        onClose={() => {
+          setShowAddVoiceSessionModal(false)
+          setSelectedModuleForLesson(null)
+        }}
+        onSave={handleSaveVoiceSession}
+        moduleTitle={selectedModuleForLesson ? course?.modules.find(m => m.id === selectedModuleForLesson)?.title || '' : ''}
       />
     </div>
   )
