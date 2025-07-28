@@ -251,36 +251,47 @@ Begin the lesson now:`
   }
 
   /**
-   * Call Amazon Bedrock for content generation
+   * Call Amazon Bedrock via Lambda for content generation
    */
   private static async callBedrock(prompt: string): Promise<string> {
     try {
-      const command = new InvokeModelCommand({
-        modelId: 'anthropic.claude-3-sonnet-20240229-v1:0',
-        contentType: 'application/json',
-        accept: 'application/json',
-        body: JSON.stringify({
-          anthropic_version: 'bedrock-2023-05-31',
-          max_tokens: 4000,
-          messages: [
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.7,
-          top_p: 0.9
-        })
-      })
+      const lambdaEndpoint = process.env.NEXT_PUBLIC_LAMBDA_BEDROCK_ENDPOINT;
+      if (!lambdaEndpoint) {
+        throw new Error('Lambda endpoint not configured');
+      }
 
-      const response = await bedrockClient.send(command)
-      const responseBody = JSON.parse(new TextDecoder().decode(response.body))
+      const response = await fetch(lambdaEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_AWS_BEARER_TOKEN_BEDROCK || ''}`
+        },
+        body: JSON.stringify({
+          audioData: prompt,
+          sessionId: `voice_session_${Date.now()}`,
+          courseId: '000000000',
+          topic: 'Voice Session Content',
+          studentId: 'voice_user',
+          contextSources: [],
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Lambda request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
       
-      return responseBody.content[0].text
+      // Extract AI response from Lambda response chunks
+      const aiResponseChunks = data.chunks?.filter((chunk: any) => chunk.type === 'ai_response') || [];
+      const aiResponse = aiResponseChunks.map((chunk: any) => chunk.text).join('');
+      
+      return aiResponse || 'Unable to generate content at this time.';
 
     } catch (error) {
-      console.error('Error calling Bedrock:', error)
-      throw new Error(`Bedrock API error: ${error}`)
+      console.error('Error calling Bedrock via Lambda:', error)
+      throw new Error(`Lambda Bedrock API error: ${error}`)
     }
   }
 

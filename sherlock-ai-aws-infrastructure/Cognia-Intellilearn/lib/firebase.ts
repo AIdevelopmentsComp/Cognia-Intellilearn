@@ -143,7 +143,7 @@ export const generateCourseContent = async (
 };
 
 /**
- * Chat with AWS Bedrock (Claude 3 Haiku)
+ * Chat with AWS Bedrock via Lambda (Claude 3 Haiku)
  * Main AI chat functionality for the application
  */
 export async function chatWithAI(
@@ -151,30 +151,41 @@ export async function chatWithAI(
   systemPrompt: string = "You are an expert educational assistant. Provide helpful, accurate, and motivating responses about academic topics."
 ): Promise<string> {
   try {
-    const client = getBedrockClient();
-    
-    const command = new InvokeModelCommand({
-      modelId: MODEL_ID,
-      contentType: 'application/json',
-      accept: 'application/json',
+    const lambdaEndpoint = process.env.NEXT_PUBLIC_LAMBDA_BEDROCK_ENDPOINT;
+    if (!lambdaEndpoint) {
+      throw new Error('Lambda endpoint not configured');
+    }
+
+    const response = await fetch(lambdaEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_AWS_BEARER_TOKEN_BEDROCK || ''}`
+      },
       body: JSON.stringify({
-        anthropic_version: 'bedrock-2023-05-31',
-        max_tokens: 1000,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: message }
-        ],
-        temperature: 0.7,
-        top_p: 0.9
+        audioData: `${systemPrompt}\n\nUser: ${message}`,
+        sessionId: `chat_${Date.now()}`,
+        courseId: '000000000',
+        topic: 'General Chat',
+        studentId: 'general_user',
+        contextSources: [],
+        timestamp: new Date().toISOString()
       })
     });
 
-    const response = await client.send(command);
-    const responseBody = JSON.parse(new TextDecoder().decode(response.body)) as BedrockResponse;
+    if (!response.ok) {
+      throw new Error(`Lambda request failed: ${response.status}`);
+    }
+
+    const data = await response.json();
     
-    return responseBody.content[0]?.text || 'Sorry, I cannot process your request at this time. Please try again later.';
+    // Extract AI response from Lambda response chunks
+    const aiResponseChunks = data.chunks?.filter((chunk: any) => chunk.type === 'ai_response') || [];
+    const aiResponse = aiResponseChunks.map((chunk: any) => chunk.text).join('');
+    
+    return aiResponse || 'Sorry, I cannot process your request at this time. Please try again later.';
   } catch (error) {
-    console.error('Error calling AWS Bedrock:', error);
+    console.error('Error calling AWS Bedrock via Lambda:', error);
     return 'Sorry, I cannot process your request at this time. Please try again later.';
   }
 }

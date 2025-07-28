@@ -34,8 +34,18 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
       setStreamingTime(0)
       setResponseText('')
       
-      // Start streaming session with Bedrock
-      await voiceStreamingService.startVoiceSession(sessionId.current)
+      // Extract course info from lesson ID for educational context
+      const courseId = lesson.id.split('_')[0] || '000000000'
+      const topic = lesson.title || 'General'
+      const studentId = `student_${Date.now()}` // In real app, get from auth context
+      
+      // Start enhanced streaming session with educational context
+      await voiceStreamingService.startVoiceSession(
+        sessionId.current,
+        courseId,
+        topic,
+        studentId
+      )
       
       // Start timer
       timerRef.current = setInterval(() => {
@@ -67,13 +77,42 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
     }
   }
 
-  // Listen for streaming events
+  // Listen for enhanced streaming events
   useEffect(() => {
     const handleStreamingEvent = (event: CustomEvent) => {
       const { type, data } = event.detail
       
-      if (type === 'response' && data.sessionId === sessionId.current) {
-        setResponseText(prev => prev + data.text)
+      if (data.sessionId === sessionId.current) {
+        switch (type) {
+          case 'transcription':
+            console.log('🎤 Transcripción recibida:', data.text)
+            break
+            
+          case 'response':
+            console.log('🤖 Respuesta IA:', data.text)
+            setResponseText(prev => prev + data.text)
+            
+            // Use Web Speech API for text-to-speech
+            if ('speechSynthesis' in window) {
+              const utterance = new SpeechSynthesisUtterance(data.text)
+              utterance.lang = 'es-ES'
+              utterance.rate = 0.9
+              utterance.pitch = 1.0
+              speechSynthesis.speak(utterance)
+            }
+            break
+            
+          case 'audio':
+            console.log('🎵 Audio recibido:', data.audioUrl)
+            // Could play audio directly if provided
+            break
+            
+          case 'error':
+            console.error('❌ Error en streaming:', data.error)
+            alert(`Error en la sesión de voz: ${data.error}`)
+            setIsStreaming(false)
+            break
+        }
       }
     }
 

@@ -45,51 +45,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<CognitoUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Inicialización del contexto de autenticación
+  // Authentication context initialization with comprehensive logging
   useEffect(() => {
-    console.log('🔧 AuthProvider initializing...');
-    console.log('🔧 AuthProvider state:', { hasUser: !!user, userEmail: user?.email, loading });
+    console.log('🔧 [AuthProvider] Initializing authentication context...');
+    console.log('🔧 [AuthProvider] Current state:', { 
+      hasUser: !!user, 
+      userEmail: user?.email, 
+      loading,
+      timestamp: new Date().toISOString()
+    });
     
     const initialize = async () => {
       try {
-        console.log('🔧 Initializing auth...');
+        console.log('🔧 [AuthProvider] Starting authentication initialization...');
         const currentUser = await initializeAuth();
         if (currentUser) {
-          console.log('✅ User restored from storage:', currentUser.email);
+          console.log('✅ [AuthProvider] User successfully restored from storage:', currentUser.email);
           setUser(currentUser);
         } else {
-          console.log('ℹ️ No user found in storage');
+          console.log('ℹ️ [AuthProvider] No existing user session found in storage');
         }
       } catch (error) {
-        console.error('❌ Auth initialization error:', error);
-        // Limpiar cualquier estado corrupto
+        console.error('❌ [AuthProvider] Authentication initialization failed:', error);
+        // Clean up any corrupted state
         localStorage.removeItem('cognia_auth_token');
         localStorage.removeItem('cognia_user_data');
+        console.log('🧹 [AuthProvider] Corrupted authentication state cleaned up');
       } finally {
         setLoading(false);
+        console.log('✅ [AuthProvider] Authentication initialization completed');
       }
     };
 
     initialize();
   }, []);
 
-  // Función de inicio de sesión con manejo de errores mejorado
+  // Enhanced sign-in function with comprehensive error handling and logging
   const signIn = async (email: string, password: string) => {
-    console.log('🔐 AuthProvider.signIn called for:', email);
+    console.log('🔐 [AuthProvider] Sign-in initiated for user:', email);
+    console.log('🔐 [AuthProvider] Authentication attempt timestamp:', new Date().toISOString());
+    
     try {
       const result = await cognitoSignIn(email, password);
-      console.log('✅ AuthProvider.signIn successful');
+      console.log('✅ [AuthProvider] Sign-in successful for user:', email);
+      console.log('✅ [AuthProvider] User session established:', {
+        username: result.username,
+        email: result.email,
+        displayName: result.displayName,
+        hasTokens: !!(result.accessToken && result.idToken)
+      });
+      
       setUser(result);
       
-      // Persistir datos de usuario en localStorage para recuperación
+      // Persist user data in localStorage for session recovery
       localStorage.setItem('cognia_user_data', JSON.stringify(result));
+      console.log('💾 [AuthProvider] User session persisted to localStorage');
       
     } catch (error) {
-      console.error('❌ AuthProvider.signIn failed:', error);
-      // Limpiar cualquier estado corrupto en caso de error
+      console.error('❌ [AuthProvider] Sign-in failed for user:', email, error);
+      // Clean up any corrupted state on error
       setUser(null);
       localStorage.removeItem('cognia_auth_token');
       localStorage.removeItem('cognia_user_data');
+      console.log('🧹 [AuthProvider] Authentication state cleaned after sign-in failure');
       throw error;
     }
   };
