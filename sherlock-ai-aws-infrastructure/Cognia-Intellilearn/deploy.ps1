@@ -1,8 +1,8 @@
 # CognIA IntelliLearn - Secure Deployment Script
-# ⚠️ SECURITY: Uses environment variables for AWS credentials
+# Security: Uses environment variables for AWS credentials
 
 Write-Host "🚀 CognIA IntelliLearn - Secure Deployment" -ForegroundColor Cyan
-Write-Host "⚠️  Loading credentials from .env.local..." -ForegroundColor Yellow
+Write-Host "Loading credentials from .env.local..." -ForegroundColor Yellow
 
 # Load environment variables from .env.local
 if (Test-Path ".env.local") {
@@ -62,11 +62,11 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "🔄 Invalidating CloudFront..." -ForegroundColor Yellow
-aws cloudfront create-invalidation --distribution-id E3NQZX5QVZH8QG --paths "/*"
+aws cloudfront create-invalidation --distribution-id E1UF9C891JJD1F --paths "/*"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Deployment completed successfully!" -ForegroundColor Green
     Write-Host "🌐 URL: https://d2sn3lk5751y3y.cloudfront.net" -ForegroundColor Cyan
 } else {
-    Write-Host "⚠️  CloudFront invalidation failed, but deployment completed" -ForegroundColor Yellow
+    Write-Host "CloudFront invalidation failed, but deployment completed" -ForegroundColor Yellow
 } 

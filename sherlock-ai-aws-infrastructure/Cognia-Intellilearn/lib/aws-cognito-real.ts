@@ -142,7 +142,7 @@ export async function confirmSignUp(email: string, confirmationCode: string): Pr
   
   try {
     const command = new ConfirmSignUpCommand({
-      ClientId: AWS_CONFIG.clientId,
+      ClientId: AWS_CONFIG.cognito.clientId,
       Username: email,
       ConfirmationCode: confirmationCode,
     });
@@ -193,7 +193,7 @@ export async function forgotPassword(email: string): Promise<void> {
   
   try {
     const command = new ForgotPasswordCommand({
-      ClientId: AWS_CONFIG.clientId,
+      ClientId: AWS_CONFIG.cognito.clientId,
       Username: email,
     });
 
@@ -214,7 +214,7 @@ export async function confirmForgotPassword(
   
   try {
     const command = new ConfirmForgotPasswordCommand({
-      ClientId: AWS_CONFIG.clientId,
+      ClientId: AWS_CONFIG.cognito.clientId,
       Username: email,
       ConfirmationCode: confirmationCode,
       Password: newPassword,

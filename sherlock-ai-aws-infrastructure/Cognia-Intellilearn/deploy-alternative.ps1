@@ -1,5 +1,5 @@
 # CognIA IntelliLearn - Alternative Secure Deployment Script
-# ⚠️ SECURITY: Uses environment variables for AWS credentials
+# Security: Uses environment variables for AWS credentials
 
 Write-Host "🚀 CognIA IntelliLearn - Alternative Secure Deployment" -ForegroundColor Cyan
 
