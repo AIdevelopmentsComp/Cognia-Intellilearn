@@ -1,23 +1,14 @@
 /**
  * Voice Streaming Service for Amazon Bedrock Integration
- * Implements real-time voice streaming with Bedrock following AWS architecture
+ * Uses secure backend endpoint for Bedrock communication
  */
-
-import { BedrockRuntimeClient, InvokeModelWithResponseStreamCommand } from '@aws-sdk/client-bedrock-runtime'
-import { AWS_CONFIG } from '../config'
-
-// Initialize Bedrock client
-const bedrockClient = new BedrockRuntimeClient({
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
-})
 
 export interface VoiceStreamingSession {
   sessionId: string
   isActive: boolean
   mediaRecorder?: MediaRecorder
   audioStream?: MediaStream
-  websocket?: WebSocket
+  eventSource?: EventSource
 }
 
 export class VoiceStreamingService {
@@ -30,6 +21,8 @@ export class VoiceStreamingService {
    */
   async startVoiceSession(sessionId: string): Promise<VoiceStreamingSession> {
     try {
+      console.log('🎤 Starting voice session:', sessionId)
+      
       // Request microphone access
       const audioStream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
@@ -61,12 +54,14 @@ export class VoiceStreamingService {
       // Setup streaming event handlers
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          this.streamAudioToBedrock(event.data, sessionId)
+          this.streamAudioToBackend(event.data, sessionId)
         }
       }
 
       mediaRecorder.onstart = () => {
         console.log('🎤 Voice streaming started:', sessionId)
+        // Send initial message to get conversation started
+        this.streamAudioToBackend(new Blob(['inicio']), sessionId)
       }
 
       mediaRecorder.onstop = () => {
@@ -77,8 +72,8 @@ export class VoiceStreamingService {
       source.connect(this.processor)
       this.processor.connect(this.audioContext.destination)
 
-      // Start recording with small chunks for streaming
-      mediaRecorder.start(100) // 100ms chunks for real-time streaming
+      // Start recording with longer chunks for better processing
+      mediaRecorder.start(2000) // 2 second chunks
 
       this.sessions.set(sessionId, session)
       return session
@@ -100,6 +95,11 @@ export class VoiceStreamingService {
       // Stop recording
       if (session.mediaRecorder && session.mediaRecorder.state !== 'inactive') {
         session.mediaRecorder.stop()
+      }
+
+      // Close EventSource if exists
+      if (session.eventSource) {
+        session.eventSource.close()
       }
 
       // Stop audio tracks
@@ -127,83 +127,124 @@ export class VoiceStreamingService {
   }
 
   /**
-   * Stream audio data to Amazon Bedrock
+   * Stream audio data to backend endpoint
    */
-  private async streamAudioToBedrock(audioBlob: Blob, sessionId: string): Promise<void> {
+  private async streamAudioToBackend(audioBlob: Blob, sessionId: string): Promise<void> {
     try {
-      // Convert audio blob to base64 for Bedrock
+      console.log('📡 Streaming audio to backend, size:', audioBlob.size)
+      
+      // Convert audio blob to base64 for transmission
       const arrayBuffer = await audioBlob.arrayBuffer()
       const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
 
-      // Prepare Bedrock streaming request
-      const input = {
-        modelId: 'anthropic.claude-3-haiku-20240307-v1:0',
-        contentType: 'application/json',
-        accept: 'application/json',
+      // Send to backend endpoint using fetch with streaming response
+      const response = await fetch('/api/bedrock-stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          anthropic_version: "bedrock-2023-05-31",
-          max_tokens: 1000,
-          messages: [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: `Procesa este audio de voz y responde de manera conversacional. Audio: ${base64Audio.substring(0, 100)}...`
-                }
-              ]
-            }
-          ],
-          stream: true
+          audioData: base64Audio.substring(0, 1000), // Limit size for demo
+          sessionId
         })
+      })
+
+      console.log('📡 Backend response status:', response.status)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('❌ Backend error response:', errorText)
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`)
       }
 
-      // Send streaming request to Bedrock
-      const command = new InvokeModelWithResponseStreamCommand(input)
-      const response = await bedrockClient.send(command)
+      // Handle streaming response
+      const reader = response.body?.getReader()
+      const decoder = new TextDecoder()
 
-      // Process streaming response
-      if (response.body) {
-        for await (const chunk of response.body) {
-          if (chunk.chunk?.bytes) {
-            const chunkData = JSON.parse(new TextDecoder().decode(chunk.chunk.bytes))
-            
-            if (chunkData.delta?.text) {
-              // Stream response back to user
-              this.handleBedrockResponse(chunkData.delta.text, sessionId)
+      if (reader) {
+        let buffer = ''
+        
+        console.log('📖 Starting to read streaming response...')
+        
+        while (true) {
+          const { done, value } = await reader.read()
+          
+          if (done) {
+            console.log('📖 Finished reading stream')
+            break
+          }
+          
+          buffer += decoder.decode(value, { stream: true })
+          
+          // Process complete messages
+          const lines = buffer.split('\n')
+          buffer = lines.pop() || '' // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6))
+                console.log('📝 Received data:', data.type, data.text?.substring(0, 50))
+                this.handleBackendResponse(data, sessionId)
+              } catch (e) {
+                console.error('❌ Error parsing SSE data:', e, 'Line:', line)
+              }
             }
           }
         }
       }
 
     } catch (error) {
-      console.error('❌ Error streaming to Bedrock:', error)
+      console.error('❌ Error streaming to backend:', error)
+      // Emit error event
+      this.emitStreamingEvent('error', { 
+        sessionId, 
+        error: error instanceof Error ? error.message : 'Error de conexión con el servidor' 
+      })
     }
   }
 
   /**
-   * Handle Bedrock response and convert to speech
+   * Handle backend response and convert to speech
    */
-  private async handleBedrockResponse(text: string, sessionId: string): Promise<void> {
+  private async handleBackendResponse(data: any, sessionId: string): Promise<void> {
     try {
-      // Use Web Speech API for text-to-speech
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text)
-        utterance.lang = 'es-ES'
-        utterance.rate = 0.9
-        utterance.pitch = 1.0
+      if (data.type === 'text_chunk' && data.text) {
+        console.log('🔊 Processing text chunk:', data.text.substring(0, 50) + '...')
         
-        // Speak the response
-        speechSynthesis.speak(utterance)
-        
-        console.log('🔊 Speaking response:', text)
+        // Use Web Speech API for text-to-speech
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(data.text)
+          utterance.lang = 'es-ES'
+          utterance.rate = 0.9
+          utterance.pitch = 1.0
+          
+          // Speak the response
+          speechSynthesis.speak(utterance)
+          
+          console.log('🔊 Speaking response:', data.text)
+        }
+
+        // Emit event for UI updates
+        this.emitStreamingEvent('response', { sessionId, text: data.text })
+      }
+      
+      if (data.type === 'stream_end') {
+        console.log('✅ Streaming completed for session:', sessionId)
+        this.emitStreamingEvent('stream_end', { sessionId })
+      }
+      
+      if (data.type === 'error') {
+        console.error('❌ Backend error:', data.error, data.details)
+        this.emitStreamingEvent('error', { 
+          sessionId, 
+          error: data.error,
+          details: data.details 
+        })
       }
 
-      // Emit event for UI updates
-      this.emitStreamingEvent('response', { sessionId, text })
-
     } catch (error) {
-      console.error('❌ Error handling Bedrock response:', error)
+      console.error('❌ Error handling backend response:', error)
     }
   }
 
