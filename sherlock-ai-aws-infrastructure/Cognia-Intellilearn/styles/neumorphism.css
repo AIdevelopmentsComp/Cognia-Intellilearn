@@ -1,0 +1,816 @@
+/* COGNIA INTELLILEARN - NEUMORPHISM STYLES */
+/* Colores corporativos CognIA: #132944 (azul oscuro), #3C31A3 (azul púrpura), #FFFFFF (blanco) */
+
+:root {
+  /* CognIA Brand Colors */
+  --cognia-blue-dark: #132944;
+  --cognia-blue-purple: #3C31A3;
+  --cognia-white: #FFFFFF;
+  
+  /* Unified background system */
+  --neuro-bg-primary: #ffffff;
+  --neuro-bg-secondary: #f8f8f8;
+  --neuro-bg-accent: #f0f0f0;
+  
+  /* Advanced neumorphic shadows for white background */
+  --neuro-shadow-highlight: rgba(255, 255, 255, 0.9);
+  --neuro-shadow-highlight-soft: rgba(255, 255, 255, 0.6);
+  --neuro-shadow-highlight-subtle: rgba(255, 255, 255, 0.1);
+  --neuro-shadow-dark: rgba(0, 0, 0, 0.1);
+  --neuro-shadow-dark-soft: rgba(0, 0, 0, 0.08);
+  --neuro-shadow-dark-subtle: rgba(0, 0, 0, 0.04);
+}
+
+/* Advanced neumorphic container */
+.neuro-container {
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 
+    -6px -6px 14px var(--neuro-shadow-highlight),
+    -6px -6px 10px var(--neuro-shadow-highlight-soft),
+    6px 6px 8px var(--neuro-shadow-highlight-subtle),
+    6px 6px 10px var(--neuro-shadow-dark);
+}
+
+.neuro-container:hover {
+  box-shadow: 
+    -2px -2px 6px var(--neuro-shadow-highlight),
+    -2px -2px 4px rgba(255, 255, 255, 0.4),
+    2px 2px 2px var(--neuro-shadow-dark-subtle),
+    2px 2px 4px var(--neuro-shadow-dark-soft);
+}
+
+/* Advanced neumorphic button - White background */
+.neuro-button {
+  padding: 1.5em 3em;
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 0.75rem;
+  color: #444;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1rem;
+  text-align: center;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 
+    -6px -6px 14px var(--neuro-shadow-highlight),
+    -6px -6px 10px var(--neuro-shadow-highlight-soft),
+    6px 6px 8px var(--neuro-shadow-highlight-subtle),
+    6px 6px 10px var(--neuro-shadow-dark);
+}
+
+.neuro-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    -3px -3px 8px var(--neuro-shadow-highlight),
+    -3px -3px 6px var(--neuro-shadow-highlight-soft),
+    3px 3px 4px var(--neuro-shadow-highlight-subtle),
+    3px 3px 6px var(--neuro-shadow-dark);
+}
+
+.neuro-button:active {
+  transform: translateY(0px);
+  box-shadow: 
+    inset -2px -2px 6px var(--neuro-shadow-highlight),
+    inset -2px -2px 4px var(--neuro-shadow-highlight-soft),
+    inset 2px 2px 2px var(--neuro-shadow-highlight-subtle),
+    inset 2px 2px 4px var(--neuro-shadow-dark);
+}
+
+/* Enhanced neumorphic card with improved shadows */
+.neuro-card {
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 1.5rem;
+  transition: all 250ms ease-in-out;
+  box-shadow: 
+    9px 9px 16px rgba(163, 177, 198, 0.6), 
+    -9px -9px 16px rgba(255, 255, 255, 0.5);
+}
+
+.neuro-card:hover {
+  box-shadow: 
+    9px 9px 16px rgba(163, 177, 198, 0.6), 
+    -9px -9px 16px rgba(255, 255, 255, 0.5), 
+    inset 3px 3px 7px rgba(136, 165, 191, 0.48), 
+    inset -3px -3px 7px #ffffff;
+  transform: translateY(-2px);
+}
+
+.neuro-card:active {
+  box-shadow: 
+    inset 3px 3px 7px rgba(136, 165, 191, 0.48),
+    inset -3px -3px 7px #ffffff;
+}
+
+/* Neumorphic cards with active state - 10% smaller, full width design */
+.neuro-card-purple {
+  background: linear-gradient(318.32deg, rgba(163, 177, 198, 0.1) 0%, rgba(163, 177, 198, 0.1) 55%, rgba(163, 177, 198, 0.25) 100%);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 1.125rem;
+  transition: all 250ms ease-in-out;
+  position: relative;
+  padding: 2.7rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: scale(0.9);
+  box-shadow: 
+    8px 8px 14px rgba(163, 177, 198, 0.6),
+    -8px -8px 14px rgba(255, 255, 255, 0.5),
+    inset 3px 3px 6px rgba(136, 165, 191, 0.48), 
+    inset -3px -3px 6px #ffffff;
+}
+
+.neuro-card-purple:hover {
+  box-shadow: 
+    9px 9px 16px rgba(163, 177, 198, 0.6),
+    -9px -9px 16px rgba(255, 255, 255, 0.5),
+    inset 3px 3px 7px rgba(136, 165, 191, 0.48), 
+    inset -3px -3px 7px #ffffff;
+  transform: translateY(-2px);
+}
+
+.neuro-card-purple:active {
+  box-shadow: 
+    9px 9px 16px rgba(163, 177, 198, 0.6),
+    -9px -9px 16px rgba(255, 255, 255, 0.5),
+    inset 3px 3px 7px rgba(136, 165, 191, 0.48), 
+    inset -3px -3px 7px #ffffff;
+  transform: translateY(0px);
+}
+
+/* Primary button with CognIA colors and neumorphic effect */
+.neuro-button-primary {
+  background: linear-gradient(135deg, var(--cognia-blue-purple), #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 1em 2em;
+  font-weight: 600;
+  letter-spacing: 0.05rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 
+    -6px -6px 14px rgba(139, 92, 246, 0.3),
+    -6px -6px 10px rgba(139, 92, 246, 0.2),
+    6px 6px 8px rgba(60, 49, 163, 0.1),
+    6px 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.neuro-button-primary:hover {
+  box-shadow: 
+    -2px -2px 6px rgba(139, 92, 246, 0.4),
+    -2px -2px 4px rgba(139, 92, 246, 0.3),
+    2px 2px 2px rgba(60, 49, 163, 0.1),
+    2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.neuro-button-primary:active {
+  box-shadow: 
+    inset -2px -2px 6px rgba(139, 92, 246, 0.3),
+    inset -2px -2px 4px rgba(139, 92, 246, 0.2),
+    inset 2px 2px 2px rgba(60, 49, 163, 0.1),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Inset style for form inputs */
+.neuro-inset {
+  background: var(--neuro-bg-accent);
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 
+    inset -4px -4px 8px var(--neuro-shadow-highlight),
+    inset -4px -4px 6px var(--neuro-shadow-highlight-soft),
+    inset 4px 4px 4px var(--neuro-shadow-highlight-subtle),
+    inset 4px 4px 6px var(--neuro-shadow-dark);
+  transition: all 0.2s ease-in-out;
+}
+
+.neuro-inset:focus {
+  box-shadow: 
+    inset -2px -2px 4px rgba(255, 255, 255, 0.6),
+    inset -2px -2px 3px rgba(255, 255, 255, 0.4),
+    inset 2px 2px 2px var(--neuro-shadow-dark-subtle),
+    inset 2px 2px 3px var(--neuro-shadow-dark-soft);
+}
+
+/* Icon container with neumorphic effect */
+.neuro-icon-container {
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 
+    -3px -3px 6px var(--neuro-shadow-highlight),
+    -3px -3px 4px var(--neuro-shadow-highlight-soft),
+    3px 3px 3px var(--neuro-shadow-highlight-subtle),
+    3px 3px 4px var(--neuro-shadow-dark);
+  transition: all 0.2s ease-in-out;
+}
+
+.neuro-icon-container:hover {
+  box-shadow: 
+    -1px -1px 3px var(--neuro-shadow-highlight),
+    -1px -1px 2px var(--neuro-shadow-highlight-soft),
+    1px 1px 1px var(--neuro-shadow-dark-subtle),
+    1px 1px 2px var(--neuro-shadow-dark-soft);
+}
+
+/* Purple icon container - neumorphic effect with purple tones, no white borders */
+.neuro-icon-container-purple {
+  background: rgba(139, 92, 246, 0.2);
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 
+    -3px -3px 6px rgba(139, 92, 246, 0.15),
+    -3px -3px 4px rgba(139, 92, 246, 0.1),
+    3px 3px 3px rgba(99, 102, 241, 0.08),
+    3px 3px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.neuro-icon-container-purple:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    -2px -2px 4px rgba(139, 92, 246, 0.2),
+    -2px -2px 3px rgba(139, 92, 246, 0.15),
+    2px 2px 2px rgba(99, 102, 241, 0.1),
+    2px 2px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Blue tone neumorphic elements */
+.neuro-blue {
+  background: rgba(59, 130, 246, 0.1);
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 
+    -3px -3px 6px rgba(59, 130, 246, 0.15),
+    -3px -3px 4px rgba(59, 130, 246, 0.1),
+    3px 3px 3px rgba(37, 99, 235, 0.08),
+    3px 3px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.neuro-blue:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    -2px -2px 4px rgba(59, 130, 246, 0.2),
+    -2px -2px 3px rgba(59, 130, 246, 0.15),
+    2px 2px 2px rgba(37, 99, 235, 0.1),
+    2px 2px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Testimonial card specific styling */
+.neuro-testimonial {
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 
+    -6px -6px 12px var(--neuro-shadow-highlight),
+    -6px -6px 8px var(--neuro-shadow-highlight-soft),
+    6px 6px 6px var(--neuro-shadow-highlight-subtle),
+    6px 6px 8px var(--neuro-shadow-dark);
+}
+
+.neuro-testimonial:hover {
+  box-shadow: 
+    -3px -3px 6px rgba(255, 255, 255, 0.6),
+    -3px -3px 4px rgba(255, 255, 255, 0.4),
+    3px 3px 3px var(--neuro-shadow-dark-subtle),
+    3px 3px 4px var(--neuro-shadow-dark-soft);
+  transform: translateY(-1px);
+}
+
+/* Header button styles */
+.btn-header {
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  color: #444;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 
+    -4px -4px 8px var(--neuro-shadow-highlight),
+    -4px -4px 6px var(--neuro-shadow-highlight-soft),
+    4px 4px 4px var(--neuro-shadow-highlight-subtle),
+    4px 4px 6px var(--neuro-shadow-dark);
+}
+
+.btn-header:hover {
+  box-shadow: 
+    -2px -2px 4px rgba(255, 255, 255, 0.6),
+    -2px -2px 3px rgba(255, 255, 255, 0.4),
+    2px 2px 2px var(--neuro-shadow-dark-subtle),
+    2px 2px 3px var(--neuro-shadow-dark-soft);
+  color: var(--cognia-blue-purple);
+}
+
+.btn-header:active {
+  box-shadow: 
+    inset -2px -2px 4px var(--neuro-shadow-highlight),
+    inset -2px -2px 3px var(--neuro-shadow-highlight-soft),
+    inset 2px 2px 2px var(--neuro-shadow-highlight-subtle),
+    inset 2px 2px 3px var(--neuro-shadow-dark);
+}
+
+.btn-header-gradient {
+  background: linear-gradient(135deg, var(--cognia-blue-purple), #8b5cf6);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 
+    -4px -4px 8px rgba(139, 92, 246, 0.3),
+    -4px -4px 6px rgba(139, 92, 246, 0.2),
+    4px 4px 4px rgba(60, 49, 163, 0.1),
+    4px 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-header-gradient:hover {
+  box-shadow: 
+    -2px -2px 4px rgba(139, 92, 246, 0.4),
+    -2px -2px 3px rgba(139, 92, 246, 0.3),
+    2px 2px 2px rgba(60, 49, 163, 0.1),
+    2px 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-header-gradient:active {
+  box-shadow: 
+    inset -2px -2px 4px rgba(139, 92, 246, 0.3),
+    inset -2px -2px 3px rgba(139, 92, 246, 0.2),
+    inset 2px 2px 2px rgba(60, 49, 163, 0.1),
+    inset 2px 2px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Login button */
+.btn-login {
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.8rem 1rem;
+  color: #444;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 
+    -4px -4px 8px var(--neuro-shadow-highlight),
+    -4px -4px 6px var(--neuro-shadow-highlight-soft),
+    4px 4px 4px var(--neuro-shadow-highlight-subtle),
+    4px 4px 6px var(--neuro-shadow-dark);
+}
+
+.btn-login:hover {
+  box-shadow: 
+    -2px -2px 4px rgba(255, 255, 255, 0.6),
+    -2px -2px 3px rgba(255, 255, 255, 0.4),
+    2px 2px 2px var(--neuro-shadow-dark-subtle),
+    2px 2px 3px var(--neuro-shadow-dark-soft);
+  color: var(--cognia-blue-purple);
+}
+
+.btn-login:active {
+  box-shadow: 
+    inset -2px -2px 4px var(--neuro-shadow-highlight),
+    inset -2px -2px 3px var(--neuro-shadow-highlight-soft),
+    inset 2px 2px 2px var(--neuro-shadow-highlight-subtle),
+    inset 2px 2px 3px var(--neuro-shadow-dark);
+}
+
+/* Try our assistant button - Custom neumorphic style */
+.btn-proof {
+  color: #090909;
+  padding: 0.7em 1.7em;
+  font-size: 18px;
+  border-radius: 0.5em;
+  background: #e8e8e8;
+  cursor: pointer;
+  border: 1px solid #e8e8e8;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-proof:hover {
+  transform: translateY(-1px);
+}
+
+.btn-proof:active {
+  color: #666;
+  box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+  transform: translateY(0px);
+}
+
+/* Star rating component - purple stars for white cards */
+.star-rating-wrapper {
+  display: inline-flex;
+  direction: ltr;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  align-self: center;
+  background: #ffffff;
+  box-shadow: 
+    7px 7px 25px rgba(198, 206, 237, 0.7),
+    -7px -7px 35px rgba(255, 255, 255, 0.7),
+    inset 0px 0px 4px rgba(255, 255, 255, 0.9),
+    inset 7px 7px 15px rgba(198, 206, 237, 0.8);
+  border-radius: 2.5rem;
+  padding: 0.75rem 1.25rem;
+}
+
+.star-rating {
+  color: #E1E6F6;
+  font-size: 1rem;
+  transition: color 0.5s ease;
+  filter: drop-shadow(5px 1px 3px rgba(198, 206, 237, 1));
+}
+
+.star-rating.filled {
+  color: #8b5cf6;
+  filter: drop-shadow(3px 1px 3px rgba(139, 92, 246, 0.6));
+}
+
+/* Enhanced neumorphic buttons for header */
+.neuro-button-enhanced {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #ffffff;
+  min-width: 80px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  color: #8b5cf6;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0 1rem;
+  text-decoration: none;
+  box-shadow: 
+    -7px -7px 20px 0px rgba(255, 255, 255, 0.9),
+    -4px -4px 5px 0px rgba(255, 255, 255, 0.9),
+    7px 7px 20px 0px rgba(0, 0, 0, 0.2),
+    4px 4px 5px 0px rgba(0, 0, 0, 0.1),
+    inset 0px 0px 0px 0px rgba(255, 255, 255, 0.9),
+    inset 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.6s cubic-bezier(.79,.21,.06,.81), transform 0.2s ease;
+}
+
+.neuro-button-enhanced:hover,
+.neuro-button-enhanced:focus-visible {
+  color: #6366f1;
+  transform: translateY(-1px);
+}
+
+.neuro-button-enhanced:active {
+  box-shadow: 
+    0px 0px 0px 0px rgba(255, 255, 255, 0.9),
+    0px 0px 0px 0px rgba(255, 255, 255, 0.9),
+    0px 0px 0px 0px rgba(0, 0, 0, 0.1),
+    0px 0px 0px 0px rgba(0, 0, 0, 0.1),
+    inset -7px -7px 20px 0px rgba(255, 255, 255, 0.9),
+    inset -4px -4px 5px 0px rgba(255, 255, 255, 0.9),
+    inset 7px 7px 20px 0px rgba(0, 0, 0, 0.3),
+    inset 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+  transform: translateY(0px);
+}
+
+/* Sign In button - Neumorphic purple style without glow */
+.btn-signin {
+  color: #ffffff;
+  padding: 0.75rem 2rem;
+  font-size: 16px;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  cursor: pointer;
+  border: 1px solid #8b5cf6;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 12px rgba(139, 92, 246, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  outline: none;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-signin:hover {
+  transform: translateY(-1px);
+}
+
+.btn-signin:active {
+  box-shadow: inset 4px 4px 12px rgba(99, 102, 241, 0.4), inset -4px -4px 12px rgba(139, 92, 246, 0.2);
+  transform: translateY(0px);
+}
+
+.btn-signin:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Voice Session Visualizer - Neumorphic White Style */
+.voice-visualizer-container {
+  position: relative;
+  height: 250px;
+  width: 250px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: voice-logo-pulse 2s infinite ease-in-out;
+  z-index: 999;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 
+    6px 6px 12px rgba(163, 177, 198, 0.3),
+    -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+
+.voice-logo.recording {
+  animation: voice-logo-recording 1s infinite ease-in-out;
+  box-shadow: 
+    6px 6px 12px rgba(139, 92, 246, 0.4),
+    -6px -6px 12px rgba(255, 255, 255, 0.9),
+    inset 2px 2px 4px rgba(139, 92, 246, 0.1);
+}
+
+.voice-logo svg {
+  width: 100%;
+  height: 100%;
+}
+
+.voice-ripple-1,
+.voice-ripple-2,
+.voice-ripple-3,
+.voice-ripple-4,
+.voice-ripple-5 {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 240, 240, 0.4));
+  border: 1px solid rgba(163, 177, 198, 0.2);
+  box-shadow: 
+    4px 4px 8px rgba(163, 177, 198, 0.2),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  animation: voice-ripple 2s infinite ease-in-out;
+}
+
+.voice-ripple-1 {
+  width: 25%;
+  height: 25%;
+  top: 37.5%;
+  left: 37.5%;
+  z-index: 99;
+}
+
+.voice-ripple-2 {
+  width: 40%;
+  height: 40%;
+  top: 30%;
+  left: 30%;
+  z-index: 98;
+  border-color: rgba(163, 177, 198, 0.15);
+  animation-delay: 0.2s;
+}
+
+.voice-ripple-3 {
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  z-index: 97;
+  border-color: rgba(163, 177, 198, 0.1);
+  animation-delay: 0.4s;
+}
+
+.voice-ripple-4 {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  z-index: 96;
+  border-color: rgba(163, 177, 198, 0.08);
+  animation-delay: 0.6s;
+}
+
+.voice-ripple-5 {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 95;
+  border-color: rgba(163, 177, 198, 0.05);
+  animation-delay: 0.8s;
+}
+
+@keyframes voice-ripple {
+  0% {
+    transform: scale(1);
+    box-shadow: 
+      4px 4px 8px rgba(163, 177, 198, 0.2),
+      -4px -4px 8px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 
+      6px 6px 12px rgba(163, 177, 198, 0.3),
+      -6px -6px 12px rgba(255, 255, 255, 0.9);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 
+      4px 4px 8px rgba(163, 177, 198, 0.2),
+      -4px -4px 8px rgba(255, 255, 255, 0.8);
+  }
+}
+
+@keyframes voice-logo-pulse {
+  0% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes voice-logo-recording {
+  0% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 
+      6px 6px 12px rgba(139, 92, 246, 0.4),
+      -6px -6px 12px rgba(255, 255, 255, 0.9),
+      inset 2px 2px 4px rgba(139, 92, 246, 0.1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 
+      8px 8px 16px rgba(139, 92, 246, 0.5),
+      -8px -8px 16px rgba(255, 255, 255, 1),
+      inset 3px 3px 6px rgba(139, 92, 246, 0.2);
+  }
+  100% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 
+      6px 6px 12px rgba(139, 92, 246, 0.4),
+      -6px -6px 12px rgba(255, 255, 255, 0.9),
+      inset 2px 2px 4px rgba(139, 92, 246, 0.1);
+  }
+}
+
+/* Sidebar navigation items with neumorphic borders */
+.neuro-nav-item {
+  background: var(--neuro-bg-primary);
+  border: 1px solid rgba(163, 177, 198, 0.1);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 
+    2px 2px 4px rgba(163, 177, 198, 0.2),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.neuro-nav-item:hover {
+  border: 1px solid rgba(163, 177, 198, 0.2);
+  box-shadow: 
+    3px 3px 6px rgba(163, 177, 198, 0.3),
+    -3px -3px 6px rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.neuro-nav-item.active {
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 
+    inset 2px 2px 4px rgba(139, 92, 246, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced testimonial cards - wider, no shadow, with stars */
+.neuro-testimonial {
+  background: var(--neuro-bg-primary);
+  border: none;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  transition: all 250ms ease-in-out;
+  width: 100%;
+  max-width: none;
+  box-shadow: none;
+  border: 1px solid rgba(163, 177, 198, 0.2);
+}
+
+.neuro-testimonial:hover {
+  transform: translateY(-2px);
+  border: 1px solid rgba(163, 177, 198, 0.3);
+}
+
+/* Neumorphic input fields for login */
+.neuro-input {
+  background: #ffffff;
+  border: none;
+  border-radius: 0.75rem;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 177, 198, 0.4),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.neuro-input:focus {
+  box-shadow:
+    inset 6px 6px 12px rgba(163, 177, 198, 0.5),
+    inset -6px -6px 12px rgba(255, 255, 255, 0.9);
+  outline: none;
+}
+
+.neuro-input::placeholder {
+  color: rgba(139, 92, 246, 0.5);
+}
+
+/* Testimonial star rating */
+.testimonial-stars {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.testimonial-stars .star-rating {
+  color: #E1E6F6;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.testimonial-stars .star-rating.filled {
+  color: #8b5cf6;
+}
+
+/* Progress bar animation */
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--target-width, 100%);
+  }
+}
+
+/* Enhanced progress bars for stats */
+.progress-bar-container {
+  background: rgba(163, 177, 198, 0.2);
+  border-radius: 1rem;
+  height: 0.5rem;
+  overflow: hidden;
+  box-shadow: inset 2px 2px 4px rgba(136, 165, 191, 0.3);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+  box-shadow: 
+    0 2px 4px rgba(139, 92, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: width 3s cubic-bezier(0.4, 0, 0.2, 1);
+} 
