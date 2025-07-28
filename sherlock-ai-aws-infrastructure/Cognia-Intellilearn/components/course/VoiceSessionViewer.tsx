@@ -76,14 +76,6 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
   return (
     <div className="neuro-card p-8 rounded-2xl bg-white">
       <div className="text-center space-y-6">
-        <div className="space-y-2">
-          <h3 className="text-xl font-semibold text-[#132944]">{lesson.title}</h3>
-          {lesson.description && (
-            <p className="text-gray-600">{lesson.description}</p>
-          )}
-          <div className="text-sm text-gray-500">Duración: {lesson.duration}</div>
-        </div>
-
         {/* Voice Visualizer */}
         <div className="relative">
           <div className="voice-visualizer-container">
