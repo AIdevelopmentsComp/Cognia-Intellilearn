@@ -113,23 +113,18 @@ export const Sidebar = () => {
    * @context Primary application sections
    */
   const mainNavItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: <FiHome /> },
+    { path: '/dashboard', label: 'My Progress', icon: <FiTrendingUp /> },
     { path: '/dashboard/courses', label: 'My Courses', icon: <FiBookOpen /> },
-    { path: '/dashboard/content', label: 'Content', icon: <FiFileText /> },
-    { path: '/dashboard/assistant', label: 'AI Assistant', icon: <FiMessageSquare /> },
-    { path: '/dashboard/analytics', label: 'Analytics', icon: <FiBarChart /> },
-    { path: '/dashboard/gamification', label: 'Gamification', icon: <FiAward /> },
+    { path: '/dashboard/assignments', label: 'My Tasks', icon: <FiFileText /> },
   ]
 
   /**
-   * Secondary navigation items
+   * Secondary navigation items (Tools section)
    * @context Additional tools and user settings
    */
   const secondaryNavItems = [
-    { path: '/dashboard/assignments', label: 'Assignments', icon: <FiFileText /> },
     { path: '/dashboard/certificates', label: 'Certificates', icon: <FiAward /> },
     { path: '/dashboard/profile', label: 'Profile', icon: <FiUser /> },
-    { path: '/dashboard/settings', label: 'Settings', icon: <FiSettings /> },
   ]
 
   return (

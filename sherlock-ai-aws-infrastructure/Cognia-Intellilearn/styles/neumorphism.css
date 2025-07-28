@@ -532,6 +532,32 @@
   transform: none;
 }
 
+/* Sidebar navigation items with neumorphic borders */
+.neuro-nav-item {
+  background: var(--neuro-bg-primary);
+  border: 1px solid rgba(163, 177, 198, 0.1);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 
+    2px 2px 4px rgba(163, 177, 198, 0.2),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.neuro-nav-item:hover {
+  border: 1px solid rgba(163, 177, 198, 0.2);
+  box-shadow: 
+    3px 3px 6px rgba(163, 177, 198, 0.3),
+    -3px -3px 6px rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.neuro-nav-item.active {
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 
+    inset 2px 2px 4px rgba(139, 92, 246, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+}
+
 /* Enhanced testimonial cards - wider, no shadow, with stars */
 .neuro-testimonial {
   background: var(--neuro-bg-primary);

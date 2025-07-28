@@ -67,15 +67,6 @@ export default function DashboardLayout({
                   </div>
                 )}
               </div>
-
-              {/* User Profile */}
-              <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 px-3 py-2 rounded-lg">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                  {user?.displayName?.charAt(0) || 'U'}
-                </div>
-                <span className="font-medium">{user?.displayName || 'Usuario'}</span>
-                <FaChevronDown className="text-gray-400 text-sm" />
-              </div>
             </div>
           </div>
         </header>

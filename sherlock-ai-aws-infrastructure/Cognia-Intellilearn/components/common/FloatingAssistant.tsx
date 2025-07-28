@@ -147,21 +147,22 @@ export const FloatingAssistant = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-[#2A1E90] to-[#4A3B9A] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 neuro-button"
-          aria-label="Open AI Assistant"
+          className="fixed bottom-6 right-6 neuro-button-enhanced bg-white text-[#8b5cf6] px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 z-50 font-semibold text-sm"
+          aria-label="Open CognIA Assistant"
         >
-          <FiMessageCircle className="text-2xl" />
+          <FiMessageCircle className="text-lg" />
+          <span>CognIA + assistant</span>
         </button>
       )}
 
-      {/* Chat Window */}
-      {isOpen && (
-        <div className={`fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl neuro-container transition-all duration-300 ${
-          isMinimized ? 'w-80 h-16' : 'w-96 h-[500px]'
-        }`}>
-          
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-[#2A1E90] to-[#4A3B9A] text-white rounded-t-2xl">
+             {/* Chat Window */}
+       {isOpen && (
+         <div className={`fixed bottom-6 right-6 z-50 neuro-card rounded-2xl transition-all duration-300 ${
+           isMinimized ? 'w-80 h-16' : 'w-96 h-[500px]'
+         }`}>
+           
+           {/* Header */}
+           <div className="flex items-center justify-between p-4 neuro-inset rounded-t-2xl bg-gradient-to-r from-[#8b5cf6] to-[#6366f1] text-white">
             <div className="flex items-center gap-3">
               <img
                 src="/assets/images/chatassistant.jpeg"
@@ -208,13 +209,13 @@ export const FloatingAssistant = () => {
                         className="w-6 h-6 rounded-full flex-shrink-0 mt-1"
                       />
                     )}
-                    <div
-                      className={`max-w-[80%] p-3 rounded-2xl text-sm ${
-                        message.role === 'user'
-                          ? 'bg-gradient-to-br from-[#2A1E90] to-[#4A3B9A] text-white neuro-button'
-                          : 'bg-gray-100 text-gray-800 neuro-inset'
-                      }`}
-                    >
+                                         <div
+                       className={`max-w-[80%] p-3 rounded-2xl text-sm ${
+                         message.role === 'user'
+                           ? 'neuro-card-purple text-white'
+                           : 'neuro-card text-gray-800'
+                       }`}
+                     >
                       <p className="whitespace-pre-wrap leading-relaxed">{message.text}</p>
                       <div className={`text-xs mt-1 ${
                         message.role === 'user' ? 'text-white/70' : 'text-gray-500'
@@ -235,7 +236,7 @@ export const FloatingAssistant = () => {
                       alt="Assistant"
                       className="w-6 h-6 rounded-full flex-shrink-0 mt-1"
                     />
-                    <div className="bg-gray-100 p-3 rounded-2xl neuro-inset">
+                                         <div className="neuro-card p-3 rounded-2xl">
                       <div className="flex gap-1">
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -248,29 +249,29 @@ export const FloatingAssistant = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input */}
-              <div className="p-4 border-t border-gray-200">
-                <div className="flex gap-2">
-                  <div className="flex-1 neuro-inset rounded-2xl p-1">
-                    <input
-                      type="text"
-                      value={inputMessage}
-                      onChange={(e) => setInputMessage(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Ask me anything..."
-                      className="w-full p-2 bg-transparent border-none outline-none text-sm text-gray-800 placeholder-gray-500"
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <button
-                    onClick={handleSendMessage}
-                    disabled={!inputMessage.trim() || isLoading}
-                    className="neuro-button bg-gradient-to-br from-[#2A1E90] to-[#4A3B9A] text-white p-3 rounded-2xl hover:shadow-lg transition-all duration-300 disabled:opacity-50"
-                    aria-label="Send message"
-                  >
-                    <FiSend className="text-sm" />
-                  </button>
-                </div>
+                             {/* Input */}
+               <div className="p-4">
+                 <div className="flex gap-2">
+                   <div className="flex-1 neuro-input rounded-2xl p-1">
+                     <input
+                       type="text"
+                       value={inputMessage}
+                       onChange={(e) => setInputMessage(e.target.value)}
+                       onKeyPress={handleKeyPress}
+                       placeholder="Ask me anything..."
+                       className="w-full p-2 bg-transparent border-none outline-none text-sm text-gray-800 placeholder-gray-500"
+                       disabled={isLoading}
+                     />
+                   </div>
+                   <button
+                     onClick={handleSendMessage}
+                     disabled={!inputMessage.trim() || isLoading}
+                     className="neuro-button-enhanced bg-gradient-to-br from-[#8b5cf6] to-[#6366f1] text-white p-3 rounded-2xl hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                     aria-label="Send message"
+                   >
+                     <FiSend className="text-sm" />
+                   </button>
+                 </div>
                 
                 <div className="mt-2 text-center">
                   <p className="text-xs text-gray-500">Powered by AWS Bedrock</p>
