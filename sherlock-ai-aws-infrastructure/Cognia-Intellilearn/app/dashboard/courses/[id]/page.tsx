@@ -29,7 +29,7 @@ import { useUserMode } from '@/lib/contexts/UserModeContext'
 import AddModuleModal from '@/components/course/AddModuleModal'
 import AddLessonModal from '@/components/course/AddLessonModal'
 import VoiceSessionModal from '@/components/course/VoiceSessionModal'
-import VoiceSessionViewer from '@/components/course/VoiceSessionViewer'
+import { VoiceSessionViewer } from '@/components/course/VoiceSessionViewer'
 
 // El modo de usuario ahora se gestiona globalmente
 

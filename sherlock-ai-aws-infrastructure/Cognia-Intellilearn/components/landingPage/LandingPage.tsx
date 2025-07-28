@@ -290,7 +290,7 @@ export default function LandingPage() {
                                 icon: <FaStar className="text-gray-600" /> 
                             }
                         ].map((stat, index) => (
-                            <div key={index} className="neuro-card-purple w-full">
+                            <div key={index} className="neuro-card-white w-full">
                                 <div className="flex-1">
                                     <h3 className="text-[18px] font-semibold text-[#8b5cf6] mb-3">{stat.title}</h3>
                                     <p className="text-[36px] font-bold text-gray-800 mb-2">
@@ -311,6 +311,10 @@ export default function LandingPage() {
                                     </div>
                                 </div>
                                 <div className="mt-auto">
+                                    {/* Star rating */}
+                                    <div className="flex justify-center mb-3">
+                                        <StarRating rating={5} className="text-[#8b5cf6]" />
+                                    </div>
                                     <div className="w-10 h-10 rounded-2xl flex items-center justify-center mx-auto">
                                         <span className="text-lg">{stat.icon}</span>
                                     </div>
