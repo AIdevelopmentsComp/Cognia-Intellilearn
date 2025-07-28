@@ -891,39 +891,40 @@ export default function CourseDetailPage() {
                       
                       return (
                         <div>
-                          {/* Header de la lección */}
-                          <div className="mb-8">
-                            <div className="flex items-center space-x-4 mb-4">
-                              <div className="neuro-container w-12 h-12 rounded-xl flex items-center justify-center">
-                                <div className="text-[#3C31A3] text-xl">
-                                  {currentLesson.type === 'video' && <FaPlay />}
-                                  {currentLesson.type === 'reading' && <FaBookOpen />}
-                                  {currentLesson.type === 'quiz' && <FaQuestionCircle />}
-                                  {currentLesson.type === 'assignment' && <FaClipboardList />}
-                                  {currentLesson.type === 'voice_session' && <FaMicrophone />}
+                          {/* Header de la lección - Solo mostrar para lecciones que NO sean voice_session */}
+                          {currentLesson.type !== 'voice_session' && (
+                            <div className="mb-8">
+                              <div className="flex items-center space-x-4 mb-4">
+                                <div className="neuro-container w-12 h-12 rounded-xl flex items-center justify-center">
+                                  <div className="text-[#3C31A3] text-xl">
+                                    {currentLesson.type === 'video' && <FaPlay />}
+                                    {currentLesson.type === 'reading' && <FaBookOpen />}
+                                    {currentLesson.type === 'quiz' && <FaQuestionCircle />}
+                                    {currentLesson.type === 'assignment' && <FaClipboardList />}
+                                  </div>
+                                </div>
+                                <div>
+                                  <h1 className="text-3xl font-bold text-[#132944]">{currentLesson.title}</h1>
+                                  <p className="text-gray-600 mt-1">{currentLesson.description}</p>
+                                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                                    <span>⏱️ {currentLesson.duration}</span>
+                                    <span className="capitalize">📚 {currentLesson.type}</span>
+                                  </div>
                                 </div>
                               </div>
-                              <div>
-                                <h1 className="text-3xl font-bold text-[#132944]">{currentLesson.title}</h1>
-                                <p className="text-gray-600 mt-1">{currentLesson.description}</p>
-                                <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                                  <span>⏱️ {currentLesson.duration}</span>
-                                  <span className="capitalize">📚 {currentLesson.type}</span>
+                              
+                              {/* Imagen del curso si existe */}
+                              {course.imageUrl && (
+                                <div className="neuro-container rounded-xl p-4 mb-6">
+                                  <img
+                                    src={course.imageUrl}
+                                    alt={course.title}
+                                    className="w-full h-48 object-cover rounded-lg"
+                                  />
                                 </div>
-                </div>
+                              )}
                             </div>
-                            
-                            {/* Imagen del curso si existe */}
-                            {course.imageUrl && (
-                              <div className="neuro-container rounded-xl p-4 mb-6">
-                                <img
-                                  src={course.imageUrl}
-                                  alt={course.title}
-                                  className="w-full h-48 object-cover rounded-lg"
-                                />
-                              </div>
-                            )}
-              </div>
+                          )}
 
               {/* Contenido de la lección */}
                           <div className="neuro-container rounded-xl p-8">
