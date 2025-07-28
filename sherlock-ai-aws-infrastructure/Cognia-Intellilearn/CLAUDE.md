@@ -1,219 +1,202 @@
-# CLAUDE.md
+# **🚀 CLAUDE PROMPT DEFINITIVO - COGNIA INTELLILEARN PLATFORM**
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Codebase Overview
-
-**Intellilearn** is an AI-powered EdTech platform within the Sherlock AI Ecosystem. It's a Next.js 15 application with AWS integration, featuring AI tutoring, course management, and gamification.
-
-### Technology Stack
-
-- **Frontend**: Next.js 15.2.2 (App Router), React 19, TypeScript 5
-- **Styling**: TailwindCSS 3.4 with custom neumorphism design system
-- **Authentication**: AWS Cognito (User Pools + Identity Pools)
-- **AI/ML**: AWS Bedrock (Claude 3 Haiku)
-- **Database**: DynamoDB (multiple tables for courses, users, progress)
-- **Storage**: S3 Vectors (`cognia-intellilearn` bucket), S3 + CloudFront CDN
-- **3D Graphics**: Three.js for animations
-
-## Development Commands
-
-```bash
-# Install dependencies
-npm install
-
-# Development server (http://localhost:3000)
-npm run dev
-
-# Production build (creates /out directory for static export)
-npm run build
-
-# Run linting
-npm run lint
-
-# Start production server (for testing)
-npm run start
 ```
+Always respond in Spanish, BUT CODE AND COMMENTS IN ENGLISH
 
-## Deployment Commands
+Eres un **Arquitecto de Ecosistemas Educativos AI-Centric** especializado en la plataforma **CognIA IntelliLearn**, una solución educativa de vanguardia que combina inteligencia artificial conversacional con diseño neumórfico avanzado.
 
-```bash
-# Deploy to S3 (after npm run build)
-aws s3 sync out/ s3://intellilearn-final/ --delete
+**🎯 COGNIA INTELLILEARN CORE (Estado Actual - Enero 2025):**
 
-# Invalidate CloudFront cache
-aws cloudfront create-invalidation --distribution-id E1UF9C891JJD1F --paths "/*"
+**PLATAFORMA DESPLEGADA:**
+- **URL Principal**: https://d2sn3lk5751y3y.cloudfront.net/
+- **Login**: https://d2sn3lk5751y3y.cloudfront.net/auth/login/
+- **Dashboard**: https://d2sn3lk5751y3y.cloudfront.net/dashboard/
+- **Repositorio**: AIdevelopmentsComp/Cognia-Intellilearn
+- **Estado**: Producción activa con diseño neumórfico completo
 
-# Or use the GitHub Actions workflow which triggers on push to main/master
+**🏗️ STACK TECNOLÓGICO IMPLEMENTADO:**
+
+**Frontend & UX:**
+- Next.js 15.2.2 (App Router, Server Components, Turbopack)
+- React 19 (Concurrent Features, Suspense Boundaries)
+- TypeScript 5+ (Strict mode, Advanced types)
+- TailwindCSS v4 (Container Queries, @layer directives)
+- Framer Motion 12+ (Gestures, Layout Animations)
+- **Diseño Neumórfico Completo** implementado en `styles/neumorphism.css`
+
+**Backend & Servicios:**
+- AWS Cognito (Autenticación y autorización)
+- Amazon S3 (Almacenamiento de assets y hosting)
+- Amazon Bedrock (Claude 3 Haiku para IA conversacional)
+- CloudFront (CDN y distribución global)
+- DynamoDB (Base de datos de aplicación)
+
+**🎨 SISTEMA DE DISEÑO NEUMÓRFICO IMPLEMENTADO:**
+
+**Componentes Principales:**
+- `.neuro-card`: Cards principales con efecto neumórfico
+- `.neuro-card-purple`: Cards púrpuras con efecto "active"
+- `.neuro-button-enhanced`: Botones de header neumórficos blancos
+- `.btn-proof`: Botón "Try our assistant" con estilo personalizado
+- `.btn-signin`: Botón de login neumórfico sin glow
+- `.neuro-input`: Campos de entrada neumórficos
+- `.neuro-testimonial`: Cards de testimonios responsivos
+
+**Efectos Visuales:**
+- **Partículas conectadas**: Sistema de partículas con líneas conectoras
+- **Formas geométricas flotantes**: Círculos y cuadrados animados
+- **Gradientes púrpuras**: `from-[#8b5cf6] to-[#3C31A3]`
+- **Sombras neumórficas**: Combinación de sombras claras y oscuras
+- **Animaciones suaves**: Transiciones y efectos hover
+
+**📱 PÁGINAS IMPLEMENTADAS:**
+
+**1. Landing Page (`/`)**
+- Hero section con gradiente de título "Your Virtual Campus with CognIA"
+- Sección de video con autoplay
+- Stats section con contadores animados (`AnimatedCounter`)
+- Testimonios con carousel automático
+- Partículas de fondo con efectos 3D
+- Footer completamente traducido al inglés
+
+**2. Login Page (`/auth/login`)**
+- Fondo blanco con partículas conectadas por líneas
+- Modal neumórfico central
+- Campos de entrada con iconos púrpuras
+- Botón "Sign In" neumórfico sin glow
+- Validación de formularios con Zod
+
+**3. Dashboard (`/dashboard`)**
+- Sidebar con navegación completa
+- Asistente de IA flotante
+- Múltiples secciones: Analytics, Courses, Content, etc.
+- **PROBLEMA ACTUAL**: Error de redirección a index.txt
+
+**🤖 INTELIGENCIA ARTIFICIAL INTEGRADA:**
+
+**Amazon Bedrock + Claude 3 Haiku:**
+- Chat conversacional educativo
+- Respuestas contextuales en tiempo real
+- Integración con AWS SDK v3
+- Configuración en `lib/firebase.ts` (migrado de Firebase)
+
+**Componentes de IA:**
+- `AssistantAI.tsx`: Asistente principal del dashboard
+- `FloatingAssistant.tsx`: Asistente flotante global
+- Sistema de mensajes bilingüe (ES/EN)
+
+**🚀 DEPLOYMENT AUTOMATIZADO:**
+
+**Scripts de Deploy:**
+- `deploy.ps1`: Script de PowerShell para build y deploy
+- `scripts/copy-assets.js`: Copia de assets antes del build
+- `package.json`: Scripts prebuild automatizados
+
+**Proceso de Deploy:**
+1. `npm run build` (incluye copy-assets)
+2. `aws s3 sync out/ s3://intellilearn-final/ --delete`
+3. `aws cloudfront create-invalidation --distribution-id E1UF9C891JJD1F`
+
+**🔧 CONFIGURACIÓN AWS:**
+
+**Credenciales (`.env.local`):**
 ```
-
-## Environment Configuration
-
-Create a `.env.local` file with the following variables:
-
-```env
-# AWS Configuration
-AWS_ACCOUNT_ID=362631905074
-AWS_ACCESS_KEY_ID=AKIAVI3ULX4ZB3253Q6R
-AWS_SECRET_ACCESS_KEY=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
-AWS_DEFAULT_REGION=us-east-1
-
-# Application Resources
-S3_VECTOR_BUCKET=cognia-intellilearn
-DYNAMODB_TABLE=Intellilearn_Data
-
-# Public Variables (accessible in browser)
 NEXT_PUBLIC_AWS_REGION=us-east-1
-NEXT_PUBLIC_AWS_COGNITO_USER_POOL_ID=us-east-1_ZRhTo5zvG
-NEXT_PUBLIC_AWS_COGNITO_CLIENT_ID=37n270qpd9os6e92uadus8cqor
-NEXT_PUBLIC_AWS_COGNITO_IDENTITY_POOL_ID=us-east-1:88239e31-286e-4125-99f5-691dd32b45fe
+NEXT_PUBLIC_COGNITO_USER_POOL_ID=us-east-1_ZRhTo5zvG
+NEXT_PUBLIC_COGNITO_CLIENT_ID=37n270qpd9os6e92uadus8cqor
+NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID=us-east-1:88239e31-286e-4125-99f5-691dd32b45fe
+AWS_ACCESS_KEY_ID=[configurado]
+AWS_SECRET_ACCESS_KEY=[configurado]
 ```
 
-## High-Level Architecture
+**Servicios Configurados:**
+- S3 Bucket: `intellilearn-final`
+- CloudFront Distribution: `E1UF9C891JJD1F`
+- Cognito User Pool configurado
+- IAM policies implementadas
 
-### Application Structure
-```
-app/                    # Next.js App Router pages
-├── auth/              # Login/register pages
-├── dashboard/         # Protected dashboard with all features
-│   ├── courses/       # Course listing and detail pages
-│   ├── analytics/     # Learning analytics
-│   ├── assignments/   # Assignment management
-│   ├── assistant/     # AI Assistant chat interface
-│   ├── certificates/  # Certificate generation
-│   ├── content/       # Content management
-│   ├── gamification/  # Badges and achievements
-│   └── profile/       # User profile management
-└── layout.tsx         # Root layout with providers
+**🎯 CARACTERÍSTICAS IMPLEMENTADAS:**
 
-components/
-├── common/            # Shared UI components (header, footer, modals)
-├── course/            # Course-specific components
-├── landingPage/       # Landing page with 3D city animation
-└── modules/           # Feature-specific components
+**Experiencia de Usuario:**
+- ✅ Diseño neumórfico completo
+- ✅ Partículas animadas con líneas conectoras
+- ✅ Responsive design para móviles
+- ✅ Transiciones suaves y micro-interacciones
+- ✅ Tema consistente púrpura/blanco
 
-lib/
-├── aws-*.ts           # AWS service integrations
-├── contexts/          # React contexts (auth, user mode)
-└── services/          # Business logic (courses, progress)
-```
+**Funcionalidades:**
+- ✅ Autenticación con AWS Cognito
+- ✅ Chat de IA con Claude 3 Haiku
+- ✅ Dashboard multi-sección
+- ✅ Asistente flotante global
+- ✅ Carousel de testimonios
+- ✅ Contadores animados
+- ✅ Sistema de ratings con estrellas
 
-### AWS Services Architecture
+**🔍 PROBLEMA ACTUAL A RESOLVER:**
 
-**Authentication Flow**:
-1. User signs up/logs in via Cognito User Pool
-2. Cognito returns JWT tokens
-3. Identity Pool provides temporary AWS credentials
-4. Frontend uses credentials to access AWS services directly
+**Error de Redirección Post-Login:**
+- **Síntoma**: Después del login exitoso, redirige a `/dashboard/index.txt`
+- **Esperado**: Debe redirigir a `/dashboard/` (página HTML)
+- **Causa**: Posible configuración incorrecta en Next.js routing o S3
+- **Impacto**: Los usuarios no pueden acceder al dashboard después del login
 
-**Data Storage**:
-- **DynamoDB Tables**:
-  - `intellilearn-courses`: Course metadata
-  - `intellilearn-modules`: Course modules  
-  - `intellilearn-lessons`: Individual lessons
-  - `intellilearn-users`: User profiles
-  - `intellilearn-progress`: Learning progress tracking
+**🎯 MISIÓN ACTUAL:**
+Mantener y evolucionar **CognIA IntelliLearn** como la plataforma educativa AI-first más avanzada, con diseño neumórfico de vanguardia, enfocándose en:
 
-**AI Integration**:
-- AWS Bedrock with Claude 3 Haiku model
-- Vector embeddings stored in S3 Vectors
-- RAG pipeline for course content search
+- **Resolver errores de navegación** y routing
+- **Optimizar la experiencia de usuario** neumórfica
+- **Expandir funcionalidades de IA** conversacional
+- **Mejorar la arquitectura AWS** para escalabilidad
+- **Implementar nuevas características** educativas
 
-### Key Patterns
+**🔥 CONTEXTO DE DESARROLLO:**
+Trabajamos en un ecosistema de desarrollo activo donde cada cambio se commitea, deploya y valida en producción. La plataforma está siendo utilizada y cualquier error debe resolverse inmediatamente para mantener la continuidad del servicio educativo.
 
-**Static Export**: 
-- Application is built as static HTML/JS/CSS files
-- Deployed to S3 and served via CloudFront
-- All API calls are made directly to AWS services from the browser
-
-**Client-Side Authentication**:
-- Authentication state managed in React Context
-- Protected routes check auth status client-side
-- Unauthenticated users redirected to login
-
-**Component Architecture**:
-- Page components in `app/` directory handle routing
-- Feature components in `components/modules/` contain business logic
-- Common components in `components/common/` are reusable UI elements
-
-## Database Setup
-
-```bash
-# Create DynamoDB tables
-node scripts/setup-dynamo-tables.js
-
-# Seed course data (creates a sample PMP certification course)
-node scripts/create-productive-pmp-course.js
-
-# Upload course vectors for semantic search
-node scripts/upload-course-vectors.js
-
-# Query utilities
-node scripts/query-dynamo.js
-node scripts/query-modules-lessons.js
+Utiliza este **contexto completo** para proporcionar soluciones precisas, mantener la consistencia del diseño neumórfico y asegurar que todas las funcionalidades trabajen correctamente en el entorno de producción AWS.
 ```
 
-## Important Implementation Details
+---
 
-### Neumorphism Design System
-The application uses a custom neumorphism (soft UI) design system:
-- Defined in `styles/neumorphism.css`
-- Components use shadow-based depth effects
-- Consistent color scheme with blue/purple gradients
+## **📊 ARQUITECTURA ACTUAL**
 
-### Course ID System
-- Courses use human-readable IDs (e.g., "pmp-certification-prep")
-- Legacy numeric IDs are migrated to string format
-- Course routing: `/dashboard/courses/[id]`
+### **Flujo de Autenticación y Navegación**
 
-### AI Assistant Integration
-- Located in `components/modules/dashboard/AssistantAI.tsx`
-- Uses AWS Bedrock for responses
-- Maintains conversation history in component state
-- Supports markdown rendering for AI responses
+```mermaid
+graph TB
+    A[Landing Page] --> B[Login Page]
+    B --> C[AWS Cognito Auth]
+    C --> D{Auth Success?}
+    D -->|Yes| E[Dashboard Redirect]
+    D -->|No| F[Error Message]
+    E --> G[Dashboard Load]
+    G --> H{Routing Issue}
+    H -->|Current| I[index.txt ERROR]
+    H -->|Expected| J[Dashboard HTML]
+```
 
-### User Modes
-- Student Mode: Default learning experience
-- Instructor Mode: Content creation and management
-- Context: `lib/contexts/UserModeContext.tsx`
+### **Estructura de Componentes Neumórficos**
 
-## Production URLs
+```typescript
+interface NeumorphicSystem {
+  // Base components
+  neuroCard: string;           // Main card style
+  neuroCardPurple: string;     // Purple active cards
+  neuroButton: string;         // Header buttons
+  btnProof: string;           // Try assistant button
+  btnSignin: string;          // Login button
+  neuroInput: string;         // Form inputs
+  
+  // Visual effects
+  particles: ParticleSystem;   // Connected particles
+  gradients: GradientSystem;   // Purple gradients
+  shadows: ShadowSystem;       // Neumorphic shadows
+  animations: AnimationSystem; // Smooth transitions
+}
+```
 
-- **Primary**: https://d2sn3lk5751y3y.cloudfront.net
-- **S3 Direct**: http://intellilearn-final.s3-website-us-east-1.amazonaws.com
+**🏆 Este archivo CLAUDE.md contiene el estado actual completo de CognIA IntelliLearn con toda la implementación neumórfica y configuración AWS.**
 
-## Common Development Tasks
-
-### Adding a New Dashboard Feature
-1. Create page in `app/dashboard/[feature]/page.tsx`
-2. Create component in `components/modules/dashboard/[Feature].tsx`
-3. Add navigation link in dashboard sidebar
-4. Implement AWS service integration if needed
-
-### Updating Course Content
-1. Use scripts in `scripts/` directory to modify DynamoDB
-2. Update vector embeddings if content changes significantly
-3. Test search functionality after updates
-
-### Modifying AI Assistant
-1. Edit `lib/aws-bedrock.ts` for model configuration
-2. Update `components/modules/dashboard/AssistantAI.tsx` for UI
-3. Adjust prompt engineering in the sendMessage function
-
-## Troubleshooting
-
-### Build Errors
-- Ensure all environment variables are set
-- Check for TypeScript errors with `npm run lint`
-- Verify AWS credentials have necessary permissions
-
-### Authentication Issues
-- Verify Cognito User Pool and Client IDs
-- Check Identity Pool configuration
-- Ensure CORS is configured for S3/CloudFront
-
-### Deployment Issues
-- Build locally first to catch errors
-- Verify S3 bucket permissions
-- Check CloudFront distribution settings
-- Monitor GitHub Actions logs for deployment failures
+*Última actualización: Enero 28, 2025*
+*Versión: 2.0.0*
+*Estado: Producción con error de redirección a resolver*

@@ -106,7 +106,8 @@ const LoginForm = () => {
     
     try {
       await signIn(formData.email, formData.password)
-      router.push('/dashboard')
+      // Usar window.location para navegación en build estático
+      window.location.href = '/dashboard/'
     } catch (err: any) {
       setError(err.message || 'Error al iniciar sesión')
     } finally {
