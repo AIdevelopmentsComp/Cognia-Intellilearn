@@ -3,18 +3,38 @@ import { DynamoDBDocumentClient, PutCommand, GetCommand, UpdateCommand, QueryCom
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { AWS_CONFIG } from '../config'
+import { awsCredentialsService } from './awsCredentialsService'
 
-// AWS Configuration
-const awsConfig = {
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
+// Variables para los clientes AWS
+let dynamoClient: DynamoDBClient
+let docClient: DynamoDBDocumentClient
+let bedrockClient: BedrockRuntimeClient
+let s3Client: S3Client
+let voiceClientsInitialized = false
+
+// Función para inicializar los clientes AWS con credenciales temporales
+async function initializeVoiceClients() {
+  if (voiceClientsInitialized) return
+  
+  try {
+    const credentials = await awsCredentialsService.getCredentials()
+    
+    const awsConfig = {
+      region: AWS_CONFIG.region,
+      credentials: credentials
+    }
+    
+    dynamoClient = new DynamoDBClient(awsConfig)
+    docClient = DynamoDBDocumentClient.from(dynamoClient)
+    bedrockClient = new BedrockRuntimeClient(awsConfig)
+    s3Client = new S3Client(awsConfig)
+    
+    voiceClientsInitialized = true
+  } catch (error) {
+    console.error('❌ Error inicializando clientes para voice session:', error)
+    throw error
+  }
 }
-
-// AWS Clients
-const dynamoClient = new DynamoDBClient(awsConfig)
-const docClient = DynamoDBDocumentClient.from(dynamoClient)
-const bedrockClient = new BedrockRuntimeClient(awsConfig)
-const s3Client = new S3Client(awsConfig)
 
 // DynamoDB Tables
 const VOICE_SESSIONS_TABLE = 'intellilearn-voice-sessions'
@@ -94,6 +114,9 @@ export class VoiceSessionService {
     config: VoiceSessionConfig
   ): Promise<VoiceSession> {
     try {
+      // Inicializar clientes AWS si es necesario
+      await initializeVoiceClients()
+      
       const sessionId = `vs_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       
       const session: VoiceSession = {
@@ -135,6 +158,8 @@ export class VoiceSessionService {
     config: VoiceSessionConfig
   ): Promise<VoiceContent> {
     try {
+      // Inicializar clientes AWS si es necesario
+      await initializeVoiceClients()
       // Check if content already exists
       const existingContent = await this.getVoiceContent(lessonId, config.topic, config.level)
       if (existingContent && existingContent.isProcessed) {
@@ -479,6 +504,9 @@ Begin the lesson now:`
     metadata?: Record<string, any>
   ): Promise<ConversationMessage> {
     try {
+      // Inicializar clientes AWS si es necesario
+      await initializeVoiceClients()
+      
       const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
       
       const message: ConversationMessage = {
@@ -510,6 +538,9 @@ Begin the lesson now:`
    */
   static async getConversationHistory(sessionId: string): Promise<ConversationMessage[]> {
     try {
+      // Inicializar clientes AWS si es necesario
+      await initializeVoiceClients()
+      
       const command = new QueryCommand({
         TableName: VOICE_CONVERSATIONS_TABLE,
         KeyConditionExpression: 'sessionId = :sessionId',

@@ -30,8 +30,7 @@ let s3Client: S3Client | null = null;
 const getBedrockClient = () => {
   if (!bedrockClient) {
     bedrockClient = new BedrockRuntimeClient({
-      region: AWS_CONFIG.region,
-      credentials: AWS_CONFIG.credentials
+      region: AWS_CONFIG.region
     });
   }
   return bedrockClient;
@@ -40,8 +39,7 @@ const getBedrockClient = () => {
 const getDynamoClient = () => {
   if (!dynamoClient) {
     dynamoClient = new DynamoDBClient({
-      region: AWS_CONFIG.region,
-      credentials: AWS_CONFIG.credentials
+      region: AWS_CONFIG.region
     });
   }
   return dynamoClient;
@@ -50,8 +48,7 @@ const getDynamoClient = () => {
 const getS3Client = () => {
   if (!s3Client) {
     s3Client = new S3Client({
-      region: AWS_CONFIG.region,
-      credentials: AWS_CONFIG.credentials
+      region: AWS_CONFIG.region
     });
   }
   return s3Client;

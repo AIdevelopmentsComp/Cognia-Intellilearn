@@ -1,18 +1,35 @@
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { AWS_CONFIG } from '../config'
+import { awsCredentialsService } from './awsCredentialsService'
 
-// Configuración AWS desde variables de entorno
-const awsConfig = {
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
+// Variable para el cliente S3
+let s3Client: S3Client
+let s3ClientInitialized = false
+
+// Función para inicializar el cliente S3 con credenciales temporales
+async function initializeS3Client() {
+  if (s3ClientInitialized) return s3Client
+  
+  try {
+    const credentials = await awsCredentialsService.getCredentials()
+    
+    s3Client = new S3Client({
+      region: AWS_CONFIG.region,
+      credentials: credentials
+    })
+    
+    s3ClientInitialized = true
+    return s3Client
+  } catch (error) {
+    console.error('❌ Error inicializando cliente S3:', error)
+    throw error
+  }
 }
-
-const s3Client = new S3Client(awsConfig)
 
 // Configuración del bucket
 export const S3_CONFIG = {
-  BUCKET_NAME: process.env.S3_VECTOR_BUCKET || 'cognia-intellilearn',
+  BUCKET_NAME: process.env.S3_VECTOR_BUCKET || 'cogniaintellilearncontent',
   FOLDERS: {
     VIDEOS: 'Videos',
     IMAGES: 'Images', 
@@ -51,6 +68,9 @@ export class S3ContentService {
     metadata?: Record<string, string>
   ): Promise<string> {
     try {
+      // Inicializar cliente S3 si es necesario
+      const client = await initializeS3Client()
+      
       const s3Key = this.generateS3Key(courseNumber, contentType, fileName)
       
       // Determinar el content type del archivo
@@ -69,7 +89,7 @@ export class S3ContentService {
         }
       })
 
-      await s3Client.send(command)
+      await client.send(command)
       
       // Retornar la URL del archivo
       return `https://${S3_CONFIG.BUCKET_NAME}.s3.us-east-1.amazonaws.com/${s3Key}`
@@ -99,7 +119,8 @@ export class S3ContentService {
         ContentType: mimeType
       })
 
-      return await getSignedUrl(s3Client, command, { expiresIn })
+      const client = await initializeS3Client()
+      return await getSignedUrl(client, command, { expiresIn })
       
     } catch (error) {
       console.error('Error generating presigned URL:', error)
@@ -124,7 +145,8 @@ export class S3ContentService {
         Key: s3Key
       })
 
-      return await getSignedUrl(s3Client, command, { expiresIn })
+      const client = await initializeS3Client()
+      return await getSignedUrl(client, command, { expiresIn })
       
     } catch (error) {
       console.error('Error generating download URL:', error)
@@ -146,6 +168,9 @@ export class S3ContentService {
     url: string
   }>> {
     try {
+      // Inicializar cliente S3 si es necesario
+      const client = await initializeS3Client()
+      
       const prefix = contentType 
         ? `${courseNumber}/${S3_CONFIG.FOLDERS[contentType]}/`
         : `${courseNumber}/`
@@ -155,7 +180,7 @@ export class S3ContentService {
         Prefix: prefix
       })
 
-      const result = await s3Client.send(command)
+      const result = await client.send(command)
       
       return result.Contents?.map(object => ({
         key: object.Key!,
@@ -180,6 +205,9 @@ export class S3ContentService {
     contentType: ContentType
   ): Promise<void> {
     try {
+      // Inicializar cliente S3 si es necesario
+      const client = await initializeS3Client()
+      
       const s3Key = this.generateS3Key(courseNumber, contentType, fileName)
       
       const command = new DeleteObjectCommand({
@@ -187,7 +215,7 @@ export class S3ContentService {
         Key: s3Key
       })
 
-      await s3Client.send(command)
+      await client.send(command)
       
     } catch (error) {
       console.error('Error deleting file from S3:', error)
@@ -200,6 +228,9 @@ export class S3ContentService {
    */
   static async createCourseStructure(courseNumber: string): Promise<void> {
     try {
+      // Inicializar cliente S3 si es necesario
+      const client = await initializeS3Client()
+      
       const folders = Object.values(S3_CONFIG.FOLDERS)
       
       // Crear un archivo .keep en cada carpeta para asegurar que existan
@@ -216,7 +247,7 @@ export class S3ContentService {
           }
         })
         
-        return s3Client.send(command)
+        return client.send(command)
       })
 
       await Promise.all(createFolderPromises)

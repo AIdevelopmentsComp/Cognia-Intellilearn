@@ -10,13 +10,11 @@ import { AWS_CONFIG } from '../config'
 
 // AWS Clients
 const s3Client = new S3Client({
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
+  region: AWS_CONFIG.region
 })
 
 const dynamoClient = new DynamoDBClient({
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
+  region: AWS_CONFIG.region
 })
 
 const docClient = DynamoDBDocumentClient.from(dynamoClient)

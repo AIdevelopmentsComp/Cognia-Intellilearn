@@ -40,13 +40,11 @@ const IDENTITY_POOL_ID = AWS_CONFIG.cognito.identityPoolId;
 
 // Initialize Cognito clients
 const cognitoClient = new CognitoIdentityProviderClient({
-  region: AWS_REGION,
-  credentials: AWS_CONFIG.credentials
+  region: AWS_REGION
 });
 
 const identityClient = new CognitoIdentityClient({
-  region: AWS_REGION,
-  credentials: AWS_CONFIG.credentials
+  region: AWS_REGION
 });
 
 // User interface

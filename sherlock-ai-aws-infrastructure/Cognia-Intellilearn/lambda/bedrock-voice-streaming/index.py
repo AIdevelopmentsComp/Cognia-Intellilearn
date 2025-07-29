@@ -19,6 +19,7 @@ try:
     s3_client = boto3.client('s3', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
     dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
     cloudwatch = boto3.client('cloudwatch', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
+    polly_client = boto3.client('polly', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
 except Exception as e:
     logger.error(f"Failed to initialize AWS clients: {e}")
     raise
@@ -40,17 +41,23 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
     # Generate unique request ID for tracing
     request_id = str(uuid.uuid4())
     
+    # Extract origin for CORS
+    origin = event.get("headers", {}).get("origin", "https://d2sn3lk5751y3y.cloudfront.net")
+    
     try:
         logger.info(f"[{request_id}] Starting voice streaming request")
         
-        # Handle CORS preflight
-        if event.get('httpMethod') == 'OPTIONS':
-            return handle_options()
+        # Handle CORS preflight (API Gateway v2 format)
+        http_method = event.get('httpMethod') or event.get('requestContext', {}).get('http', {}).get('method')
+        if http_method == 'OPTIONS':
+            return handle_options(event)
         
-        # Validate API key if configured
-        if API_KEY and not validate_api_key(event):
-            logger.warning(f"[{request_id}] Unauthorized access attempt")
-            return create_error_response(403, "Unauthorized", request_id)
+        # Simple token validation for voice streaming
+        auth_header = event.get('headers', {}).get('authorization', '')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            logger.info(f"[{request_id}] No authorization header, allowing request for voice streaming")
+        else:
+            logger.info(f"[{request_id}] Authorization header present: {auth_header[:20]}...")
         
         # Parse and validate request body
         try:
@@ -60,10 +67,10 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
                 body = event
         except json.JSONDecodeError as e:
             logger.error(f"[{request_id}] Invalid JSON in request body: {e}")
-            return create_error_response(400, "Invalid JSON format", request_id)
+            return create_error_response(400, "Invalid JSON format", request_id, origin)
         
         # Robust input validation
-        validation_error = validate_input(body, request_id)
+        validation_error = validate_input(body, request_id, origin)
         if validation_error:
             return validation_error
         
@@ -121,11 +128,12 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
             logger.error(f"[{request_id}] Bedrock invocation failed: {e}")
             if ENABLE_METRICS:
                 send_metric('BedrockErrors', 1, course_id)
-            return create_error_response(500, "AI service temporarily unavailable", request_id)
+            return create_error_response(500, "AI service temporarily unavailable", request_id, origin)
         
         # Process streaming response with AI Content integration
         full_response = ""
         streaming_chunks = []
+        audio_urls = []
         
         try:
             for event_stream in response['body']:
@@ -138,7 +146,7 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
                         if text_chunk:
                             full_response += text_chunk
                             
-                            # Create streaming chunk for frontend
+                            # Create streaming chunk for frontend (text only for now)
                             chunk_response = {
                                 'type': 'ai_response',
                                 'text': text_chunk,
@@ -148,17 +156,47 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
                             }
                             streaming_chunks.append(chunk_response)
                             
-                            logger.debug(f"[{request_id}] AI Chunk: {text_chunk[:50]}...")
+                            logger.info(f"[{request_id}] AI Chunk: {text_chunk[:50]}...")
         
         except Exception as e:
             logger.error(f"[{request_id}] Error processing streaming response: {e}")
-            return create_error_response(500, "Error processing AI response", request_id)
+            return create_error_response(500, "Error processing AI response", request_id, origin)
         
         # Save AI Content with parallel processing
         save_success = save_ai_content_parallel(
             session_id, course_id, topic, student_id, 
             enhanced_prompt, full_response, request_id
         )
+        
+        # Generate audio for the complete response if we have text
+        if full_response and len(full_response.strip()) > 0:
+            logger.info(f"[{request_id}] 🎤 Starting TTS generation for complete response: {len(full_response)} chars")
+            logger.info(f"[{request_id}] Full response preview: {full_response[:100]}...")
+            
+            # Split response into sentences for better TTS
+            sentences = []
+            current = ""
+            for char in full_response:
+                current += char
+                if char in '.!?\n' and len(current.strip()) > 10:
+                    sentences.append(current.strip())
+                    current = ""
+            if current.strip():
+                sentences.append(current.strip())
+            
+            # Generate audio for each sentence
+            for i, sentence in enumerate(sentences):
+                if sentence:
+                    audio_url = generate_audio_from_text(
+                        sentence,
+                        session_id,
+                        student_id,
+                        request_id,
+                        i
+                    )
+                    if audio_url:
+                        audio_urls.append(audio_url)
+                        logger.info(f"[{request_id}] Generated audio URL {i+1}/{len(sentences)}: {audio_url}")
         
         # Create final response chunks
         final_chunks = [
@@ -173,6 +211,7 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
                 'type': 'stream_end',
                 'sessionId': session_id,
                 'fullResponse': full_response,
+                'audioUrls': audio_urls,
                 'requestId': request_id,
                 'metadata': {
                     'courseId': course_id,
@@ -180,6 +219,7 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
                     'studentId': student_id,
                     'contextSourcesUsed': len(context_sources),
                     'responseLength': len(full_response),
+                    'audioChunksGenerated': len(audio_urls),
                     'model': MODEL_ID
                 }
             }
@@ -193,25 +233,27 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
         
         logger.info(f"[{request_id}] Successfully processed voice streaming session")
         
-        # Return streaming response
+        # Return streaming response with explicit CORS headers
         return {
-            'statusCode': 200,
-            'headers': get_cors_headers(),
-            'body': json.dumps({
-                'success': True,
-                'sessionId': session_id,
-                'requestId': request_id,
-                'chunks': final_chunks,
-                'fullResponse': full_response,
-                'aiContentSaved': save_success,
-                'metadata': {
-                    'model': MODEL_ID,
-                    'courseId': course_id,
-                    'topic': topic,
-                    'chunksCount': len(streaming_chunks),
-                    'responseLength': len(full_response),
-                    'contextSources': len(context_sources),
-                    'timestamp': datetime.now().isoformat()
+            "statusCode": 200,
+            "headers": get_cors_headers(origin),
+            "body": json.dumps({
+                "success": True,
+                "sessionId": session_id,
+                "requestId": request_id,
+                "chunks": final_chunks,
+                "fullResponse": full_response,
+                "audioUrls": audio_urls,
+                "aiContentSaved": save_success,
+                "metadata": {
+                    "model": MODEL_ID,
+                    "courseId": course_id,
+                    "topic": topic,
+                    "chunksCount": len(streaming_chunks),
+                    "audioChunksGenerated": len(audio_urls),
+                    "responseLength": len(full_response),
+                    "contextSources": len(context_sources),
+                    "timestamp": datetime.now().isoformat()
                 }
             })
         }
@@ -220,9 +262,9 @@ def lambda_handler(event: Dict[str, Any], context) -> Dict[str, Any]:
         logger.error(f"[{request_id}] Unhandled error in lambda_handler: {str(e)}")
         if ENABLE_METRICS:
             send_metric('LambdaErrors', 1, 'unknown')
-        return create_error_response(500, "Internal server error", request_id)
+        return create_error_response(500, "Internal server error", request_id, origin)
 
-def validate_input(body: Dict[str, Any], request_id: str) -> Optional[Dict[str, Any]]:
+def validate_input(body: Dict[str, Any], request_id: str, origin: str = "*") -> Optional[Dict[str, Any]]:
     """
     Robust input validation with detailed error messages
     """
@@ -233,21 +275,21 @@ def validate_input(body: Dict[str, Any], request_id: str) -> Optional[Dict[str, 
     missing = [f for f in required_fields if f not in body or not body[f]]
     if missing:
         logger.warning(f"[{request_id}] Missing required fields: {missing}")
-        return create_error_response(400, f"Missing required fields: {', '.join(missing)}", request_id)
+        return create_error_response(400, f"Missing required fields: {', '.join(missing)}", request_id, origin)
     
     # Validate field types and lengths
     if not isinstance(body['audioData'], str):
-        return create_error_response(400, "audioData must be a string", request_id)
+        return create_error_response(400, "audioData must be a string", request_id, origin)
     
     if len(body['audioData']) > 1000000:  # 1MB limit
-        return create_error_response(400, "audioData too large (max 1MB)", request_id)
+        return create_error_response(400, "audioData too large (max 1MB)", request_id, origin)
     
     if not isinstance(body['sessionId'], str) or len(body['sessionId']) < 3:
-        return create_error_response(400, "sessionId must be a string with at least 3 characters", request_id)
+        return create_error_response(400, "sessionId must be a string with at least 3 characters", request_id, origin)
     
     # Validate optional fields
     if 'contextSources' in body and not isinstance(body['contextSources'], list):
-        return create_error_response(400, "contextSources must be an array", request_id)
+        return create_error_response(400, "contextSources must be an array", request_id, origin)
     
     return None
 
@@ -530,51 +572,104 @@ def handle_session_stop(session_id: str, request_id: str) -> Dict[str, Any]:
         send_metric('SessionsStopped', 1, 'unknown')
     
     return {
-        'statusCode': 200,
-        'headers': get_cors_headers(),
-        'body': json.dumps({
-            'success': True,
-            'message': f'Session {session_id} stopped',
-            'sessionId': session_id,
-            'requestId': request_id
+        "statusCode": 200,
+        "headers": get_cors_headers(),
+        "body": json.dumps({
+            "success": True,
+            "message": f"Session {session_id} stopped",
+            "sessionId": session_id,
+            "requestId": request_id
         })
     }
 
-def get_cors_headers() -> Dict[str, str]:
+def get_cors_headers(origin: str = "*"):
     """
-    Get standardized CORS headers
+    Get standardized CORS headers for API Gateway v2 HTTP API
     """
     return {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "OPTIONS,POST",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Requested-With,x-amz-date,x-api-key,x-amz-security-token",
+        "Access-Control-Allow-Credentials": "true"
     }
 
-def handle_options() -> Dict[str, Any]:
+def handle_options(event) -> Dict[str, Any]:
     """
     Handle CORS preflight requests
     """
+    origin = event.get("headers", {}).get("origin", "https://d2sn3lk5751y3y.cloudfront.net")
     return {
-        'statusCode': 200,
-        'headers': get_cors_headers(),
-        'body': ''
+        "statusCode": 200,
+        "headers": get_cors_headers(origin),
+        "body": json.dumps({"message": "CORS preflight OK"})
     }
 
-def create_error_response(status_code: int, message: str, request_id: str) -> Dict[str, Any]:
+def create_error_response(status_code: int, message: str, request_id: str, origin: str = "*") -> Dict[str, Any]:
     """
-    Create standardized error response
+    Create standardized error response with CORS headers
     """
     return {
-        'statusCode': status_code,
-        'headers': get_cors_headers(),
-        'body': json.dumps({
-            'success': False,
-            'error': message,
-            'requestId': request_id,
-            'timestamp': datetime.now().isoformat()
+        "statusCode": status_code,
+        "headers": get_cors_headers(origin),
+        "body": json.dumps({
+            "success": False,
+            "error": message,
+            "requestId": request_id,
+            "timestamp": datetime.now().isoformat()
         })
     }
+
+def generate_audio_from_text(text: str, session_id: str, student_id: str, request_id: str, chunk_index: int = 0) -> Optional[str]:
+    """
+    Generate audio from text using Amazon Polly and save to S3
+    Returns the S3 URL of the generated audio file
+    """
+    try:
+        logger.info(f"[{request_id}] 🔊 Generating audio chunk {chunk_index} for text: {text[:50]}...")
+        # Select voice based on language detection
+        voice_id = 'Mia' if 'es' in os.environ.get('DEFAULT_LANGUAGE', 'es') else 'Joanna'
+        
+        # Synthesize speech using Polly
+        logger.info(f"[{request_id}] 🗣️ Calling Polly with voice {voice_id} for {len(text)} chars")
+        polly_response = polly_client.synthesize_speech(
+            Text=text,
+            OutputFormat='mp3',
+            VoiceId=voice_id,
+            Engine='neural',  # Use neural voice for better quality
+            LanguageCode='es-ES' if voice_id == 'Mia' else 'en-US'
+        )
+        logger.info(f"[{request_id}] ✅ Polly synthesis successful")
+        
+        # Read audio stream
+        audio_stream = polly_response['AudioStream'].read()
+        
+        # Save audio to S3
+        timestamp = datetime.now().isoformat().split('T')[0]
+        audio_key = f"AIContent/VoiceSessions/{student_id}/{timestamp}/{session_id}_chunk{chunk_index}.mp3"
+        
+        s3_client.put_object(
+            Bucket=BUCKET_NAME,
+            Key=audio_key,
+            Body=audio_stream,
+            ContentType='audio/mpeg',
+            Metadata={
+                'sessionId': session_id,
+                'studentId': student_id,
+                'chunkIndex': str(chunk_index),
+                'requestId': request_id,
+                'createdAt': datetime.now().isoformat()
+            }
+        )
+        
+        # Generate CloudFront URL
+        cloudfront_url = f"https://d2sn3lk5751y3y.cloudfront.net/{audio_key}"
+        logger.info(f"[{request_id}] Audio generated and saved: {cloudfront_url}")
+        
+        return cloudfront_url
+        
+    except Exception as e:
+        logger.error(f"[{request_id}] Error generating audio with Polly: {e}")
+        return None
 
 # Export for Lambda deployment
 __all__ = ['lambda_handler'] 

@@ -21,11 +21,70 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
   
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const sessionId = useRef(`voice_${lesson.id}_${Date.now()}`)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const audioQueueRef = useRef<string[]>([])
+  const isPlayingRef = useRef(false)
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const playNextAudio = () => {
+    if (audioQueueRef.current.length === 0 || isPlayingRef.current) {
+      return
+    }
+
+    const audioUrl = audioQueueRef.current.shift()!
+    isPlayingRef.current = true
+
+    try {
+      // Stop any currently playing audio
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+
+      // Create new audio element
+      const audio = new Audio(audioUrl)
+      audioRef.current = audio
+
+      // Set audio properties
+      audio.volume = 0.8
+      
+      // Play the audio
+      audio.play()
+        .then(() => {
+          console.log('✅ Playing audio chunk from:', audioUrl)
+        })
+        .catch((error) => {
+          console.error('❌ Error playing audio:', error)
+          isPlayingRef.current = false
+          // Try next audio in queue
+          playNextAudio()
+        })
+
+      // Clean up when audio ends and play next
+      audio.addEventListener('ended', () => {
+        console.log('✅ Audio chunk completed')
+        audioRef.current = null
+        isPlayingRef.current = false
+        // Play next audio in queue
+        playNextAudio()
+      })
+
+    } catch (error) {
+      console.error('❌ Error creating audio element:', error)
+      isPlayingRef.current = false
+      playNextAudio()
+    }
+  }
+
+  const playAudioSequence = (audioUrls: string[]) => {
+    console.log('🎵 Starting audio sequence with', audioUrls.length, 'chunks')
+    audioQueueRef.current = [...audioUrls]
+    playNextAudio()
   }
 
   const startVoiceStreaming = async () => {
@@ -63,6 +122,12 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
     try {
       setIsStreaming(false)
       
+      // Stop any playing audio
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+      
       // Stop streaming session
       await voiceStreamingService.stopVoiceSession(sessionId.current)
       
@@ -92,19 +157,19 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
             console.log('🤖 Respuesta IA:', data.text)
             setResponseText(prev => prev + data.text)
             
-            // Use Web Speech API for text-to-speech
-            if ('speechSynthesis' in window) {
-              const utterance = new SpeechSynthesisUtterance(data.text)
-              utterance.lang = 'es-ES'
-              utterance.rate = 0.9
-              utterance.pitch = 1.0
-              speechSynthesis.speak(utterance)
-            }
+            // Individual audio chunks will be handled by audioUrls event
             break
             
           case 'audio':
-            console.log('🎵 Audio recibido:', data.audioUrl)
-            // Could play audio directly if provided
+            console.log('🎵 Audio chunk recibido:', data.audioUrl)
+            // Individual chunks handled by audioUrls event
+            break
+            
+          case 'audioUrls':
+            console.log('🎵 Audio URLs completas recibidas:', data.audioUrls)
+            if (data.audioUrls && data.audioUrls.length > 0) {
+              playAudioSequence(data.audioUrls)
+            }
             break
             
           case 'error':

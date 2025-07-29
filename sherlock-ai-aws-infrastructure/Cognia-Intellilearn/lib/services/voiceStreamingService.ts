@@ -166,21 +166,42 @@ export class VoiceStreamingService {
         sampleRate: 16000
       }
 
-      // Stream to Lambda endpoint
+      // Get valid JWT token from Cognito
+      const { CognitoAuthService } = await import('./cognitoAuthService')
+      const authService = CognitoAuthService.getInstance()
+      const bearerToken = await authService.getBearerToken()
+
+      // Stream to Lambda endpoint with JWT authentication
       const response = await fetch(this.lambdaEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_AWS_BEARER_TOKEN_BEDROCK || ''}`
+          'Authorization': bearerToken,
+          'X-Requested-With': 'CognIA-IntelliLearn'
         },
+        credentials: 'include',
         body: JSON.stringify(payload)
       })
 
       if (response.ok) {
-        // Handle streaming response
-        const reader = response.body?.getReader()
-        if (reader) {
-          await this.processStreamingResponse(reader, sessionId)
+        // Parse JSON response with chunks
+        const data = await response.json()
+        console.log('📨 Lambda response:', data)
+        
+        if (data.success && data.chunks) {
+          // Process each chunk from the response
+          for (const chunk of data.chunks) {
+            await this.handleStreamingData(chunk, sessionId)
+          }
+          
+          // If there are audio URLs in the main response, handle them
+          if (data.audioUrls && data.audioUrls.length > 0) {
+            console.log('🎵 Audio URLs received:', data.audioUrls)
+            // Audio URLs are already handled in individual chunks
+          }
+        } else {
+          console.error('❌ Invalid response format:', data)
+          this.handleStreamingError(sessionId, 'Invalid response format')
         }
       } else {
         console.error('❌ Backend streaming error:', response.status, response.statusText)
@@ -269,7 +290,12 @@ export class VoiceStreamingService {
             )
           }
 
-          this.dispatchVoiceEvent('response', { sessionId, text: data.text })
+          // Include audioUrl if available
+          this.dispatchVoiceEvent('response', { 
+            sessionId, 
+            text: data.text,
+            audioUrl: data.audioUrl 
+          })
           break
 
         case 'audio_segment':
@@ -287,6 +313,17 @@ export class VoiceStreamingService {
         case 'error':
           console.error('❌ Backend error:', data.message)
           this.handleStreamingError(sessionId, data.message)
+          break
+
+        case 'stream_end':
+          console.log('🎵 Audio URLs received:', data.audioUrls)
+          if (data.audioUrls && data.audioUrls.length > 0) {
+            this.dispatchVoiceEvent('audioUrls', { 
+              sessionId, 
+              audioUrls: data.audioUrls,
+              fullResponse: data.fullResponse 
+            })
+          }
           break
 
         default:
@@ -345,11 +382,19 @@ export class VoiceStreamingService {
 
       // Notify backend to clean up
       try {
+        // Get valid JWT token from Cognito
+        const { CognitoAuthService } = await import('./cognitoAuthService')
+        const authService = CognitoAuthService.getInstance()
+        const bearerToken = await authService.getBearerToken()
+
         await fetch(this.lambdaEndpoint, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': bearerToken,
+            'X-Requested-With': 'CognIA-IntelliLearn'
           },
+          credentials: 'include',
           body: JSON.stringify({
             action: 'stop_session',
             sessionId

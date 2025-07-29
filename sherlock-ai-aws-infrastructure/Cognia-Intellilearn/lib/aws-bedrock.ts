@@ -17,11 +17,20 @@ const BEDROCK_CONFIG = {
   modelId: 'anthropic.claude-3-haiku-20240307-v1:0'
 };
 
-// Cliente de Bedrock con credenciales AWS
-const bedrockClient = new BedrockRuntimeClient({
-  region: BEDROCK_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
-});
+// Cliente de Bedrock - las credenciales se obtendrán dinámicamente
+let bedrockClient: BedrockRuntimeClient | null = null;
+
+// Función para obtener o crear el cliente de Bedrock
+function getBedrockClient(): BedrockRuntimeClient {
+  if (!bedrockClient) {
+    // En producción, las credenciales vendrán de Cognito Identity Pool
+    // Por ahora, crear el cliente sin credenciales explícitas
+    bedrockClient = new BedrockRuntimeClient({
+      region: BEDROCK_CONFIG.region
+    });
+  }
+  return bedrockClient;
+}
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -141,7 +150,7 @@ async function invokeBedrock(
       body: JSON.stringify(payload)
     });
 
-    const response = await bedrockClient.send(command);
+    const response = await getBedrockClient().send(command);
     
     if (!response.body) {
       throw new Error('No response body received from Bedrock');

@@ -38,13 +38,13 @@ Write-Host "✅ All required environment variables are present" -ForegroundColor
 
 # Set AWS credentials from environment variables
 $env:AWS_ACCESS_KEY_ID = [Environment]::GetEnvironmentVariable("NEXT_PUBLIC_AWS_ACCESS_KEY_ID")
-$env:AWS_SECRET_ACCESS_KEY = [Environment]::GetEnvironmentVariable("NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY")
+$env:AWS_SECRET_ACCESS_KEY = [Environment]::GetEnvironmentVariable("NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY")     
 $env:AWS_DEFAULT_REGION = [Environment]::GetEnvironmentVariable("NEXT_PUBLIC_AWS_REGION")
 
 Write-Host "🔐 Using credentials from environment variables" -ForegroundColor Green
-Write-Host "📍 Region: $env:AWS_DEFAULT_REGION" -ForegroundColor Cyan
+Write-Host "🌎 Region: $env:AWS_DEFAULT_REGION" -ForegroundColor Green
 
-# Build and deploy
+# Build and export
 Write-Host "📦 Building application..." -ForegroundColor Yellow
 npm run build
 
@@ -53,7 +53,16 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-Write-Host "☁️  Syncing to S3..." -ForegroundColor Yellow
+# Export static files
+Write-Host "📦 Exporting static files..." -ForegroundColor Yellow
+npm run export
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ Export failed!" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "☁️ Syncing to S3..." -ForegroundColor Yellow
 aws s3 sync out/ s3://intellilearn-final --delete
 
 if ($LASTEXITCODE -ne 0) {
@@ -66,7 +75,7 @@ aws cloudfront create-invalidation --distribution-id E1UF9C891JJD1F --paths "/*"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Deployment completed successfully!" -ForegroundColor Green
-    Write-Host "🌐 URL: https://d2sn3lk5751y3y.cloudfront.net" -ForegroundColor Cyan
+    Write-Host "🌐 URL: https://d2sn3lk5751y3y.cloudfront.net" -ForegroundColor Green
 } else {
     Write-Host "CloudFront invalidation failed, but deployment completed" -ForegroundColor Yellow
 } 

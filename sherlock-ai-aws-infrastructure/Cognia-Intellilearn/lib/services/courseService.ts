@@ -3,21 +3,43 @@ import { DynamoDBDocumentClient, PutCommand, GetCommand, UpdateCommand, QueryCom
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { AWS_CONFIG } from '../config'
+import { awsCredentialsService } from './awsCredentialsService'
 
-// Configuración de credenciales AWS
-const awsConfig = {
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
+// Variables para los clientes AWS
+let dynamoClient: DynamoDBClient
+let docClient: DynamoDBDocumentClient
+let s3Client: S3Client
+let bedrockClient: BedrockRuntimeClient
+let clientsInitialized = false
+
+// Función para inicializar los clientes AWS con credenciales temporales
+async function initializeAWSClients() {
+  if (clientsInitialized) return
+  
+  try {
+    console.log('🔧 Inicializando clientes AWS con credenciales temporales...')
+    const credentials = await awsCredentialsService.getCredentials()
+    
+    const awsConfig = {
+      region: AWS_CONFIG.region,
+      credentials: credentials
+    }
+    
+    dynamoClient = new DynamoDBClient(awsConfig)
+    docClient = DynamoDBDocumentClient.from(dynamoClient)
+    s3Client = new S3Client(awsConfig)
+    bedrockClient = new BedrockRuntimeClient(awsConfig)
+    
+    clientsInitialized = true
+    console.log('✅ Clientes AWS inicializados correctamente')
+  } catch (error) {
+    console.error('❌ Error inicializando clientes AWS:', error)
+    throw error
+  }
 }
 
-// Configuración de clientes AWS con credenciales
-const dynamoClient = new DynamoDBClient(awsConfig)
-const docClient = DynamoDBDocumentClient.from(dynamoClient)
-const s3Client = new S3Client(awsConfig)
-const bedrockClient = new BedrockRuntimeClient(awsConfig)
-
 // Constantes para el bucket vectorial existente
-const VECTOR_BUCKET_NAME = 'cognia-intellilearn'
+const VECTOR_BUCKET_NAME = 'cogniaintellilearncontent'
 const CONTENT_BUCKET_NAME = 'cogniaintellilearncontent'
 const COURSES_TABLE = 'intellilearn-courses'
 const MODULES_TABLE = 'intellilearn-modules'
@@ -429,25 +451,175 @@ export class CourseService {
   }
 
   /**
-   * Obtiene un curso por ID con persistencia real
+   * Obtiene un curso por ID desde DynamoDB o localStorage
    */
   async getCourse(courseId: string): Promise<Course | null> {
     try {
       console.log(`🔍 Getting course: ${courseId}`)
       
+      // First try to get from localStorage (immediate availability)
       const courses = this.loadCoursesFromStorage()
-      const course = courses[courseId]
+      const localCourse = courses[courseId]
       
-      if (!course) {
-        console.log(`❌ Course ${courseId} not found`)
+      if (localCourse) {
+        console.log(`✅ Course ${courseId} found in localStorage: ${localCourse.title}`)
+        return localCourse
+      }
+      
+      // If not in localStorage and it's the PMP course, try DynamoDB
+      if (courseId === '000000000') {
+        try {
+          // Solo intentar inicializar AWS si tenemos un usuario autenticado
+          const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+          if (user) {
+            await initializeAWSClients()
+            const course = await this.getCourseFromDynamoDB(courseId)
+            if (course) {
+              console.log(`✅ Course ${courseId} loaded from DynamoDB: ${course.title}`)
+              // Guardar en localStorage para acceso offline
+              courses[courseId] = course
+              this.saveCoursesToStorage(courses)
+              return course
+            }
+          }
+        } catch (error) {
+          console.log('⚠️ Failed to load from DynamoDB:', error)
+          // Continue to fallback logic
+        }
+      }
+      
+      console.log(`❌ Course ${courseId} not found`)
+      return null
+    } catch (error) {
+      console.error('Error getting course:', error)
+      // En caso de error, intentar cargar desde localStorage como último recurso
+      const courses = this.loadCoursesFromStorage()
+      return courses[courseId] || null
+    }
+  }
+
+  /**
+   * Load course from DynamoDB with all modules and lessons
+   */
+  private async getCourseFromDynamoDB(courseId: string): Promise<Course | null> {
+    try {
+      console.log(`📊 Loading course ${courseId} from DynamoDB...`)
+      
+      // Asegurar que los clientes están inicializados
+      await initializeAWSClients()
+      
+      // Get course metadata
+      const courseResponse = await docClient.send(new GetCommand({
+        TableName: 'Intellilearn_Data',
+        Key: {
+          id: `COURSE#${courseId}`,
+          client_id: 'METADATA'
+        }
+      }))
+
+      if (!courseResponse.Item) {
+        console.log(`❌ Course ${courseId} not found in DynamoDB`)
         return null
       }
 
-      console.log(`✅ Course ${courseId} found: ${course.title}`)
+      const courseData = courseResponse.Item
+
+      // Get all modules for this course
+      const modulesResponse = await docClient.send(new QueryCommand({
+        TableName: 'Intellilearn_Data',
+        IndexName: 'client-document-index',
+        KeyConditionExpression: 'client_id = :clientId AND document_type = :docType',
+        FilterExpression: 'courseId = :courseId',
+        ExpressionAttributeValues: {
+          ':clientId': 'METADATA',
+          ':docType': 'MODULE',
+          ':courseId': courseId
+        }
+      }))
+
+      const modules: Module[] = []
+      
+      if (modulesResponse.Items) {
+        // Sort modules by order
+        const sortedModules = modulesResponse.Items.sort((a, b) => (a.order || 0) - (b.order || 0))
+        
+        for (const moduleItem of sortedModules) {
+          // Get lessons for each module
+          const lessonsResponse = await docClient.send(new QueryCommand({
+            TableName: 'Intellilearn_Data',
+            IndexName: 'client-document-index',
+            KeyConditionExpression: 'client_id = :clientId AND document_type = :docType',
+            FilterExpression: 'moduleId = :moduleId',
+            ExpressionAttributeValues: {
+              ':clientId': 'METADATA',
+              ':docType': 'LESSON',
+              ':moduleId': moduleItem.moduleId
+            }
+          }))
+
+          const lessons: Lesson[] = []
+          if (lessonsResponse.Items) {
+            const sortedLessons = lessonsResponse.Items.sort((a, b) => (a.order || 0) - (b.order || 0))
+            
+            for (const lessonItem of sortedLessons) {
+              lessons.push({
+                id: lessonItem.lessonId,
+                moduleId: moduleItem.moduleId,
+                courseId: courseId,
+                title: lessonItem.title,
+                description: lessonItem.description,
+                type: lessonItem.type || 'video',
+                content: lessonItem.content || '',
+                videoUrl: lessonItem.videoUrl || '',
+                duration: lessonItem.duration || '30 min',
+                order: lessonItem.order || 0,
+                resources: [],
+                createdAt: lessonItem.created_date || new Date().toISOString(),
+                updatedAt: lessonItem.updated_date || new Date().toISOString()
+              })
+            }
+          }
+
+          modules.push({
+            id: moduleItem.moduleId,
+            courseId: courseId,
+            title: moduleItem.title,
+            description: moduleItem.description,
+            order: moduleItem.order || 0,
+            lessons: lessons,
+            createdAt: moduleItem.created_date || new Date().toISOString(),
+            updatedAt: moduleItem.updated_date || new Date().toISOString()
+          })
+        }
+      }
+
+      // Build the complete course object
+      const course: Course = {
+        id: courseId,
+        title: courseData.title || 'PMP Certification Masterclass',
+        description: courseData.description || 'Complete PMP preparation course',
+        instructor: courseData.instructor || 'CognIA Project Management Institute',
+        thumbnail: courseData.thumbnail || '/assets/images/course-pm.jpg',
+        imageUrl: courseData.imageUrl || '/assets/images/course-pm.jpg',
+        category: courseData.category || 'Project Management',
+        level: courseData.level || 'intermediate',
+        duration: courseData.duration || '120 hours',
+        rating: courseData.rating || 4.8,
+        totalStudents: courseData.totalStudents || 1250,
+        price: courseData.price || 299,
+        tags: courseData.tags || ['PMP', 'Project Management', 'Certification', 'PMBOK'],
+        modules: modules,
+        createdAt: courseData.created_date || new Date().toISOString(),
+        updatedAt: courseData.updated_date || new Date().toISOString(),
+        isPublished: courseData.status === 'active'
+      }
+
+      console.log(`✅ Successfully loaded course from DynamoDB: ${course.title} with ${modules.length} modules`)
       return course
+
     } catch (error) {
-      console.error('Error getting course:', error)
-      throw new Error('Failed to get course')
+      console.error('❌ Error loading course from DynamoDB:', error)
+      throw error
     }
   }
 

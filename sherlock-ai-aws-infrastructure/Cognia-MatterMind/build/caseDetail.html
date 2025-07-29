@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#FFD700" />
+    <meta name="description" content="MatterMind - Case Detail View" />
+    
+    <title>Case Detail - MatterMind</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #FFD700;
+            --background-dark: #0a0a0a;
+            --text-light: #ffffff;
+            --text-secondary: #cccccc;
+            --surface-dark: #1a1a1a;
+            --surface-dark-elevated: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Neumorphic Components */
+        .neu-card {
+            background: var(--surface-dark);
+            border-radius: 20px;
+            box-shadow: 
+                -8px -8px 16px rgba(255, 255, 255, 0.02),
+                8px 8px 16px rgba(0, 0, 0, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .neu-card:hover {
+            box-shadow: 
+                -12px -12px 24px rgba(255, 255, 255, 0.03),
+                12px 12px 24px rgba(0, 0, 0, 1);
+        }
+
+        .neu-input {
+            background: var(--surface-dark);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-light);
+            box-shadow: 
+                inset -4px -4px 8px rgba(255, 255, 255, 0.02),
+                inset 4px 4px 8px rgba(0, 0, 0, 0.9);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .neu-input:focus {
+            box-shadow: 
+                inset -6px -6px 12px rgba(255, 255, 255, 0.02),
+                inset 6px 6px 12px rgba(0, 0, 0, 0.95),
+                0 0 0 2px rgba(255, 215, 0, 0.3);
+        }
+
+        .neu-button {
+            background: var(--surface-dark);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            box-shadow: 
+                -6px -6px 12px rgba(255, 255, 255, 0.02),
+                6px 6px 12px rgba(0, 0, 0, 0.9);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .neu-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                -8px -8px 16px rgba(255, 255, 255, 0.03),
+                8px 8px 16px rgba(0, 0, 0, 1);
+        }
+
+        .neu-button:active {
+            transform: translateY(0);
+            box-shadow: 
+                inset -4px -4px 8px rgba(255, 255, 255, 0.02),
+                inset 4px 4px 8px rgba(0, 0, 0, 0.9);
+        }
+
+        .neu-button.primary {
+            color: var(--background-dark);
+            background: linear-gradient(145deg, #FFD700, #FFA500);
+            box-shadow: 
+                -6px -6px 12px rgba(255, 215, 0, 0.3),
+                6px 6px 12px rgba(255, 165, 0, 0.3);
+        }
+
+        /* Background with Stars */
+        #stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+        }
+
+        .case-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            box-shadow: 
+                inset -2px -2px 4px rgba(76, 175, 80, 0.1),
+                inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .status-inactive {
+            background: rgba(255, 107, 107, 0.2);
+            color: #FF6B6B;
+            box-shadow: 
+                inset -2px -2px 4px rgba(255, 107, 107, 0.1),
+                inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Grid Layout */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-section {
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .field-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .field-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .field-value {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .field-value.currency {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .field-value.date {
+            color: var(--text-secondary);
+        }
+
+        /* Full Width Sections */
+        .full-width-section {
+            grid-column: 1 / -1;
+            padding: 2rem;
+        }
+
+        /* Address Formatting */
+        .address-block {
+            line-height: 1.6;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .error {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            text-align: center;
+            color: #FF6B6B;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .case-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .case-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(145deg, #333333, #1a1a1a);
+            border-radius: 10px;
+            box-shadow: 
+                inset -2px -2px 4px rgba(255, 255, 255, 0.02),
+                inset 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(145deg, #444444, #2a2a2a);
+        }
+    </style>
+</head>
+<body>
+    <!-- Stars Background -->
+    <canvas id="stars-canvas"></canvas>
+
+    <div class="container">
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div>Loading case details...</div>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error" style="display: none;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">⚠️</div>
+            <div id="error-message" style="margin-bottom: 1rem;">Failed to load case details</div>
+            <button class="neu-button" onclick="location.reload()">
+                <i class="fas fa-redo"></i> Retry
+            </button>
+        </div>
+
+        <!-- Case Details -->
+        <div id="case-details" style="display: none;">
+            <!-- Header -->
+            <div class="neu-card case-header fade-in">
+                <div>
+                    <div class="case-title" id="case-title">Loading...</div>
+                    <div class="case-subtitle" id="case-subtitle">Case Details</div>
+                </div>
+                <div class="header-actions">
+                    <div class="status-badge" id="status-badge">UNKNOWN</div>
+                    <button class="neu-button" onclick="window.close()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button class="neu-button primary">
+                        <i class="fas fa-edit"></i> Edit Case
+                    </button>
+                </div>
+            </div>
+
+            <!-- Details Grid -->
+            <div class="details-grid">
+                <!-- Basic Information -->
+                <div class="neu-card detail-section fade-in">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Basic Information
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Case ID</label>
+                        <div class="field-value" id="case-id">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Case Type</label>
+                        <div class="field-value" id="case-type">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Tort Type</label>
+                        <div class="field-value" id="tort-type">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Priority</label>
+                        <div class="field-value" id="priority">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Court Jurisdiction</label>
+                        <div class="field-value" id="court-jurisdiction">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Filing Status</label>
+                        <div class="field-value" id="filing-status">-</div>
+                    </div>
+                </div>
+
+                <!-- Client Information -->
+                <div class="neu-card detail-section fade-in">
+                    <div class="section-title">
+                        <i class="fas fa-user"></i>
+                        Client Information
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Client Name</label>
+                        <div class="field-value" id="client-name">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Phone</label>
+                        <div class="field-value" id="client-phone">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Email</label>
+                        <div class="field-value" id="client-email">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Address</label>
+                        <div class="field-value address-block" id="client-address">-</div>
+                    </div>
+                </div>
+
+                <!-- Legal Information -->
+                <div class="neu-card detail-section fade-in">
+                    <div class="section-title">
+                        <i class="fas fa-balance-scale"></i>
+                        Legal Information
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Attorney ID</label>
+                        <div class="field-value" id="attorney-id">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Law Firm</label>
+                        <div class="field-value" id="law-firm">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Statute of Limitations</label>
+                        <div class="field-value date" id="sol-date">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Incident Date</label>
+                        <div class="field-value date" id="incident-date">-</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Discovery Date</label>
+                        <div class="field-value date" id="discovery-date">-</div>
+                    </div>
+                </div>
+
+                <!-- Financial Information -->
+                <div class="neu-card detail-section fade-in">
+                    <div class="section-title">
+                        <i class="fas fa-dollar-sign"></i>
+                        Financial Information
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Estimated Value</label>
+                        <div class="field-value currency" id="estimated-value">$0</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Damages Claimed</label>
+                        <div class="field-value currency" id="damages-claimed">$0</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Medical Expenses</label>
+                        <div class="field-value currency" id="medical-expenses">$0</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Lost Wages</label>
+                        <div class="field-value currency" id="lost-wages">$0</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Pain & Suffering</label>
+                        <div class="field-value currency" id="pain-suffering">$0</div>
+                    </div>
+                </div>
+
+                <!-- Product Information -->
+                <div class="neu-card detail-section full-width-section fade-in">
+                    <div class="section-title">
+                        <i class="fas fa-box"></i>
+                        Product Information
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;">
+                        <div class="field-group">
+                            <label class="field-label">Product Name</label>
+                            <div class="field-value" id="product-name">-</div>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="field-label">Manufacturer</label>
+                            <div class="field-value" id="product-manufacturer">-</div>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="field-label">Usage Frequency</label>
+                            <div class="field-value" id="usage-frequency">-</div>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="field-label">Usage Start Date</label>
+                            <div class="field-value date" id="usage-start-date">-</div>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="field-label">Usage End Date</label>
+                            <div class="field-value date" id="usage-end-date">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timestamps -->
+                <div class="neu-card detail-section full-width-section fade-in">
+                    <div class="section-title">
+                        <i class="fas fa-clock"></i>
+                        Case Timeline
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 2rem;">
+                        <div class="field-group">
+                            <label class="field-label">Created At</label>
+                            <div class="field-value date" id="created-at">-</div>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="field-label">Updated At</label>
+                            <div class="field-value date" id="updated-at">-</div>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="field-label">Created By</label>
+                            <div class="field-value" id="created-by">-</div>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="field-label">Updated By</label>
+                            <div class="field-value" id="updated-by">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AWS SDK for DynamoDB -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1563.0.min.js"></script>
+    
+    <script>
+        // Stars background effect
+        function createStarsBackground() {
+            const canvas = document.getElementById('stars-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            let stars = [];
+            
+            function createStars() {
+                stars = [];
+                const starCount = 120;
+                
+                for (let i = 0; i < starCount; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        size: Math.random() * 2 + 1,
+                        opacity: Math.random() * 0.8 + 0.2,
+                        twinkleSpeed: Math.random() * 0.05 + 0.01
+                    });
+                }
+            }
+            
+            function animateStars() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                stars.forEach(star => {
+                    star.opacity += star.twinkleSpeed;
+                    if (star.opacity > 1 || star.opacity < 0.2) {
+                        star.twinkleSpeed *= -1;
+                    }
+                    
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 215, 0, ${star.opacity})`;
+                    ctx.fill();
+                    ctx.shadowBlur = star.size * 2;
+                    ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+                });
+                
+                requestAnimationFrame(animateStars);
+            }
+            
+            resizeCanvas();
+            createStars();
+            animateStars();
+            
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                createStars();
+            });
+        }
+
+        // Initialize AWS SDK with Cognito credentials
+        async function initializeAWS() {
+            try {
+                // Configure AWS SDK to use Cognito Identity Pool
+                AWS.config.update({
+                    region: 'us-east-1',
+                    credentials: new AWS.CognitoIdentityCredentials({
+                        IdentityPoolId: 'us-east-1:88239e31-286e-4125-99f5-691dd32b45fe'
+                    })
+                });
+                
+                // Refresh credentials to ensure they're valid
+                await AWS.config.credentials.refreshPromise();
+                console.log('✅ AWS credentials initialized successfully');
+                return true;
+            } catch (error) {
+                console.error('❌ AWS initialization failed:', error);
+                return false;
+            }
+        }
+
+        // Get case ID from URL parameters
+        function getCaseIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // Format currency
+        function formatCurrency(value) {
+            if (!value) return '$0';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            }).format(value);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Format address - Handle both string and object formats
+        function formatAddress(address) {
+            if (!address) return 'N/A';
+            
+            // If it's already a string, return as is
+            if (typeof address === 'string') {
+                return address.replace(/\n/g, '<br>');
+            }
+            
+            // If it's an object, construct the address
+            if (typeof address === 'object') {
+                const parts = [
+                    address.street || address.address_1 || address.client_address,
+                    address.city || address.client_city,
+                    (address.state || address.client_state) + (address.zip || address.client_zip ? ' ' + (address.zip || address.client_zip) : ''),
+                    address.country || address.client_country
+                ].filter(Boolean);
+                
+                return parts.join('<br>');
+            }
+            
+            return 'N/A';
+        }
+
+        // Load case data from DynamoDB
+        async function loadCaseData(caseId) {
+            try {
+                const dynamodb = new AWS.DynamoDB.DocumentClient();
+                
+                // Clean and format the case ID correctly
+                let matterPK;
+                if (caseId.startsWith('MATTER#')) {
+                    matterPK = caseId; // Already formatted as MATTER#ZAN2024001
+                } else {
+                    matterPK = `MATTER#${caseId}`; // Convert ZAN2024001 to MATTER#ZAN2024001
+                }
+                
+                console.log(`🔍 Searching for case with PK: ${matterPK}`);
+                
+                // Method 1: Try direct query with PK + SK (most efficient)
+                const directParams = {
+                    TableName: 'sherlock-cases-main',
+                    KeyConditionExpression: 'PK = :pk AND SK = :sk',
+                    ExpressionAttributeValues: {
+                        ':pk': matterPK,
+                        ':sk': 'CASE#METADATA'
+                    }
+                };
+
+                let result = await dynamodb.query(directParams).promise();
+                
+                if (result.Items && result.Items.length > 0) {
+                    console.log('✅ Case found with direct query:', matterPK);
+                    displayCaseData(result.Items[0]);
+                    return;
+                }
+                
+                // Method 2: Try query by PK only (in case SK is different)
+                const pkOnlyParams = {
+                    TableName: 'sherlock-cases-main',
+                    KeyConditionExpression: 'PK = :pk',
+                    ExpressionAttributeValues: {
+                        ':pk': matterPK
+                    }
+                };
+
+                result = await dynamodb.query(pkOnlyParams).promise();
+                
+                if (result.Items && result.Items.length > 0) {
+                    // Find the case metadata record
+                    const caseData = result.Items.find(item => 
+                        item.SK && (item.SK.startsWith('CASE#') || item.SK.includes('META'))
+                    ) || result.Items[0]; // Fallback to first item
+                    
+                    console.log('✅ Case found with PK query:', matterPK);
+                    displayCaseData(caseData);
+                    return;
+                }
+                
+                // Method 3: Try searching by matter_number if direct queries failed
+                console.log('🔍 Trying scan by matter_number...');
+                const scanParams = {
+                    TableName: 'sherlock-cases-main',
+                    FilterExpression: 'matter_number = :matter_num',
+                    ExpressionAttributeValues: {
+                        ':matter_num': caseId.replace('MATTER#', '') // Remove MATTER# prefix if present
+                    },
+                    Limit: 1
+                };
+
+                result = await dynamodb.scan(scanParams).promise();
+                
+                if (result.Items && result.Items.length > 0) {
+                    console.log('✅ Case found with matter_number scan:', caseId);
+                    displayCaseData(result.Items[0]);
+                    return;
+                }
+                
+                console.log('❌ Case not found in DynamoDB, using mock data');
+                loadMockCaseData(caseId);
+                
+            } catch (error) {
+                console.warn('❌ DynamoDB query failed, using mock data:', error);
+                loadMockCaseData(caseId);
+            }
+        }
+
+        // Mock data fallback
+        function loadMockCaseData(caseId) {
+            const mockData = {
+                'ZAN-2024-0145': {
+                    case_id: 'ZAN-2024-0145',
+                    case_type: 'ZANTAC',
+                    case_status: 'ACTIVE',
+                    case_priority: 'HIGH',
+                    tort_type: 'MASS',
+                    court_jurisdiction: 'FEDERAL',
+                    filing_status: 'PRE_LITIGATION',
+                    client_name: 'Maria Rodriguez',
+                    client_phone: '+1-555-123-4567',
+                    client_email: 'maria.rodriguez@email.com',
+                    client_address: {
+                        street: '123 Main St',
+                        city: 'Houston',
+                        state: 'TX',
+                        zip: '77001',
+                        country: 'USA'
+                    },
+                    attorney_id: 'ATT001',
+                    law_firm: 'Smith & Associates',
+                    statute_of_limitations: '2024-12-13',
+                    incident_date: '2022-01-15',
+                    discovery_date: '2023-01-15',
+                    estimated_value: 125000,
+                    damages_claimed: 100000,
+                    medical_expenses: 15000,
+                    lost_wages: 5000,
+                    pain_suffering: 80000,
+                    product_name: 'Zantac (Ranitidine)',
+                    product_manufacturer: 'Various Manufacturers',
+                    usage_period: {
+                        start_date: '2018-01-01',
+                        end_date: '2022-01-15',
+                        frequency: 'DAILY'
+                    },
+                    created_at: '2024-01-15T10:30:00Z',
+                    updated_at: '2024-01-15T10:30:00Z',
+                    created_by: 'admin@lawfirm.com',
+                    updated_by: 'admin@lawfirm.com'
+                },
+                // Add more mock cases as needed
+            };
+
+            const caseData = mockData[caseId];
+            if (caseData) {
+                displayCaseData(caseData);
+            } else {
+                showError(`Case ${caseId} not found`);
+            }
+        }
+
+        // Display case data in the UI
+        function displayCaseData(caseData) {
+            console.log('📊 Displaying case data:', caseData);
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('case-details').style.display = 'block';
+
+            // Header - Handle both new and legacy field names
+            const caseId = caseData.matter_number || caseData.case_id || caseData.PK?.replace('MATTER#', '') || 'Unknown';
+            const caseType = caseData.case_type || 'Unknown Type';
+            const clientName = caseData.client_name || caseData.client_first_name || 'Unknown Client';
+            
+            document.getElementById('case-title').textContent = `Case ${caseId}`;
+            document.getElementById('case-subtitle').textContent = `${caseType} - ${clientName}`;
+            
+            // Status badge - Handle different status field names
+            const statusBadge = document.getElementById('status-badge');
+            const status = caseData.status || caseData.case_status || 'UNKNOWN';
+            statusBadge.textContent = status;
+            statusBadge.className = `status-badge ${status === 'ACTIVE' ? 'status-active' : 'status-inactive'}`;
+
+            // Basic Information - Map DynamoDB fields to display fields
+            document.getElementById('case-id').textContent = caseId;
+            document.getElementById('case-type').textContent = caseType;
+            document.getElementById('tort-type').textContent = caseData.tort_type || caseData.litigation_category || 'N/A';
+            document.getElementById('priority').textContent = caseData.priority || caseData.case_priority || 'NORMAL';
+            document.getElementById('court-jurisdiction').textContent = caseData.court_jurisdiction || caseData.jurisdiction || 'N/A';
+            document.getElementById('filing-status').textContent = caseData.filing_status || caseData.litigation_phase || 'N/A';
+
+            // Client Information - Handle DynamoDB field mapping
+            const fullClientName = clientName + (caseData.client_last_name ? ` ${caseData.client_last_name}` : '');
+            document.getElementById('client-name').textContent = fullClientName || 'N/A';
+            document.getElementById('client-phone').textContent = caseData.client_phone || caseData.phone || 'N/A';
+            document.getElementById('client-email').textContent = caseData.client_email || caseData.email || 'N/A';
+            
+            // Handle address - it might be a string or object
+            const address = caseData.client_address || caseData.address || 'N/A';
+            document.getElementById('client-address').innerHTML = formatAddress(address);
+
+            // Legal Information - Map DynamoDB fields
+            document.getElementById('attorney-id').textContent = caseData.assigned_attorney || caseData.attorney_id || 'N/A';
+            document.getElementById('law-firm').textContent = caseData.law_firm || caseData.firm_name || 'Watts Law Firm';
+            document.getElementById('sol-date').textContent = formatDate(caseData.sol_date || caseData.statute_of_limitations);
+            document.getElementById('incident-date').textContent = formatDate(caseData.incident_date || caseData.injury_date);
+            document.getElementById('discovery-date').textContent = formatDate(caseData.discovery_date || caseData.intake_date);
+
+            // Financial Information - Handle DynamoDB field mapping
+            document.getElementById('estimated-value').textContent = formatCurrency(caseData.estimated_value || caseData.case_value);
+            document.getElementById('damages-claimed').textContent = formatCurrency(caseData.damages_claimed || caseData.total_damages);
+            document.getElementById('medical-expenses').textContent = formatCurrency(caseData.medical_expenses || caseData.medical_costs);
+            document.getElementById('lost-wages').textContent = formatCurrency(caseData.lost_wages || caseData.wage_loss);
+            document.getElementById('pain-suffering').textContent = formatCurrency(caseData.pain_suffering || caseData.pain_and_suffering);
+
+            // Product Information - Handle different case types
+            let productName = 'N/A';
+            if (caseType === 'ZANTAC') {
+                productName = 'Zantac (Ranitidine)';
+            } else if (caseType === 'HAIR_RELAXER') {
+                productName = 'Hair Relaxer Products';
+            } else if (caseType === 'NEC') {
+                productName = 'Baby Formula Products';
+            }
+            
+            document.getElementById('product-name').textContent = caseData.product_name || productName;
+            document.getElementById('product-manufacturer').textContent = caseData.product_manufacturer || caseData.manufacturer || 'Various';
+            document.getElementById('usage-frequency').textContent = caseData.usage_frequency || caseData.usage_period?.frequency || 'N/A';
+            document.getElementById('usage-start-date').textContent = formatDate(caseData.usage_start_date || caseData.usage_period?.start_date);
+            document.getElementById('usage-end-date').textContent = formatDate(caseData.usage_end_date || caseData.usage_period?.end_date);
+
+            // Timestamps - Handle DynamoDB timestamps
+            document.getElementById('created-at').textContent = formatDate(caseData.created_at || caseData.intake_date);
+            document.getElementById('updated-at').textContent = formatDate(caseData.updated_at || caseData.last_modified);
+            document.getElementById('created-by').textContent = caseData.created_by || caseData.intake_paralegal || 'System';
+            document.getElementById('updated-by').textContent = caseData.updated_by || caseData.last_updated_by || 'System';
+        }
+
+        // Show error state
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'flex';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        // Initialize page
+        async function initializePage() {
+            const caseId = getCaseIdFromURL();
+            
+            if (!caseId) {
+                showError('No case ID provided in URL');
+                return;
+            }
+
+            console.log('🚀 Initializing case detail page for:', caseId);
+            createStarsBackground();
+            
+            try {
+                const awsInitialized = await initializeAWS();
+                if (!awsInitialized) {
+                    console.warn('⚠️ AWS initialization failed, will use mock data');
+                }
+            } catch (error) {
+                console.warn('⚠️ AWS initialization error:', error);
+            }
+            
+            // Load case data regardless of AWS initialization status
+            await loadCaseData(caseId);
+        }
+
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html> 

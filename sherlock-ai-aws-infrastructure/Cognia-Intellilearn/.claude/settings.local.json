@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(ls:*)",
+      "Bash(aws s3 ls:*)",
+      "Bash(aws cloudfront create-invalidation:*)"
+    ],
+    "deny": []
+  }
+}

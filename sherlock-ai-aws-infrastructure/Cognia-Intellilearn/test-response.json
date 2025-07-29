@@ -1,0 +1,987 @@
+🚀 Testing Lambda TTS function...
+URL: https://4epqqr8bqg.execute-api.us-east-1.amazonaws.com/prod/bedrock-stream
+Payload: {
+  "audioData": "test audio data",
+  "sessionId": "test_session_123",
+  "courseId": "000000000",
+  "topic": "Test TTS",
+  "studentId": "test_student",
+  "contextSources": [],
+  "timestamp": "2025-07-29T05:00:00Z",
+  "format": "webm",
+  "sampleRate": 16000
+}
+
+📡 Response Status: 200
+📨 Response Headers: {'Date': 'Tue, 29 Jul 2025 05:41:32 GMT', 'Content-Type': 'text/plain; charset=utf-8', 'Content-Length': '25249', 'Connection': 'keep-alive', 'Apigw-Requestid': 'OdPJlghDIAMEcRA='}
+
+✅ Response Data:
+{
+  "success": true,
+  "sessionId": "test_session_123",
+  "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2",
+  "chunks": [
+    {
+      "type": "transcription",
+      "text": "Audio procesado para sesi\u00f3n de Test TTS",
+      "sessionId": "test_session_123",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "\u00a1",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:29.952915",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "H",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:29.974275",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ola",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:29.976609",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "!",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:29.978813",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " S",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.023257",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "oy",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.023723",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " C",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.023868",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ogn",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.023980",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "IA",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.045300",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": ",",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.046921",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " tu",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.048559",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " as",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.067190",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ist",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.068421",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ente",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.069415",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " educ",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.070695",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ativo",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.090220",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " especial",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.091185",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "iza",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.113739",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "do en",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.115029",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " ap",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.116057",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ren",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.117062",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "diz",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.137040",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "aje",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.138468",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " inter",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.139693",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "act",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.139871",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ivo",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.158947",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": ".",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.159901",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " Me",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.181424",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " aleg",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.206338",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ra",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.226729",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " poder",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.229652",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " ay",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.251170",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "u",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.252340",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "darte",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.253093",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " con",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.253800",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " el",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.272608",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " tema",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.297383",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " de",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.320732",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " Test",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.321014",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " T",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.321951",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "TS",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.322376",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": ".",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.343295",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " ",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.367104",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "\u00bf",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.368112",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "Q",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.395985",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "u\u00e9",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.433866",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " asp",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.435761",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ecto",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.437299",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " espec\u00edf",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.437520",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ico",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.456841",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " del",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.457457",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " Test",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.479910",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " T",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.505781",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "TS",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.507205",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " te",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.507444",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " gu",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.507806",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "sta",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.526307",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "r\u00eda",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.528291",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " explo",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.532319",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "rar",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.532841",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "?",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.554694",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " Ten",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.598856",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "go",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.621733",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " informaci\u00f3n",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.622648",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " det",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.644172",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "all",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.668736",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ada",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.683830",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " sobre",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.684085",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " los",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.690806",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " diferentes",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.712681",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " tipos",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.735841",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " de",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.737774",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " pru",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.738316",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "eb",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.760923",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "as",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.762080",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " T",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.762328",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "TS",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.782811",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": ",",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.784022",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " sus",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.805387",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " aplic",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.829122",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "aciones",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.850237",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " y",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.852140",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " c",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.852391",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "\u00f3",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.875720",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "mo",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.875970",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " interpre",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.876297",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "tar",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.895921",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " los",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.898461",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " result",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.898894",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ados",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.899858",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": ".",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.918765",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " E",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.921044",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "sta",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.944143",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "r\u00e9",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.944686",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " enc",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.945647",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "ant",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.946172",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "a",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.965748",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "do de",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.966869",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " prof",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.967884",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "un",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.989340",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "dizar",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.989837",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " en",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.990797",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " el",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:30.990962",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " tema",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.012242",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " cont",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.012656",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "igo",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.014016",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " y",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.014371",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " resp",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.033233",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "onder",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.034413",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " a",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.036143",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " cual",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.056442",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "quier",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.080746",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " preg",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.081151",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "unta",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.082287",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " que",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.083335",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " ten",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.101750",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "gas",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.102683",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": ".",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.105870",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " ",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.106320",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "\u00bf",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.125836",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "Q",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.148381",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "u\u00e9",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.171987",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " te",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.172415",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " inter",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.193954",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "esa",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.221496",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " s",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.222041",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "aber",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.223307",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": " m\u00e1s",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.223757",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "ai_response",
+      "text": "?",
+      "sessionId": "test_session_123",
+      "timestamp": "2025-07-29T05:41:31.243433",
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2"
+    },
+    {
+      "type": "stream_end",
+      "sessionId": "test_session_123",
+      "fullResponse": "\u00a1Hola! Soy CognIA, tu asistente educativo especializado en aprendizaje interactivo. Me alegra poder ayudarte con el tema de Test TTS. \u00bfQu\u00e9 aspecto espec\u00edfico del Test TTS te gustar\u00eda explorar? Tengo informaci\u00f3n detallada sobre los diferentes tipos de pruebas TTS, sus aplicaciones y c\u00f3mo interpretar los resultados. Estar\u00e9 encantado de profundizar en el tema contigo y responder a cualquier pregunta que tengas. \u00bfQu\u00e9 te interesa saber m\u00e1s?",
+      "audioUrls": [
+        "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk0.mp3",
+        "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk1.mp3",
+        "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk2.mp3",
+        "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk3.mp3",
+        "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk4.mp3",
+        "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk5.mp3"
+      ],
+      "requestId": "582e0e7f-abb5-40f0-b97f-12018955a6a2",
+      "metadata": {
+        "courseId": "000000000",
+        "topic": "Test TTS",
+        "studentId": "test_student",
+        "contextSourcesUsed": 0,
+        "responseLength": 439,
+        "audioChunksGenerated": 6,
+        "model": "anthropic.claude-3-haiku-20240307-v1:0"
+      }
+    }
+  ],
+  "fullResponse": "\u00a1Hola! Soy CognIA, tu asistente educativo especializado en aprendizaje interactivo. Me alegra poder ayudarte con el tema de Test TTS. \u00bfQu\u00e9 aspecto espec\u00edfico del Test TTS te gustar\u00eda explorar? Tengo informaci\u00f3n detallada sobre los diferentes tipos de pruebas TTS, sus aplicaciones y c\u00f3mo interpretar los resultados. Estar\u00e9 encantado de profundizar en el tema contigo y responder a cualquier pregunta que tengas. \u00bfQu\u00e9 te interesa saber m\u00e1s?",
+  "audioUrls": [
+    "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk0.mp3",
+    "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk1.mp3",
+    "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk2.mp3",
+    "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk3.mp3",
+    "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk4.mp3",
+    "https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk5.mp3"
+  ],
+  "aiContentSaved": false,
+  "metadata": {
+    "model": "anthropic.claude-3-haiku-20240307-v1:0",
+    "courseId": "000000000",
+    "topic": "Test TTS",
+    "chunksCount": 129,
+    "audioChunksGenerated": 6,
+    "responseLength": 439,
+    "contextSources": 0,
+    "timestamp": "2025-07-29T05:41:32.404021"
+  }
+}
+
+🎵 Audio URLs found: 6
+  - https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk0.mp3
+  - https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk1.mp3
+  - https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk2.mp3
+  - https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk3.mp3
+  - https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk4.mp3
+  - https://d2sn3lk5751y3y.cloudfront.net/AIContent/VoiceSessions/test_student/2025-07-29/test_session_123_chunk5.mp3
+
+🎵 Audio chunks found: 0

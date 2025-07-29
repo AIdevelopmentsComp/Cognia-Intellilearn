@@ -4,8 +4,7 @@ import { AWS_CONFIG } from '../config'
 
 // Configuración AWS
 const awsConfig = {
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
+  region: AWS_CONFIG.region
 }
 
 const dynamoClient = new DynamoDBClient(awsConfig)

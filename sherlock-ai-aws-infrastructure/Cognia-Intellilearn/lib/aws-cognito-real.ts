@@ -19,15 +19,13 @@ import {
 import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
 import { AWS_CONFIG } from './config';
 
-// Initialize Cognito clients with secure configuration
+// Initialize Cognito clients - las credenciales se obtendrán dinámicamente
 const cognitoClient = new CognitoIdentityProviderClient({
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
+  region: AWS_CONFIG.region
 });
 
 const identityClient = new CognitoIdentityClient({
-  region: AWS_CONFIG.region,
-  credentials: AWS_CONFIG.credentials
+  region: AWS_CONFIG.region
 });
 
 export interface CognitoUser {

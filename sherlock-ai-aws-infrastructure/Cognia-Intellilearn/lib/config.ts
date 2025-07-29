@@ -23,13 +23,11 @@ export const AWS_CONFIG = {
     region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
     modelId: 'anthropic.claude-3-haiku-20240307-v1:0'
   },
-  credentials: {
-    accessKeyId: getEnvVar('NEXT_PUBLIC_AWS_ACCESS_KEY_ID', 'AKIAVI3ULX4ZB3253Q6R'),
-    secretAccessKey: getEnvVar('NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY', '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')
-  },
+  // Las credenciales NO deben ser usadas en el frontend
+  // Se obtendrán dinámicamente desde Cognito Identity Pool
   // Configuración adicional para S3 Vectors
   s3: {
-    vectorBucket: process.env.S3_VECTOR_BUCKET || 'cognia-intellilearn',
+    vectorBucket: process.env.S3_VECTOR_BUCKET || 'cogniaintellilearncontent',
     region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1'
   },
   dynamodb: {
@@ -43,8 +41,6 @@ export const validateAWSConfig = (): boolean => {
     try {
       // Validar que todas las variables críticas estén presentes en desarrollo
       const requiredVars = [
-        'NEXT_PUBLIC_AWS_ACCESS_KEY_ID',
-        'NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY',
         'NEXT_PUBLIC_COGNITO_USER_POOL_ID',
         'NEXT_PUBLIC_COGNITO_CLIENT_ID',
         'NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID'
