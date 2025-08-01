@@ -5,8 +5,8 @@ const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-be
 const awsConfig = {
   region: 'us-east-1',
   credentials: {
-    accessKeyId: 'AKIAVI3ULX4ZB3253Q6R',
-    secretAccessKey: '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'
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   }
 }
 

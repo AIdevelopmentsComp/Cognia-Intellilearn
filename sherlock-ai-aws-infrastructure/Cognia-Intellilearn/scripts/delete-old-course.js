@@ -5,8 +5,8 @@ const { DynamoDBDocumentClient, DeleteCommand, QueryCommand } = require('@aws-sd
 const client = new DynamoDBClient({
   region: 'us-east-1',
   credentials: {
-    accessKeyId: 'AKIAZRFWGQV75WHQPQLI',
-    secretAccessKey: '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'
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   }
 })
 

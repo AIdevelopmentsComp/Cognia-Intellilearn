@@ -6,7 +6,10 @@
       "Bash(npm install:*)",
       "Bash(ls:*)",
       "Bash(aws s3 ls:*)",
-      "Bash(aws cloudfront create-invalidation:*)"
+      "Bash(aws cloudfront create-invalidation:*)",
+      "Bash(export AWS_ACCESS_KEY_ID=\"$AWS_ACCESS_KEY_ID\")",
+      "Bash(export:*)",
+      "Bash(aws iam delete-role:*)"
     ],
     "deny": []
   }

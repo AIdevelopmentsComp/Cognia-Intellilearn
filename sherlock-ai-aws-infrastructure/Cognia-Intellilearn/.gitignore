@@ -15,6 +15,9 @@ dist/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.aws
+.env.production
+*.env
 
 # AWS credentials and config files
 .aws/

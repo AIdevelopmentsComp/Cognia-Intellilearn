@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Educational AI-powered platform with neumorphic design, deployed on AWS infrastructure.
 
-**Production URL**: https://d2sn3lk5751y3y.cloudfront.net/
+**Production URL**: https://telmoai.mx
 
 ## 📋 Common Commands
 
@@ -19,14 +19,16 @@ npm start            # Start production server
 ```
 
 ### Deployment
-```powershell
-./deploy.ps1         # Full deployment to AWS (build + S3 sync + CloudFront invalidation)
+```bash
+./deploy.sh          # Full deployment to AWS (Linux/Mac)
+./deploy.ps1         # Full deployment to AWS (Windows PowerShell)
 ```
 
 ### AWS Resources
-- **S3 Bucket**: `intellilearn-final`
-- **CloudFront Distribution**: `E1UF9C891JJD1F`
-- **Cognito User Pool**: `us-east-1_ZRhTo5zvG`
+- **S3 Bucket**: `intellilearn-prod-app`
+- **CloudFront Distribution**: `EAGB3KBNKHJYZ`
+- **Cognito User Pool**: `us-east-1_BxbAO9DtG`
+- **S3 Vector Storage**: `intellilearn-vector-storage`
 
 ## 🏗️ Architecture Overview
 
@@ -65,11 +67,10 @@ Landing → Login → AWS Cognito → Dashboard
 ### Environment Variables (`.env.local`)
 ```
 NEXT_PUBLIC_AWS_REGION=us-east-1
-NEXT_PUBLIC_COGNITO_USER_POOL_ID=us-east-1_ZRhTo5zvG
-NEXT_PUBLIC_COGNITO_CLIENT_ID=37n270qpd9os6e92uadus8cqor
-NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID=us-east-1:88239e31-286e-4125-99f5-691dd32b45fe
-AWS_ACCESS_KEY_ID=[required]
-AWS_SECRET_ACCESS_KEY=[required]
+NEXT_PUBLIC_COGNITO_USER_POOL_ID=us-east-1_BxbAO9DtG
+NEXT_PUBLIC_COGNITO_CLIENT_ID=4dhimdt09osbal1l5fc75mo6j2
+NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID=us-east-1:d030a5b5-e950-493c-855f-a578cc578e39
+# AWS credentials are now in .env.aws for security
 ```
 
 ### AWS Service Integrations
@@ -101,22 +102,22 @@ Core CSS classes in `styles/neumorphism.css`:
 - `.neuro-input` - Form inputs
 - Consistent shadow system: `var(--shadow-light)` and `var(--shadow-dark)`
 
-## 🐛 Known Issues
+## 🐛 Fixed Issues
 
-### Dashboard Redirect Error
-- **Issue**: After login, redirects to `/dashboard/index.txt` instead of `/dashboard/`
-- **Impact**: Users cannot access dashboard
-- **Workaround**: Manually navigate to `/dashboard/` after login
+### ✅ Login Authentication (FIXED)
+- **Issue**: "Incorrect username or password" due to wrong User Pool ID
+- **Solution**: Updated to correct User Pool ID: `us-east-1_BxbAO9DtG`
+- **Test User**: `demo@intellilearn.com` / `Demo2025!`
 
 ## 🚀 Deployment Process
 
-1. **Pre-deployment**: Ensure `.env.local` has all required AWS credentials
+1. **Pre-deployment**: Ensure `.env.aws` has AWS credentials (separate from `.env.local`)
 2. **Build**: `npm run build` (automatically copies assets via prebuild script)
-3. **Deploy**: Run `./deploy.ps1` which:
-   - Loads environment variables
+3. **Deploy**: Run `./deploy.sh` (Linux/Mac) or `./deploy.ps1` (Windows) which:
+   - Loads environment variables from `.env.aws`
    - Builds the application
-   - Syncs to S3: `aws s3 sync out/ s3://intellilearn-final --delete`
-   - Invalidates CloudFront: `aws cloudfront create-invalidation --distribution-id E1UF9C891JJD1F --paths "/*"`
+   - Syncs to S3: `aws s3 sync out/ s3://intellilearn-prod-app --acl public-read --delete`
+   - Invalidates CloudFront: `aws cloudfront create-invalidation --distribution-id EAGB3KBNKHJYZ --paths "/*"`
 
 ## 📝 Development Tips
 
@@ -129,6 +130,8 @@ Core CSS classes in `styles/neumorphism.css`:
 ## 🔐 Security Notes
 
 - Never commit AWS credentials
+- AWS credentials stored in `.env.aws` (not `.env.local`)
 - Use environment variables for all sensitive data
 - Cognito handles authentication tokens
 - S3 content accessed via presigned URLs
+- All credentials removed from codebase

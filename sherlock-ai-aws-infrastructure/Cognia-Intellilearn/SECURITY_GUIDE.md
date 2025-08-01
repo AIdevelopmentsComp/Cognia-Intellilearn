@@ -25,8 +25,8 @@ NEXT_PUBLIC_AWS_REGION=us-east-1
 AWS_ACCOUNT_ID=362631905074
 
 # AWS Access Credentials - MANTENER SECRETO
-NEXT_PUBLIC_AWS_ACCESS_KEY_ID=AKIAVI3ULX4ZB3253Q6R
-NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=VHqetma/kDjD36ocyuU2H+RWkOXdsU9u+NZe6h9L
+NEXT_PUBLIC_AWS_ACCESS_KEY_ID=[YOUR_AWS_ACCESS_KEY_ID]
+NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=[YOUR_AWS_SECRET_ACCESS_KEY]
 
 # AWS Cognito Configuration
 NEXT_PUBLIC_COGNITO_USER_POOL_ID=us-east-1_ZRhTo5zvG
@@ -105,8 +105,8 @@ Para deployment en AWS/Vercel/Netlify:
 ```bash
 # Variables requeridas en el entorno de producción
 NEXT_PUBLIC_AWS_REGION=us-east-1
-NEXT_PUBLIC_AWS_ACCESS_KEY_ID=[TUS_NUEVAS_CREDENCIALES]
-NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=[TU_NUEVA_SECRET_KEY]
+NEXT_PUBLIC_AWS_ACCESS_KEY_ID=[YOUR_NEW_ACCESS_KEY_ID]
+NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=[YOUR_NEW_SECRET_ACCESS_KEY]
 NEXT_PUBLIC_COGNITO_USER_POOL_ID=us-east-1_ZRhTo5zvG
 NEXT_PUBLIC_COGNITO_CLIENT_ID=37n270qpd9os6e92uadus8cqor
 NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID=us-east-1:88239e31-286e-4125-99f5-691dd32b45fe
@@ -151,8 +151,8 @@ NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID=us-east-1:88239e31-286e-4125-99f5-691dd32b4
 ### Verificar que No Hay Credenciales Expuestas
 ```bash
 # Buscar credenciales hardcodeadas (no debería encontrar nada)
-grep -r "AKIAVI3ULX4ZB3253Q6R" . --exclude-dir=node_modules --exclude=.env.local
-grep -r "VHqetma" . --exclude-dir=node_modules --exclude=.env.local
+grep -r "AKIA[A-Z0-9]{16}" . --exclude-dir=node_modules --exclude=.env.local
+grep -r "aws_secret_access_key" . --exclude-dir=node_modules --exclude=.env.local
 
 # Si encuentra algo, esos archivos necesitan ser corregidos
 ```

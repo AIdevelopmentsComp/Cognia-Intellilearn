@@ -9,7 +9,7 @@
 
 ### 2. Configuración de Credenciales
 - ✅ Archivo `.env.local` configurado con credenciales correctas:
-  - AWS_ACCESS_KEY_ID: `AKIAVI3ULX4ZB3253Q6R`
+  - AWS_ACCESS_KEY_ID: `[configured in .env.local]`
   - COGNITO_USER_POOL_ID: `us-east-1_ZRhTo5zvG`
   - COGNITO_CLIENT_ID: `37n270qpd9os6e92uadus8cqor`
   - COGNITO_IDENTITY_POOL_ID: `us-east-1:88239e31-286e-4125-99f5-691dd32b45fe`

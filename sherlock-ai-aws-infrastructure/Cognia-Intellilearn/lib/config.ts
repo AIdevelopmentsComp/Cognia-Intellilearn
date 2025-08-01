@@ -15,9 +15,9 @@ const getEnvVar = (key: string, fallback?: string): string => {
 export const AWS_CONFIG = {
   region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
   cognito: {
-    userPoolId: getEnvVar('NEXT_PUBLIC_COGNITO_USER_POOL_ID', 'us-east-1_ZRhTo5zvG'),
-    clientId: getEnvVar('NEXT_PUBLIC_COGNITO_CLIENT_ID', '37n270qpd9os6e92uadus8cqor'),
-    identityPoolId: getEnvVar('NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID', 'us-east-1:88239e31-286e-4125-99f5-691dd32b45fe')
+    userPoolId: getEnvVar('NEXT_PUBLIC_COGNITO_USER_POOL_ID', 'us-east-1_BxbAO9DtG'),
+    clientId: getEnvVar('NEXT_PUBLIC_COGNITO_CLIENT_ID', '4dhimdt09osbal1l5fc75mo6j2'),
+    identityPoolId: getEnvVar('NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID', 'us-east-1:d030a5b5-e950-493c-855f-a578cc578e39')
   },
   bedrock: {
     region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',

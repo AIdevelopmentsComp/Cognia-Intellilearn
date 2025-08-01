@@ -31,7 +31,7 @@ const nextConfig = {
   },
   
   // Configuración de trailing slash para consistencia
-  trailingSlash: true,
+  trailingSlash: false,
   
   // Configuración de ESLint
   eslint: {

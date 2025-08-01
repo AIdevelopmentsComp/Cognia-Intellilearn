@@ -32,8 +32,8 @@ export class CognitoAuthService {
   private currentTokens: CognitoAuthResult | null = null;
   
   // Configuración sin hardcode
-  private readonly userPoolId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID || 'us-east-1_ZRhTo5zvG';
-  private readonly clientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID || '37n270qpd9os6e92uadus8cqor';
+  private readonly userPoolId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID || 'us-east-1_BxbAO9DtG';
+  private readonly clientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID || '4dhimdt09osbal1l5fc75mo6j2';
   private readonly username = process.env.NEXT_PUBLIC_COGNITO_USERNAME || 'testuser@cognia.edu';
   private readonly password = process.env.NEXT_PUBLIC_COGNITO_PASSWORD || 'CogniaTest123!';
 

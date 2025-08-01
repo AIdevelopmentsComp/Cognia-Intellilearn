@@ -4,9 +4,9 @@
 Write-Host "🚀 CognIA IntelliLearn - Secure Deployment" -ForegroundColor Cyan
 Write-Host "Loading credentials from .env.local..." -ForegroundColor Yellow
 
-# Load environment variables from .env.local
-if (Test-Path ".env.local") {
-    Get-Content ".env.local" | ForEach-Object {
+# Load environment variables from .env.aws for AWS credentials
+if (Test-Path ".env.aws") {
+    Get-Content ".env.aws" | ForEach-Object {
         if ($_ -match "^([^#][^=]+)=(.*)$") {
             $name = $matches[1].Trim()
             $value = $matches[2].Trim()
@@ -15,16 +15,16 @@ if (Test-Path ".env.local") {
         }
     }
 } else {
-    Write-Host "❌ ERROR: .env.local file not found!" -ForegroundColor Red
-    Write-Host "Please create .env.local with your AWS credentials" -ForegroundColor Red
+    Write-Host "❌ ERROR: .env.aws file not found!" -ForegroundColor Red
+    Write-Host "Please create .env.aws with your AWS credentials" -ForegroundColor Red
     exit 1
 }
 
 # Validate required environment variables
 $requiredVars = @(
-    "NEXT_PUBLIC_AWS_ACCESS_KEY_ID",
-    "NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY",
-    "NEXT_PUBLIC_AWS_REGION"
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_REGION"
 )
 
 foreach ($var in $requiredVars) {
@@ -37,9 +37,9 @@ foreach ($var in $requiredVars) {
 Write-Host "✅ All required environment variables are present" -ForegroundColor Green
 
 # Set AWS credentials from environment variables
-$env:AWS_ACCESS_KEY_ID = [Environment]::GetEnvironmentVariable("NEXT_PUBLIC_AWS_ACCESS_KEY_ID")
-$env:AWS_SECRET_ACCESS_KEY = [Environment]::GetEnvironmentVariable("NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY")     
-$env:AWS_DEFAULT_REGION = [Environment]::GetEnvironmentVariable("NEXT_PUBLIC_AWS_REGION")
+$env:AWS_ACCESS_KEY_ID = [Environment]::GetEnvironmentVariable("AWS_ACCESS_KEY_ID")
+$env:AWS_SECRET_ACCESS_KEY = [Environment]::GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY")     
+$env:AWS_DEFAULT_REGION = [Environment]::GetEnvironmentVariable("AWS_REGION")
 
 Write-Host "🔐 Using credentials from environment variables" -ForegroundColor Green
 Write-Host "🌎 Region: $env:AWS_DEFAULT_REGION" -ForegroundColor Green
@@ -53,17 +53,11 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# Export static files
-Write-Host "📦 Exporting static files..." -ForegroundColor Yellow
-npm run export
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Export failed!" -ForegroundColor Red
-    exit 1
-}
+# Note: Next.js with output: 'export' creates the out/ directory during build
+# No separate export step needed
 
 Write-Host "☁️ Syncing to S3..." -ForegroundColor Yellow
-aws s3 sync out/ s3://intellilearn-final --delete
+aws s3 sync out/ s3://intellilearn-prod-app --acl public-read --delete
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "❌ S3 sync failed!" -ForegroundColor Red
@@ -71,11 +65,14 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "🔄 Invalidating CloudFront..." -ForegroundColor Yellow
-aws cloudfront create-invalidation --distribution-id E1UF9C891JJD1F --paths "/*"
+aws cloudfront create-invalidation --distribution-id EAGB3KBNKHJYZ --paths "/*"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Deployment completed successfully!" -ForegroundColor Green
-    Write-Host "🌐 URL: https://d2sn3lk5751y3y.cloudfront.net" -ForegroundColor Green
+    Write-Host "🌐 URLs:" -ForegroundColor Green
+    Write-Host "   - https://telmoai.mx" -ForegroundColor Green
+    Write-Host "   - https://www.telmoai.mx" -ForegroundColor Green
+    Write-Host "   - https://d2j7zvp3tz528c.cloudfront.net" -ForegroundColor Green
 } else {
     Write-Host "CloudFront invalidation failed, but deployment completed" -ForegroundColor Yellow
 } 
