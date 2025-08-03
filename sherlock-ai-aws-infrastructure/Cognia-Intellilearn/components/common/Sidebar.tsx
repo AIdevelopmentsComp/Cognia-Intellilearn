@@ -23,8 +23,8 @@
 
 'use client'
 import React, { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { StaticLink } from './StaticLink';
 import { 
   FiHome, 
   FiBookOpen, 
@@ -147,7 +147,7 @@ export const Sidebar = () => {
         {/* Logo section with neumorphic container */}
         <div className="py-6 px-4 flex justify-center">
           <div className="neuro-container p-4 rounded-lg">
-            <Link href="/dashboard" className="block">
+            <StaticLink href="/dashboard" className="block">
               <img
                 src="/assets/images/Logo.svg"
                 alt="CognIA Logo"
@@ -161,7 +161,7 @@ export const Sidebar = () => {
                   console.error('Sidebar logo src:', e.currentTarget.src);
                 }}
               />
-            </Link>
+            </StaticLink>
           </div>
         </div>
 
@@ -188,7 +188,7 @@ export const Sidebar = () => {
             <ul className="space-y-2">
               {mainNavItems.map((item) => (
                 <li key={item.path}>
-                  <Link
+                  <StaticLink
                     href={item.path}
                     className={`neuro-nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-300 ${
                       isActive(item.path)
@@ -203,7 +203,7 @@ export const Sidebar = () => {
                   >
                     <span className="text-lg">{item.icon}</span>
                     {item.label}
-                  </Link>
+                  </StaticLink>
                 </li>
               ))}
             </ul>
@@ -221,7 +221,7 @@ export const Sidebar = () => {
             <ul className="space-y-2">
               {secondaryNavItems.map((item) => (
                 <li key={item.path}>
-                  <Link
+                  <StaticLink
                     href={item.path}
                     className={`neuro-nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all duration-300 ${
                       isActive(item.path)
@@ -236,7 +236,7 @@ export const Sidebar = () => {
                   >
                     <span className="text-lg">{item.icon}</span>
                     {item.label}
-                  </Link>
+                  </StaticLink>
                 </li>
               ))}
             </ul>

@@ -29,7 +29,7 @@ import { useUserMode } from '@/lib/contexts/UserModeContext'
 import AddModuleModal from '@/components/course/AddModuleModal'
 import AddLessonModal from '@/components/course/AddLessonModal'
 import VoiceSessionModal from '@/components/course/VoiceSessionModal'
-import VoiceSessionViewer from '@/components/course/VoiceSessionViewer'
+import VoiceSessionViewerNew from '@/components/course/VoiceSessionViewerNew'
 
 // El modo de usuario ahora se gestiona globalmente
 
@@ -944,7 +944,7 @@ export default function CourseDetailPage() {
                             )}
 
                             {currentLesson.type === 'voice_session' && (
-                              <VoiceSessionViewer lesson={currentLesson} />
+                              <VoiceSessionViewerNew lesson={currentLesson} />
                             )}
                             
                             {currentLesson.type !== 'voice_session' && (

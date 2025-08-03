@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
+import { StaticLink } from '@/components/common/StaticLink'
 import { FaSearch, FaFilter, FaSort, FaEye, FaRegClock, FaUser, FaStar } from 'react-icons/fa'
 import { courseService, Course } from '@/lib/services/courseService'
 
@@ -255,13 +255,13 @@ const Courses = () => {
               </div>
               
               <div className="pt-4 mt-4 border-t border-gray-100">
-                <Link 
+                <StaticLink 
                   href={`/dashboard/courses/${course.id}`}
                   className="neuro-button-primary w-full flex items-center justify-center py-3 px-4 rounded-lg transition-all duration-300 text-white font-semibold"
                 >
                   <FaEye className="mr-2" />
                   {course.progress > 0 ? 'Continuar aprendiendo' : 'Comenzar curso'}
-                </Link>
+                </StaticLink>
               </div>
             </div>
           ))}

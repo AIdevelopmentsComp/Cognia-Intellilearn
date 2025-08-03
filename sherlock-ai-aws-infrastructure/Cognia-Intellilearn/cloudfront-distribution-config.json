@@ -1,0 +1,91 @@
+{
+    "CallerReference": "intellilearn-prod-2025-08-01",
+    "Aliases": {
+        "Quantity": 2,
+        "Items": [
+            "www.telmoai.mx",
+            "telmoai.mx"
+        ]
+    },
+    "DefaultRootObject": "index.html",
+    "Origins": {
+        "Quantity": 1,
+        "Items": [
+            {
+                "Id": "S3-intellilearn-prod-app",
+                "DomainName": "intellilearn-prod-app.s3.amazonaws.com",
+                "OriginPath": "",
+                "CustomHeaders": {
+                    "Quantity": 0
+                },
+                "S3OriginConfig": {
+                    "OriginAccessIdentity": ""
+                }
+            }
+        ]
+    },
+    "DefaultCacheBehavior": {
+        "TargetOriginId": "S3-intellilearn-prod-app",
+        "TrustedSigners": {
+            "Enabled": false,
+            "Quantity": 0
+        },
+        "ViewerProtocolPolicy": "redirect-to-https",
+        "AllowedMethods": {
+            "Quantity": 7,
+            "Items": [
+                "HEAD",
+                "DELETE", 
+                "POST",
+                "GET",
+                "OPTIONS",
+                "PUT",
+                "PATCH"
+            ],
+            "CachedMethods": {
+                "Quantity": 2,
+                "Items": [
+                    "HEAD",
+                    "GET"
+                ]
+            }
+        },
+        "Compress": true,
+        "ForwardedValues": {
+            "QueryString": false,
+            "Cookies": {
+                "Forward": "none"
+            }
+        },
+        "MinTTL": 0,
+        "DefaultTTL": 86400,
+        "MaxTTL": 31536000
+    },
+    "CustomErrorResponses": {
+        "Quantity": 2,
+        "Items": [
+            {
+                "ErrorCode": 403,
+                "ResponsePagePath": "/index.html",
+                "ResponseCode": "200",
+                "ErrorCachingMinTTL": 300
+            },
+            {
+                "ErrorCode": 404,
+                "ResponsePagePath": "/index.html", 
+                "ResponseCode": "200",
+                "ErrorCachingMinTTL": 300
+            }
+        ]
+    },
+    "Comment": "IntelliLearn CloudFront Distribution Prod",
+    "Enabled": true,
+    "ViewerCertificate": {
+        "ACMCertificateArn": "arn:aws:acm:us-east-1:304936889025:certificate/61800973-9a3b-400e-8b6d-b0154b351dbb",
+        "SSLSupportMethod": "sni-only",
+        "MinimumProtocolVersion": "TLSv1.2_2021"
+    },
+    "PriceClass": "PriceClass_All",
+    "HttpVersion": "http2",
+    "IsIPV6Enabled": true
+}

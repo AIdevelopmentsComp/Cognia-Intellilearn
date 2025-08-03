@@ -171,10 +171,82 @@ export async function getCurrentUser(): Promise<CognitoUser | null> {
     // Try to get user from local storage first
     if (typeof window !== 'undefined') {
       const storedUser = localStorage.getItem('cognia_user_data');
+      const storedTokens = localStorage.getItem('cognito_tokens');
+      
       if (storedUser) {
         const user = JSON.parse(storedUser);
-        console.log('✅ User found in storage:', user.email);
-        return user;
+        
+        // Check if tokens are already included in user object (current format)
+        const hasTokensInUser = !!(user.idToken && user.accessToken);
+        
+        // Check if tokens exist separately (alternative format)
+        const hasTokensSeparate = !!(storedTokens);
+        
+        if (hasTokensInUser) {
+          // Format 1: Tokens are inside the user object
+          console.log('📦 Tokens found within user object');
+          
+          // Validate token expiration
+          try {
+            const payload = JSON.parse(atob(user.idToken.split('.')[1]));
+            const currentTime = Math.floor(Date.now() / 1000);
+            
+            if (payload.exp && currentTime >= payload.exp) {
+              console.warn('⚠️ Stored token is expired, clearing storage');
+              localStorage.removeItem('cognia_user_data');
+              localStorage.removeItem('cognito_tokens');
+              return null;
+            }
+          } catch (tokenError) {
+            console.warn('⚠️ Error validating stored token:', tokenError);
+            localStorage.removeItem('cognia_user_data');
+            localStorage.removeItem('cognito_tokens');
+            return null;
+          }
+          
+          console.log('✅ User found in storage with valid tokens (embedded):', user.email);
+          return user;
+          
+        } else if (hasTokensSeparate) {
+          // Format 2: Tokens are stored separately
+          console.log('📦 Tokens found in separate storage');
+          const tokens = JSON.parse(storedTokens);
+          
+          // Validate token expiration
+          if (tokens.idToken) {
+            try {
+              const payload = JSON.parse(atob(tokens.idToken.split('.')[1]));
+              const currentTime = Math.floor(Date.now() / 1000);
+              
+              if (payload.exp && currentTime >= payload.exp) {
+                console.warn('⚠️ Stored token is expired, clearing storage');
+                localStorage.removeItem('cognia_user_data');
+                localStorage.removeItem('cognito_tokens');
+                return null;
+              }
+            } catch (tokenError) {
+              console.warn('⚠️ Error validating stored token:', tokenError);
+              localStorage.removeItem('cognia_user_data');
+              localStorage.removeItem('cognito_tokens');
+              return null;
+            }
+          }
+          
+          console.log('✅ User found in storage with valid tokens (separate):', user.email);
+          
+          // Return user with tokens included
+          return {
+            ...user,
+            ...tokens // Include idToken, accessToken, refreshToken
+          };
+          
+        } else {
+          // User exists but no valid tokens found
+          console.warn('⚠️ User data found but no valid tokens, clearing storage');
+          localStorage.removeItem('cognia_user_data');
+          localStorage.removeItem('cognito_tokens');
+          return null;
+        }
       }
     }
     

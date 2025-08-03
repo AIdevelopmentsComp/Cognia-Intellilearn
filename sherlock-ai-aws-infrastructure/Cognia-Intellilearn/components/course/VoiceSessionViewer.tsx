@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { FaMicrophone, FaTimes } from 'react-icons/fa'
-import { voiceStreamingService } from '../../lib/services/voiceStreamingService'
+import { novaConversationalService } from '../../lib/services/novaConversationalService'
 
 interface VoiceSessionViewerProps {
   lesson: {
@@ -98,22 +98,37 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
       const topic = lesson.title || 'General'
       const studentId = `student_${Date.now()}` // In real app, get from auth context
       
-      // Start enhanced streaming session with educational context
-      await voiceStreamingService.startVoiceSession(
-        sessionId.current,
+      console.log('🎯 Starting Nova Sonic conversation session')
+      
+      // Start Nova Sonic conversation with educational context
+      const conversationId = await novaConversationalService.startConversation({
         courseId,
         topic,
-        studentId
-      )
+        studentId,
+        voiceId: 'matthew', // Nova Sonic voice
+        temperature: 0.7,
+        maxTokens: 1024,
+        systemPrompt: `Eres un asistente educativo especializado en ${topic}. 
+          Ayuda al estudiante con preguntas sobre el curso. 
+          Mantén respuestas claras y concisas de 2-3 oraciones.`
+      })
+      
+      // Update session ID to conversation ID
+      sessionId.current = conversationId
+      
+      // Start audio capture
+      await novaConversationalService.startAudioCapture(conversationId)
       
       // Start timer
       timerRef.current = setInterval(() => {
         setStreamingTime(prev => prev + 1)
       }, 1000)
       
+      setResponseText('🎤 Nova Sonic está listo. Habla al micrófono para interactuar...')
+      
     } catch (error) {
-      console.error('Error starting voice streaming:', error)
-      alert('Error al iniciar la sesión de voz. Verifica los permisos del micrófono.')
+      console.error('❌ Error starting Nova Sonic conversation:', error)
+      alert('Error al iniciar la sesión con Nova Sonic. Verifica los permisos del micrófono.')
       setIsStreaming(false)
     }
   }
@@ -128,8 +143,10 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
         audioRef.current = null
       }
       
-      // Stop streaming session
-      await voiceStreamingService.stopVoiceSession(sessionId.current)
+      console.log('🛑 Stopping Nova Sonic conversation')
+      
+      // End Nova Sonic conversation
+      await novaConversationalService.endConversation(sessionId.current)
       
       // Clear timer
       if (timerRef.current) {
@@ -137,63 +154,40 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
         timerRef.current = null
       }
       
+      setResponseText('✅ Sesión Nova Sonic finalizada')
+      
     } catch (error) {
-      console.error('Error stopping voice streaming:', error)
+      console.error('❌ Error stopping Nova Sonic conversation:', error)
     }
   }
 
-  // Listen for enhanced streaming events
+  // Cleanup on unmount
   useEffect(() => {
-    const handleStreamingEvent = (event: CustomEvent) => {
-      const { type, data } = event.detail
-      
-      if (data.sessionId === sessionId.current) {
-        switch (type) {
-          case 'transcription':
-            console.log('🎤 Transcripción recibida:', data.text)
-            break
-            
-          case 'response':
-            console.log('🤖 Respuesta IA:', data.text)
-            setResponseText(prev => prev + data.text)
-            
-            // Individual audio chunks will be handled by audioUrls event
-            break
-            
-          case 'audio':
-            console.log('🎵 Audio chunk recibido:', data.audioUrl)
-            // Individual chunks handled by audioUrls event
-            break
-            
-          case 'audioUrls':
-            console.log('🎵 Audio URLs completas recibidas:', data.audioUrls)
-            if (data.audioUrls && data.audioUrls.length > 0) {
-              playAudioSequence(data.audioUrls)
-            }
-            break
-            
-          case 'error':
-            console.error('❌ Error en streaming:', data.error)
-            alert(`Error en la sesión de voz: ${data.error}`)
-            setIsStreaming(false)
-            break
-        }
-      }
-    }
-
-    window.addEventListener('voiceStreaming', handleStreamingEvent as EventListener)
-    
     return () => {
-      window.removeEventListener('voiceStreaming', handleStreamingEvent as EventListener)
       if (timerRef.current) {
         clearInterval(timerRef.current)
       }
-      // Cleanup session on unmount
-      if (isStreaming) {
-        voiceStreamingService.stopVoiceSession(sessionId.current)
+      // Cleanup Nova Sonic session on unmount
+      if (isStreaming && sessionId.current) {
+        novaConversationalService.endConversation(sessionId.current)
       }
     }
   }, [isStreaming])
+
+  // Test function for Nova Sonic (temporary)
+  const sendTestMessage = async () => {
+    if (sessionId.current && isStreaming) {
+      try {
+        const response = await novaConversationalService.sendTextMessage(
+          sessionId.current, 
+          "Hola, ¿puedes explicarme sobre este tema?"
+        )
+        setResponseText(response)
+      } catch (error) {
+        console.error('❌ Error sending test message:', error)
+      }
+    }
+  }
 
   return (
     <div className="neuro-card p-8 rounded-2xl bg-white">
@@ -261,13 +255,24 @@ export default function VoiceSessionViewer({ lesson }: VoiceSessionViewerProps) 
           </div>
         )}
 
+        {/* Test Button for Nova Sonic (temporary) */}
+        {isStreaming && (
+          <button
+            onClick={sendTestMessage}
+            className="neuro-button-enhanced bg-blue-500 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300"
+          >
+            🧪 Probar Nova Sonic (Texto)
+          </button>
+        )}
+
         {/* Instructions */}
         <div className="neuro-card p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white">
-          <h4 className="font-semibold text-[#132944] mb-2">Instrucciones:</h4>
+          <h4 className="font-semibold text-[#132944] mb-2">Nova Sonic - Instrucciones:</h4>
           <div className="text-sm text-gray-600 space-y-1">
-            <p>🎤 <strong>Hablar:</strong> Presiona el micrófono para iniciar una conversación con IA</p>
-            <p>❌ <strong>Detener:</strong> Presiona X para terminar la conversación</p>
-            <p>🤖 <strong>IA:</strong> La IA responderá por voz automáticamente</p>
+            <p>🎤 <strong>Iniciar:</strong> Presiona el micrófono para iniciar conversación con Nova Sonic</p>
+            <p>🗣️ <strong>Hablar:</strong> Nova Sonic escucha y responde en tiempo real</p>
+            <p>❌ <strong>Detener:</strong> Presiona X para terminar la sesión</p>
+            <p>🤖 <strong>Nova Sonic:</strong> Conversación bidireccional inteligente con voz</p>
           </div>
         </div>
       </div>

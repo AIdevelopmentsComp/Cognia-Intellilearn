@@ -1,0 +1,29 @@
+{
+  "name": "nova-websocket-handler",
+  "version": "1.0.0",
+  "description": "AWS Lambda WebSocket handler for Nova Sonic bidirectional streaming",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "zip -r nova-websocket-handler.zip index.js package.json node_modules/"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.699.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.699.0",
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/credential-providers": "^3.699.0"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "websocket",
+    "nova-sonic",
+    "bedrock",
+    "intellilearn"
+  ],
+  "author": "Intellilearn Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

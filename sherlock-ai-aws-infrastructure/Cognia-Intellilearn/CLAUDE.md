@@ -24,11 +24,15 @@ npm start            # Start production server
 ./deploy.ps1         # Full deployment to AWS (Windows PowerShell)
 ```
 
-### AWS Resources
+### AWS Resources (Account: 304936889025)
 - **S3 Bucket**: `intellilearn-prod-app`
-- **CloudFront Distribution**: `EAGB3KBNKHJYZ`
-- **Cognito User Pool**: `us-east-1_BxbAO9DtG`
 - **S3 Vector Storage**: `intellilearn-vector-storage`
+- **S3 Content**: `cognia-content-prod`
+- **Cognito User Pool**: `us-east-1_BxbAO9DtG`
+- **Cognito Client ID**: `4dhimdt09osbal1l5fc75mo6j2`
+- **Cognito Identity Pool**: `us-east-1:71aecbbb-2419-4ce0-8951-439207a8e2fe`
+- **DynamoDB**: `IntelliLearn_Data_Prod` + course tables
+- **CloudFront Distribution**: To be created
 
 ## 🏗️ Architecture Overview
 
@@ -69,7 +73,7 @@ Landing → Login → AWS Cognito → Dashboard
 NEXT_PUBLIC_AWS_REGION=us-east-1
 NEXT_PUBLIC_COGNITO_USER_POOL_ID=us-east-1_BxbAO9DtG
 NEXT_PUBLIC_COGNITO_CLIENT_ID=4dhimdt09osbal1l5fc75mo6j2
-NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID=us-east-1:d030a5b5-e950-493c-855f-a578cc578e39
+NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID=us-east-1:71aecbbb-2419-4ce0-8951-439207a8e2fe
 # AWS credentials are now in .env.aws for security
 ```
 
@@ -84,6 +88,12 @@ NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID=us-east-1:d030a5b5-e950-493c-855f-a578cc578
    - Claude 3 Haiku integration
    - Streaming responses
    - Educational chat context
+
+2.1. **Nova Sonic Voice AI** (`lib/services/novaConversationalService.ts`)
+   - Amazon Nova Sonic bidirectional voice conversations
+   - Real-time speech-to-speech interaction
+   - Advanced voice synthesis and recognition
+   - Educational context integration
 
 3. **S3 Content** (`lib/services/s3ContentService.ts`)
    - Course asset storage
@@ -102,12 +112,41 @@ Core CSS classes in `styles/neumorphism.css`:
 - `.neuro-input` - Form inputs
 - Consistent shadow system: `var(--shadow-light)` and `var(--shadow-dark)`
 
+## 🚀 Latest Updates
+
+### ✅ Nova Sonic Voice AI Integration (NEW - Aug 2025)
+- **Migration**: Upgraded from Amazon Polly to Nova Sonic for voice interactions
+- **Features**: Bidirectional voice conversations, real-time speech-to-speech
+- **Components**: New NovaConversationalService, updated VoiceSessionViewer/Modal
+- **Benefits**: More natural conversations with advanced AI voice capabilities
+- **Configuration**: Matthew voice, temperature 0.7, 1024 max tokens
+- **Status**: Implemented and ready for testing
+
 ## 🐛 Fixed Issues
 
 ### ✅ Login Authentication (FIXED)
 - **Issue**: "Incorrect username or password" due to wrong User Pool ID
 - **Solution**: Updated to correct User Pool ID: `us-east-1_BxbAO9DtG`
 - **Test User**: `demo@intellilearn.com` / `Demo2025!`
+
+### ✅ Nova Sonic Cognito Identity Pool (FIXED)
+- **Issue**: `InvalidIdentityPoolConfigurationException: Invalid identity pool configuration. Check assigned IAM roles for this pool.`
+- **Root Cause**: Missing IAM roles for Cognito Identity Pool authentication
+- **Solution**: Created proper IAM roles with Bedrock, DynamoDB, and S3 permissions
+  - **Authenticated Role**: `CognitaIntelliLearnAuthenticatedRole` with full Bedrock access
+  - **Unauthenticated Role**: `CognitaIntelliLearnUnauthenticatedRole` with basic permissions
+- **New Identity Pool**: `us-east-1:71aecbbb-2419-4ce0-8951-439207a8e2fe`
+- **Status**: ✅ Nova Sonic now has proper AWS credentials for voice conversations
+
+### ✅ Cognito Token Expiration Handling (FIXED)
+- **Issue**: `Invalid login token. Token expired` causing Nova Sonic to fail
+- **Root Cause**: Application didn't handle JWT token expiration (1-hour default)
+- **Solution**: Implemented comprehensive token expiration management
+  - **Automatic Detection**: JWT payload decoding to check expiration
+  - **Secure Cleanup**: Clear all auth data when tokens expire
+  - **Forced Re-authentication**: Automatic redirect to login when needed
+  - **No Hardcoded Credentials**: 100% secure using only Cognito Identity Pool
+- **Status**: ✅ Token expiration handled automatically, Nova Sonic works securely
 
 ## 🚀 Deployment Process
 

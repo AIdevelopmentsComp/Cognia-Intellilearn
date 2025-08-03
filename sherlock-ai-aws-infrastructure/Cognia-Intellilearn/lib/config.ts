@@ -27,12 +27,17 @@ export const AWS_CONFIG = {
   // Se obtendrán dinámicamente desde Cognito Identity Pool
   // Configuración adicional para S3 Vectors
   s3: {
-    vectorBucket: process.env.S3_VECTOR_BUCKET || 'cogniaintellilearncontent',
+    vectorBucket: process.env.S3_VECTOR_BUCKET || 'intellilearn-vector-storage',
     region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1'
   },
   dynamodb: {
-    table: process.env.DYNAMODB_TABLE || 'intellilearn_Data'
-  }
+    table: process.env.DYNAMODB_TABLE || 'IntelliLearn_Data_Prod'
+  },
+  lambda: {
+    bedrockEndpoint: process.env.NEXT_PUBLIC_LAMBDA_BEDROCK_ENDPOINT || 'https://4epqqr8bqg.execute-api.us-east-1.amazonaws.com/prod/bedrock-stream'
+  },
+  // All credentials are handled securely via Cognito Identity Pool
+  // No hardcoded credentials allowed
 };
 
 // Validación de configuración al cargar el módulo (solo en desarrollo)

@@ -148,9 +148,13 @@ export async function chatWithAI(
   systemPrompt: string = "You are an expert educational assistant. Provide helpful, accurate, and motivating responses about academic topics."
 ): Promise<string> {
   try {
+    // Lambda endpoint disabled - use direct AWS Bedrock instead
+    const useLambda = false;
     const lambdaEndpoint = process.env.NEXT_PUBLIC_LAMBDA_BEDROCK_ENDPOINT;
-    if (!lambdaEndpoint) {
-      throw new Error('Lambda endpoint not configured');
+    if (!useLambda || !lambdaEndpoint) {
+      console.log('⚠️ Lambda endpoint disabled, using direct AWS Bedrock');
+      // Use the sendMessageToClaude function from this same file
+      return await sendMessageToClaude(message, []);
     }
 
     const response = await fetch(lambdaEndpoint, {

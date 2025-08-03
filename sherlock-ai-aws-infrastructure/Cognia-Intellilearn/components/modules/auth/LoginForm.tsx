@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FiMail, FiLock } from 'react-icons/fi'
 import { useRouter } from 'next/navigation'
@@ -83,13 +83,21 @@ const ParticleField = () => {
 
 const LoginForm = () => {
   const router = useRouter()
-  const { signIn } = useAuth()
+  const { signIn, user, loading: authLoading } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   })
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (!authLoading && user) {
+      console.log('🔄 User already authenticated, redirecting to dashboard...')
+      window.location.replace('/dashboard.html')
+    }
+  }, [user, authLoading])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -106,11 +114,10 @@ const LoginForm = () => {
     
     try {
       await signIn(formData.email, formData.password)
-      // Usar window.location para navegación en build estático
-      window.location.href = '/dashboard/'
+      // Para static export, forzar recarga completa de la página
+      window.location.replace('/dashboard.html')
     } catch (err: any) {
       setError(err.message || 'Error al iniciar sesión')
-    } finally {
       setLoading(false)
     }
   }

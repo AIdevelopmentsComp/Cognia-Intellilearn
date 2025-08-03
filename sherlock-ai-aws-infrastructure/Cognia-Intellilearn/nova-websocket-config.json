@@ -1,0 +1,7 @@
+﻿{
+    "integrationId":  "v84465h",
+    "websocketUrl":  "wss://7t5s7gt11c.execute-api.us-east-1.amazonaws.com/prod",
+    "lambdaArn":  "arn:aws:lambda:us-east-1:304936889025:function:NovaWebSocketHandler",
+    "deploymentDate":  "8/1/2025 3:45:06 PM",
+    "apiGatewayId":  "7t5s7gt11c"
+}

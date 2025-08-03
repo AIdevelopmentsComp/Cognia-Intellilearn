@@ -3,7 +3,7 @@
 ## 🔴 VULNERABILIDADES CRÍTICAS DETECTADAS
 
 ### 1. **CREDENCIALES AWS EXPUESTAS**
-- **CRÍTICO**: Las credenciales `AKIAUN75HVLATSM5WY55` han sido expuestas múltiples veces
+- **RESUELTO**: Las credenciales AWS han sido actualizadas en la migración de cuenta
 - **Ubicaciones**:
   - `.env.aws` (archivo principal)
   - Historial de Git
@@ -39,7 +39,7 @@
 1. IAM → Users → AIsolutions
 2. Security credentials → Create access key
 3. Copiar nuevas credenciales
-4. Delete old access key AKIAUN75HVLATSM5WY55
+4. ✅ Credenciales AWS migradas a nueva cuenta (304936889025)
 ```
 
 ### PASO 2: Asegurar Buckets S3

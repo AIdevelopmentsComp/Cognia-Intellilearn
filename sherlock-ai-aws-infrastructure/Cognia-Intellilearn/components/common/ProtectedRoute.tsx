@@ -64,16 +64,28 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const router = useRouter();
   
+  // Debug logging
+  useEffect(() => {
+    console.log('🔒 [ProtectedRoute] State:', { 
+      hasUser: !!user, 
+      userEmail: user?.email, 
+      loading,
+      pathname: window.location.pathname 
+    });
+  }, [user, loading]);
+  
   // Redirect effect
   useEffect(() => {
     // If not loading and no user, redirect to home page
     if (!loading && !user) {
+      console.log('🔒 [ProtectedRoute] Redirecting to home - no user');
       router.push('/');
     }
   }, [loading, user, router]);
 
   // Show loading spinner while checking authentication
   if (loading) {
+    console.log('🔒 [ProtectedRoute] Showing loading spinner');
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-600"></div>
@@ -83,10 +95,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   // If not authenticated and not loading, render nothing while redirecting
   if (!user && !loading) {
+    console.log('🔒 [ProtectedRoute] No user, returning null');
     return null;
   }
 
   // If authenticated, render the protected content
+  console.log('🔒 [ProtectedRoute] User authenticated, rendering children');
   return <>{children}</>
 }
 

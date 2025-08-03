@@ -26,12 +26,13 @@ export default function VoiceSessionModal({
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   
-  // Voice Assistant Configuration Parameters
-  const [voiceSpeed, setVoiceSpeed] = useState('medium')
+  // Nova Sonic Configuration Parameters
+  const [voiceId, setVoiceId] = useState('matthew')
   const [voiceStyle, setVoiceStyle] = useState('conversational')
   const [sessionDuration, setSessionDuration] = useState('5')
   const [interactionLevel, setInteractionLevel] = useState('medium')
-  const [languageModel, setLanguageModel] = useState('claude-3-haiku')
+  const [temperature, setTemperature] = useState('0.7')
+  const [maxTokens, setMaxTokens] = useState('1024')
   const [voicePersonality, setVoicePersonality] = useState('friendly')
 
   useEffect(() => {
@@ -39,11 +40,12 @@ export default function VoiceSessionModal({
       // Reset state when modal closes
       setTitle('')
       setDescription('')
-      setVoiceSpeed('medium')
+      setVoiceId('matthew')
       setVoiceStyle('conversational')
       setSessionDuration('5')
       setInteractionLevel('medium')
-      setLanguageModel('claude-3-haiku')
+      setTemperature('0.7')
+      setMaxTokens('1024')
       setVoicePersonality('friendly')
     }
   }, [isOpen])
@@ -55,12 +57,14 @@ export default function VoiceSessionModal({
     }
 
     const configData = {
-      voiceSpeed,
+      voiceId,
       voiceStyle,
       sessionDuration,
       interactionLevel,
-      languageModel,
-      voicePersonality
+      temperature: parseFloat(temperature),
+      maxTokens: parseInt(maxTokens),
+      voicePersonality,
+      model: 'amazon.nova-sonic-v1:0'
     }
 
     const sessionData = {
@@ -127,28 +131,30 @@ export default function VoiceSessionModal({
 
           {/* Voice Assistant Configuration */}
           <div className="neuro-card p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-white">
-            <div className="space-y-6">
+                          <div className="space-y-6">
               <div className="flex items-center space-x-3 mb-4">
                 <FaCog className="text-[#8b5cf6] text-lg" />
                 <h3 className="text-lg font-semibold text-[#132944]">
-                  Configuración del Asistente de Voz
+                  Configuración Nova Sonic - Asistente de Voz IA
                 </h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Voice Speed */}
+                {/* Nova Sonic Voice ID */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Velocidad de Voz
+                    Voz Nova Sonic
                   </label>
                   <select
-                    value={voiceSpeed}
-                    onChange={(e) => setVoiceSpeed(e.target.value)}
+                    value={voiceId}
+                    onChange={(e) => setVoiceId(e.target.value)}
                     className="neuro-input w-full p-3 rounded-lg border-none outline-none text-gray-800"
                   >
-                    <option value="slow">Lenta</option>
-                    <option value="medium">Normal</option>
-                    <option value="fast">Rápida</option>
+                    <option value="matthew">Matthew - Masculina Natural</option>
+                    <option value="joanna">Joanna - Femenina Cálida</option>
+                    <option value="brian">Brian - Masculina Británica</option>
+                    <option value="emma">Emma - Femenina Británica</option>
+                    <option value="amy">Amy - Femenina Profesional</option>
                   </select>
                 </div>
 
@@ -203,19 +209,36 @@ export default function VoiceSessionModal({
                   </select>
                 </div>
 
-                {/* Language Model */}
+                {/* Nova Sonic Temperature */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Modelo de IA
+                    Creatividad (Temperature)
                   </label>
                   <select
-                    value={languageModel}
-                    onChange={(e) => setLanguageModel(e.target.value)}
+                    value={temperature}
+                    onChange={(e) => setTemperature(e.target.value)}
                     className="neuro-input w-full p-3 rounded-lg border-none outline-none text-gray-800"
                   >
-                    <option value="claude-3-haiku">Claude 3 Haiku - Rápido</option>
-                    <option value="claude-3-sonnet">Claude 3 Sonnet - Balanceado</option>
-                    <option value="claude-3-opus">Claude 3 Opus - Avanzado</option>
+                    <option value="0.3">0.3 - Muy Enfocado</option>
+                    <option value="0.5">0.5 - Equilibrado</option>
+                    <option value="0.7">0.7 - Creativo</option>
+                    <option value="0.9">0.9 - Muy Creativo</option>
+                  </select>
+                </div>
+
+                {/* Max Tokens */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Longitud de Respuesta
+                  </label>
+                  <select
+                    value={maxTokens}
+                    onChange={(e) => setMaxTokens(e.target.value)}
+                    className="neuro-input w-full p-3 rounded-lg border-none outline-none text-gray-800"
+                  >
+                    <option value="512">512 - Respuestas Cortas</option>
+                    <option value="1024">1024 - Respuestas Medianas</option>
+                    <option value="2048">2048 - Respuestas Largas</option>
                   </select>
                 </div>
 
@@ -243,12 +266,12 @@ export default function VoiceSessionModal({
                 <div className="flex items-start space-x-3">
                   <FaLightbulb className="text-[#6366f1] text-lg mt-1 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-[#132944] mb-2">Consejos de Configuración:</h4>
+                    <h4 className="font-semibold text-[#132944] mb-2">Nova Sonic - Consejos de Configuración:</h4>
                     <div className="text-sm text-gray-600 space-y-1">
-                      <p>• <strong>Velocidad Lenta:</strong> Ideal para principiantes o contenido complejo</p>
-                      <p>• <strong>Estilo Educativo:</strong> Mejor para explicaciones técnicas</p>
-                      <p>• <strong>Interacción Alta:</strong> Permite debates y análisis profundos</p>
-                      <p>• <strong>Claude 3 Opus:</strong> Mejor comprensión contextual para temas avanzados</p>
+                      <p>• <strong>Matthew:</strong> Voz masculina natural, ideal para explicaciones técnicas</p>
+                      <p>• <strong>Temperature 0.7:</strong> Balance perfecto entre coherencia y creatividad</p>
+                      <p>• <strong>1024 Tokens:</strong> Respuestas medianas, conversación fluida</p>
+                      <p>• <strong>Nova Sonic:</strong> Conversación bidireccional con voz en tiempo real</p>
                     </div>
                   </div>
                 </div>

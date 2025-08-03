@@ -261,6 +261,12 @@ export class AIContentService {
     contextSources: string[]
   ): Promise<void> {
     try {
+      // Check if docClient is available
+      if (!docClient) {
+        console.warn('⚠️ DynamoDB client not available, skipping session metadata save')
+        return
+      }
+      
       await docClient.send(new PutCommand({
         TableName: this.tableName,
         Item: {

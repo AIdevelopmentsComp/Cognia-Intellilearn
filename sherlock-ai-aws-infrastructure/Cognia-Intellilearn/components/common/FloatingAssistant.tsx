@@ -18,7 +18,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiMessageCircle, FiX, FiSend, FiMinimize2, FiMaximize2 } from 'react-icons/fi';
 import { useAuth } from '@/lib/AuthContext';
-import { chatWithAI } from '@/lib/firebase';
+import { chatWithAI } from '@/lib/aws-bedrock';
 
 interface Message {
   id: string;
@@ -81,7 +81,7 @@ export const FloatingAssistant = () => {
       
       Respond in a friendly, educational, and helpful manner. Keep responses concise but informative.`;
 
-      const aiResponseText = await chatWithAI(userMessage.text, systemPrompt);
+      const aiResponseText = await chatWithAI(userMessage.text, systemPrompt, []);
       
       // Add AI response to chat
       const aiMessage: Message = {

@@ -37,6 +37,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, displayName?: string) => Promise<void>;
   signOut: () => Promise<void>;
+  handleTokenExpiration: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -60,6 +61,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('🔧 [AuthProvider] Starting authentication initialization...');
         const currentUser = await initializeAuth();
         if (currentUser) {
+          // Check if the restored user has valid tokens
+          if (currentUser.idToken && isTokenExpired(currentUser.idToken)) {
+            console.warn('⚠️ [AuthProvider] Restored user has expired token, clearing session');
+            handleTokenExpiration();
+            return;
+          }
+          
           console.log('✅ [AuthProvider] User successfully restored from storage:', currentUser.email);
           setUser(currentUser);
         } else {
@@ -70,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Clean up any corrupted state
         localStorage.removeItem('cognia_auth_token');
         localStorage.removeItem('cognia_user_data');
+        localStorage.removeItem('cognito_tokens');
         console.log('🧹 [AuthProvider] Corrupted authentication state cleaned up');
       } finally {
         setLoading(false);
@@ -79,6 +88,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initialize();
   }, []);
+
+  // Check if current token is expired
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      // Check actual expiration without buffer - let AWS decide
+      return payload.exp && currentTime >= payload.exp;
+    } catch {
+      return true; // If we can't decode, consider it expired
+    }
+  };
+
+  // Handle token expiration
+  const handleTokenExpiration = () => {
+    console.warn('🔄 [AuthProvider] Token expired, forcing logout');
+    setUser(null);
+    localStorage.removeItem('cognia_auth_token');
+    localStorage.removeItem('cognia_user_data');
+    localStorage.removeItem('cognito_tokens');
+    
+    // Redirect to login
+    if (typeof window !== 'undefined') {
+      window.location.href = '/auth/login';
+    }
+  };
 
   // Enhanced sign-in function with comprehensive error handling and logging
   const signIn = async (email: string, password: string) => {
@@ -95,6 +130,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         hasTokens: !!(result.accessToken && result.idToken)
       });
       
+      // Check if token is valid before setting user
+      if (result.idToken && isTokenExpired(result.idToken)) {
+        console.error('❌ [AuthProvider] Received expired token, forcing re-authentication');
+        throw new Error('Token expired immediately after sign-in');
+      }
+      
       setUser(result);
       
       // Persist user data in localStorage for session recovery
@@ -107,6 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       localStorage.removeItem('cognia_auth_token');
       localStorage.removeItem('cognia_user_data');
+      localStorage.removeItem('cognito_tokens');
       console.log('🧹 [AuthProvider] Authentication state cleaned after sign-in failure');
       throw error;
     }
@@ -163,6 +205,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signUp,
     signOut,
+    handleTokenExpiration,
   };
 
   return (
