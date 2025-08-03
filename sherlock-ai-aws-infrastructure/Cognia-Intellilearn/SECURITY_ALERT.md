@@ -1,107 +1,54 @@
-# 🚨 ALERTA DE SEGURIDAD CRÍTICA - INTELLILEARN
+# ALERTA DE SEGURIDAD: Credenciales AWS Expuestas
 
-## 🔴 VULNERABILIDADES CRÍTICAS DETECTADAS
+## Problema Detectado
 
-### 1. **CREDENCIALES AWS EXPUESTAS**
-- **RESUELTO**: Las credenciales AWS han sido actualizadas en la migración de cuenta
-- **Ubicaciones**:
-  - `.env.aws` (archivo principal)
-  - Historial de Git
-  - Logs de Claude AI
-  - Scripts varios
+Se han detectado credenciales de AWS en el historial de commits del repositorio. Específicamente, el commit `0216cc4b952c4f10076c3455fba5953c40dd2db5` contiene un archivo `.env.local` con las siguientes credenciales expuestas:
 
-**ACCIÓN INMEDIATA**: 
+- Amazon AWS Access Key ID
+- Amazon AWS Secret Access Key
+
+## Acciones Inmediatas Tomadas
+
+1. Se ha eliminado el archivo `.env.local` del repositorio actual con `git rm --cached .env.local`
+2. Se ha agregado `.env.local` al archivo `.gitignore` para evitar commits futuros
+3. Se ha creado un nuevo commit para registrar estos cambios
+
+## Pasos Necesarios para Resolver el Problema
+
+El problema persiste porque las credenciales siguen existiendo en el historial de commits. Para resolver esto, es necesario:
+
+### Opción 1: Permitir las credenciales (NO RECOMENDADO)
+
+Puedes usar los enlaces proporcionados por GitHub para permitir estas credenciales específicas:
+- https://github.com/AIdevelopmentsComp/Cognia-Intellilearn/security/secret-scanning/unblock-secret/30msfVwHidHKzE6BNE26rF4NN80
+- https://github.com/AIdevelopmentsComp/Cognia-Intellilearn/security/secret-scanning/unblock-secret/30msfSpu1AJO7teHDxKdpc1KJdR
+
+Sin embargo, esta opción NO es recomendada por razones de seguridad.
+
+### Opción 2: Reescribir el historial de Git (RECOMENDADO)
+
+1. Revocar inmediatamente las credenciales AWS expuestas en la consola AWS
+2. Crear nuevas credenciales
+3. Reescribir el historial de Git para eliminar el archivo `.env.local` de todos los commits anteriores
+
 ```bash
-# 1. Rotar credenciales en AWS IAM Console AHORA
-# 2. Eliminar las credenciales antiguas
-# 3. Actualizar .env.aws con nuevas credenciales
+# Comando para reescribir el historial y eliminar .env.local de todos los commits
+git filter-branch --force --index-filter "git rm --cached --ignore-unmatch sherlock-ai-aws-infrastructure/Cognia-Intellilearn/.env.local" --prune-empty --tag-name-filter cat -- --all
+
+# Forzar el push al repositorio remoto
+git push --force
 ```
 
-### 2. **BUCKETS S3 PÚBLICOS**
-- ⚠️ `intellilearn-prod-app` - **PÚBLICO** (aplicación web)
-- ⚠️ `intellilearn-vector-storage` - **PÚBLICO** (datos sensibles de vectores)
-- ✅ `cognia-content-prod` - Seguro
+## Mejores Prácticas para el Futuro
 
-**RIESGO**: Exposición de datos sensibles y vectores de embeddings
+1. **Nunca** incluir archivos `.env`, `.env.local` o similares en repositorios Git
+2. Usar siempre `.gitignore` para excluir archivos con credenciales
+3. Considerar el uso de AWS Secrets Manager o AWS Parameter Store para gestionar credenciales
+4. Implementar rotación regular de credenciales
+5. Utilizar IAM Roles en lugar de Access Keys cuando sea posible
 
-### 3. **CONFIGURACIÓN INSEGURA**
-- No hay MFA habilitado en cuenta AWS
-- No hay rotación automática de credenciales
-- Políticas IAM demasiado permisivas
-- No hay CloudTrail para auditoría
-- Sin AWS Security Hub activado
+## Recursos Adicionales
 
-## 🛡️ PLAN DE REMEDIACIÓN INMEDIATA
-
-### PASO 1: Rotar Credenciales (HACER AHORA)
-```bash
-# En AWS Console:
-1. IAM → Users → AIsolutions
-2. Security credentials → Create access key
-3. Copiar nuevas credenciales
-4. ✅ Credenciales AWS migradas a nueva cuenta (304936889025)
-```
-
-### PASO 2: Asegurar Buckets S3
-```bash
-# Bloquear acceso público:
-aws s3api put-public-access-block \
-  --bucket intellilearn-prod-app \
-  --public-access-block-configuration \
-  "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
-
-aws s3api put-public-access-block \
-  --bucket intellilearn-vector-storage \
-  --public-access-block-configuration \
-  "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
-```
-
-### PASO 3: Limpiar Código
-```bash
-# Eliminar todas las referencias a credenciales
-git filter-branch --force --index-filter \
-  'git rm --cached --ignore-unmatch .env.aws' \
-  --prune-empty --tag-name-filter cat -- --all
-```
-
-### PASO 4: Configurar Seguridad
-1. **Habilitar MFA**: AWS Console → Security credentials → MFA
-2. **CloudTrail**: Crear trail para auditoría
-3. **AWS Config**: Habilitar para compliance
-4. **Security Hub**: Activar para detección de amenazas
-
-## 📊 ANÁLISIS DE IMPACTO
-
-### Datos Potencialmente Comprometidos:
-- Configuración de la aplicación
-- Vectores de embeddings educativos
-- Metadatos de cursos
-- Logs de acceso
-
-### Ventana de Exposición:
-- Desde: 31 de julio de 2025
-- Duración: Activa
-- Severidad: CRÍTICA
-
-## 🔒 MEJORES PRÁCTICAS A IMPLEMENTAR
-
-1. **Usar AWS Secrets Manager** para credenciales
-2. **Implementar principio de menor privilegio** en IAM
-3. **Habilitar logging y monitoreo** completo
-4. **Configurar alertas de seguridad** en CloudWatch
-5. **Implementar rotación automática** de credenciales (90 días)
-6. **Usar AWS KMS** para encriptación
-7. **Configurar VPC** para aislar recursos
-8. **Implementar WAF** para CloudFront
-
-## 📞 CONTACTOS DE EMERGENCIA
-
-- AWS Support: https://console.aws.amazon.com/support
-- AWS Abuse: abuse@amazonaws.com
-- Equipo de Seguridad: [TU EQUIPO]
-
----
-
-**ÚLTIMA ACTUALIZACIÓN**: $(date)
-**SEVERIDAD**: CRÍTICA
-**ACCIÓN REQUERIDA**: INMEDIATA
+- [Documentación de GitHub sobre protección de push](https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push)
+- [Mejores prácticas de seguridad para AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)
+- [Cómo reescribir el historial de Git](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History)
